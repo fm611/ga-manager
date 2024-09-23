@@ -1,4 +1,6 @@
-﻿namespace GroupAddress.TestConsole
+﻿using GroupAddress.Core;
+
+namespace GroupAddress.TestConsole
 {
     internal class Program
     {
