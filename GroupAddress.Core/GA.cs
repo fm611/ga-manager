@@ -6,15 +6,54 @@ using System.Threading.Tasks;
 
 namespace GroupAddress.Core
 {
-    public struct GA
+    public abstract class GABase
     {
-        public int HG { get; set; }
-        public int MG { get; set; }
-        public int UG { get; set; }
+        public MiddleGroup MiddleGroup { get; protected set; }
+        public int Id { get; protected set; }
+        public string Name { get; protected set; }
 
-        public override string ToString()
+    }
+
+
+    public class TemplateGA : GABase
+    {
+        public string PostFix { get; private set; }
+
+        public TemplateGA(MiddleGroup middleGroup, string postFix)
         {
-            return HG+"/"+MG+"/"+UG;
+            MiddleGroup = middleGroup;
+            PostFix = postFix;
+        }
+
+        public GA GetGA(int ug, string preFix)
+        {
+            return new GA(this, ug, preFix);
+        }
+    }
+
+    public class GA : GABase
+    {
+
+        public GA(TemplateGA template, int id, string preFix) 
+        {
+            MiddleGroup = template.MiddleGroup;
+            Id = id;
+
+            Name = preFix + "_" + template.PostFix;
+        }
+    }
+
+    public class GaGroup
+    {
+        private List<MiddleGroup> MiddleGroups { get; } = [];
+        private List<GA> GAs { get; } = [];
+
+        public GaGroup() { }
+
+        public void Add(MiddleGroup middleGroup, GA ga)
+        {
+            MiddleGroups.Add(middleGroup);
+            GAs.Add(ga);
         }
     }
 }

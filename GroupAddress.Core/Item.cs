@@ -11,8 +11,22 @@ namespace GroupAddress.Core
         public string Id { get; set; }
         public string Name { get; set; }
 
-        public Item BaseItem { get; set; }
+        public Item ParentItem { get; set; }
 
+        public List<Item> ChildItems { get; set; } = [];
 
+        public List<TemplateGA> TemplateGAs { get; set; }
+
+        public Item()
+        {
+            TemplateGAs = new List<TemplateGA>();
+        }
+
+        public Item(Item parentItem) : this()
+        {
+            ParentItem = parentItem;
+            ParentItem.ChildItems.Add(this);
+
+        }
     }
 }
