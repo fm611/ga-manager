@@ -9,7 +9,6 @@ namespace GroupAddress.Core
     public abstract class GABase
     {
         public MiddleGroup MiddleGroup { get; protected set; }
-        public int Id { get; protected set; }
         public string Name { get; protected set; }
 
     }
@@ -17,15 +16,15 @@ namespace GroupAddress.Core
 
     public class TemplateGA : GABase
     {
-        public string PostFix { get; private set; }
+        public string PostString { get; private set; }
 
         public TemplateGA(MiddleGroup middleGroup, string postFix)
         {
             MiddleGroup = middleGroup;
-            PostFix = postFix;
+            PostString = postFix;
         }
 
-        public GA GetGA(int ug, string preFix)
+        public GA CreateGA(int ug, string preFix)
         {
             return new GA(this, ug, preFix);
         }
@@ -33,27 +32,25 @@ namespace GroupAddress.Core
 
     public class GA : GABase
     {
+        public int Id { get; protected set; }
 
-        public GA(TemplateGA template, int id, string preFix) 
+        public GA(TemplateGA template, int id, string preString) 
         {
             MiddleGroup = template.MiddleGroup;
             Id = id;
-
-            Name = preFix + "_" + template.PostFix;
+            Name = preString + "_" + template.PostString;
         }
+
+        public string Address => MiddleGroup + "/" + Id;
+
     }
 
-    public class GaGroup
+    public class GATemplateGroup : List<TemplateGA>
     {
-        private List<MiddleGroup> MiddleGroups { get; } = [];
-        private List<GA> GAs { get; } = [];
+        private List<GATemplateGroup> TemplateGAs { get; } = [];
 
-        public GaGroup() { }
+        public GATemplateGroup() { }
 
-        public void Add(MiddleGroup middleGroup, GA ga)
-        {
-            MiddleGroups.Add(middleGroup);
-            GAs.Add(ga);
-        }
     }
+
 }

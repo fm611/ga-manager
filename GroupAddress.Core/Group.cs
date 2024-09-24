@@ -30,5 +30,10 @@
             MainGroup = mainGroup;
             mainGroup.MiddleGroups.Add(this);
         }
+
+        public override string ToString()
+        {
+            return MainGroup.Id + "/" + Id;
+        }
     }
 }

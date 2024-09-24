@@ -1,4 +1,5 @@
 ﻿using GroupAddress.Core;
+using System.Collections.Generic;
 
 namespace GroupAddress.TestConsole
 {
@@ -33,82 +34,115 @@ namespace GroupAddress.TestConsole
 
             var lightCommonTemplate = new Item();
 
-
-            lightCommonTemplate.TemplateGAs.Add(new TemplateGA(lightCommonMain_Switch_MiddleGroup, "Schalten"));
-            lightCommonTemplate.TemplateGAs.Add(new TemplateGA(lightCommonMain_SwitchStatus_MiddleGroup, "Schalten_Status"));
-            lightCommonTemplate.TemplateGAs.Add(new TemplateGA(lightCommonMain_Lock_MiddleGroup, "Sperren1"));
-            lightCommonTemplate.TemplateGAs.Add(new TemplateGA(lightCommonMain_Lock_MiddleGroup, "Sperren2"));
-            lightCommonTemplate.TemplateGAs.Add(new TemplateGA(lightCommonMain_LockStatus_MiddleGroup, "Sperren1_Status"));
-            lightCommonTemplate.TemplateGAs.Add(new TemplateGA(lightCommonMain_LockStatus_MiddleGroup, "Sperren2_Status"));
-
+            lightCommonTemplate.GATemplateGroups.AddRange([ 
+                [
+                    new TemplateGA(lightCommonMain_Switch_MiddleGroup, "Schalten"),
+                    new TemplateGA(lightCommonMain_SwitchStatus_MiddleGroup, "Schalten_Status")
+                ],
+                [
+                    new TemplateGA(lightCommonMain_Lock_MiddleGroup, "Sperren1"),
+                    new TemplateGA(lightCommonMain_LockStatus_MiddleGroup, "Sperren1_Status")
+                ],
+                [
+                    new TemplateGA(lightCommonMain_Lock_MiddleGroup, "Sperren2"),
+                    new TemplateGA(lightCommonMain_LockStatus_MiddleGroup, "Sperren2_Status")
+                ]
+            ]);
+            
             var dimmLightTemplate = new Item(lightCommonTemplate);
-            dimmLightTemplate.TemplateGAs.AddRange(new[]
-            {
-                new TemplateGA(lightDimm_BrightnessRel_MiddleGroup, "Hell_rel"),
-                new TemplateGA(lightDimm_BrigthnessAbs_MiddleGroup, "Hell_abs"),
-                new TemplateGA(lightDimm_BrightnesseValue_MiddleGroup, "Hell_Wert")
-            });
+            dimmLightTemplate.GATemplateGroups.AddRange([
+                [
+                    new TemplateGA(lightDimm_BrightnessRel_MiddleGroup, "Hell_rel"),
+                    new TemplateGA(lightDimm_BrigthnessAbs_MiddleGroup, "Hell_abs"),
+                    new TemplateGA(lightDimm_BrightnesseValue_MiddleGroup, "Hell_Wert")
+                ]
+            ]);
 
 
             var dimmTWTemplate = new Item(dimmLightTemplate);
-            dimmTWTemplate.TemplateGAs.AddRange(new[]
-            {
-               new TemplateGA(lightDimm_BrightnessRel_MiddleGroup, "TempP_rel"),
-               new TemplateGA(lightDimm_BrightnessRel_MiddleGroup, "TempK_rel"),
-               new TemplateGA(lightDimm_BrigthnessAbs_MiddleGroup, "TempP_abs"),
-               new TemplateGA(lightDimm_BrigthnessAbs_MiddleGroup, "TempK_abs"),
-               new TemplateGA(lightDimm_BrightnesseValue_MiddleGroup, "TempP_Wert"),
-               new TemplateGA(lightDimm_BrightnesseValue_MiddleGroup, "TempK_Wert"),
-            });
+            dimmTWTemplate.GATemplateGroups.AddRange([
+                [
+                    new TemplateGA(lightTW_TempRel_MiddleGroup, "TempP_rel"),
+                    new TemplateGA(lightTW_TempAbs_MiddleGroup, "TempP_abs"),
+                    new TemplateGA(lightTW_TempValue_MiddleGroup, "TempP_Wert"),
+                ],
+                [
+                    new TemplateGA(lightTW_TempRel_MiddleGroup, "TempK_rel"),
+                    new TemplateGA(lightTW_TempAbs_MiddleGroup, "TempK_abs"),
+                    new TemplateGA(lightTW_TempValue_MiddleGroup, "TempK_Wert"),
+                ]
+            ]);
+                               
 
 
             var rgbwTemplate = new Item(dimmTWTemplate);
-            rgbwTemplate.TemplateGAs.AddRange(new[]
-            {
-                new TemplateGA(lightRGBW_Switch_MiddleGroup, "R_Schalten" ),
-                new TemplateGA(lightRGBW_Switch_MiddleGroup, "G_Schalten" ),
-                new TemplateGA(lightRGBW_Switch_MiddleGroup, "B_Schalten" ),
-                new TemplateGA(lightRGBW_Switch_MiddleGroup, "W_Schalten" ),
-                new TemplateGA(lightRGBW_SwitchStatus_MiddleGroup, "R_Schalten_Status" ),
-                new TemplateGA(lightRGBW_SwitchStatus_MiddleGroup, "G_Schalten_Status" ),
-                new TemplateGA(lightRGBW_SwitchStatus_MiddleGroup, "B_Schalten_Status" ),
-                new TemplateGA(lightRGBW_SwitchStatus_MiddleGroup, "W_Schalten_Status" ),
+            rgbwTemplate.GATemplateGroups.AddRange([
+                [
+                    new TemplateGA(lightRGBW_Switch_MiddleGroup, "R_Schalten" ),
+                    new TemplateGA(lightRGBW_SwitchStatus_MiddleGroup, "R_Schalten_Status" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_Switch_MiddleGroup, "G_Schalten" ),
+                    new TemplateGA(lightRGBW_SwitchStatus_MiddleGroup, "G_Schalten_Status" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_Switch_MiddleGroup, "B_Schalten" ),
+                    new TemplateGA(lightRGBW_SwitchStatus_MiddleGroup, "B_Schalten_Status" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_Switch_MiddleGroup, "W_Schalten" ),
+                    new TemplateGA(lightRGBW_SwitchStatus_MiddleGroup, "W_Schalten_Status" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "H_rel" ),
+                    new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "H_abs" ),
+                    new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "H_Wert" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "S_rel" ),
+                    new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "S_abs" ),
+                    new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "S_Wert" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "R_rel" ),
+                    new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "R_abs" ),
+                    new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "R_Wert" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "G_rel" ),
+                    new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "G_abs" ),
+                    new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "G_Wert" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "B_rel" ),
+                    new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "B_abs" ),
+                    new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "B_Wert" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "W_rel" ),
+                    new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "W_abs" ),
+                    new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "W_Wert" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "W_rel" ),
+                    new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "W_abs" ),
+                    new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "W_Wert" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "HSV" ),
+                    new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "HSV_Wert" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "RGB" ),
+                    new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "RGB_Wert" )
+                ],
+                [
+                    new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "RGBW_Wert" )
+                ]
+            ]);
 
-                new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "H_rel" ),
-                new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "S_rel" ),
-                new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "R_rel" ),
-                new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "G_rel" ),
-                new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "B_rel" ),
-                new TemplateGA(lightRGBW_DimmRel_MiddleGroup, "W_rel" ),
 
-                new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "H_abs" ),
-                new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "S_abs" ),
-                new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "R_abs" ),
-                new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "G_abs" ),
-                new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "B_abs" ),
-                new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "W_abs" ),
-                new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "HSV" ),
-                new TemplateGA(lightRGBW_DimmAbs_MiddleGroup, "RGB" ),
-
-                new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "H_Wert" ),
-                new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "S_Wert" ),
-                new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "R_Wert" ),
-                new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "G_Wert" ),
-                new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "B_Wert" ),
-                new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "W_Wert" ),
-                new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "HSV_Wert" ),
-                new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "RGB_Wert" ),
-                new TemplateGA(lightRGBW_DimmValue_MiddleGroup, "RGBW_Wert" ),
-
-
-
-            });
-
-
-
-
-
-
+            var gas = dimmTWTemplate.CreateGA("EG_WZ_Spots");
 
         }
     }
