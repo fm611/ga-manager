@@ -8,43 +8,75 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace GroupAddress.Core
 {
 
-
-    public class GetGATemplate : GATemplate
+    public enum GASpacerType
     {
-        public GetGATemplate(SubGroupTemplate sGroup, string baseString) : base(null, sGroup, baseString, null, null)
-        {
-        }
-        public GetGATemplate(SubGroupTemplate sGroup, string baseString, string getAddonString) : base(null, sGroup, baseString, null,getAddonString)
-        {
-        }
+        None,
+        SetSpacer,
+        GetSpacer
     }
 
-    public class SetGATemplate : GATemplate
+    public class GATemplate
     {
-        public SetGATemplate(SubGroupTemplate mGroup, string baseString) : base(null, mGroup, baseString)
+
+        public string SetPostString { get; private set; } = "";
+        public string GetPostString { get; private set; } = "";
+
+        public SubGroupTemplate? SetSubGroupTemplate { get; private set; }
+        public SubGroupTemplate? GetSubGroupTemplate { get; private set; }
+
+        public GASpacerType SpacerType { get; private set; } = GASpacerType.None;
+
+        // Single GA
+        public GATemplate(SubGroupTemplate subGroupTemplate, string baseString, string addonString="")
         {
+            SetSubGroupTemplate = subGroupTemplate;
+            SetPostString = string.Join("_", new[] { baseString, addonString }.Where(s => !string.IsNullOrEmpty(s)));
         }
-        public SetGATemplate(SubGroupTemplate mGroup, string baseString, string setAddonString) : base(mGroup,null, baseString, setAddonString,null)
+
+
+
+        // Single GA + Blocker
+        public GATemplate(SubGroupTemplatePair subGroupTemplatePair, GASpacerType blockerType, string baseString, string addonString = "") : 
+            this(subGroupTemplatePair.SetGroup, subGroupTemplatePair.GetGroup, blockerType,baseString,addonString)
+        { }
+
+            public GATemplate(SubGroupTemplate setMGroup, SubGroupTemplate getMGroup, GASpacerType spacerType, string baseString, string addonString="")
         {
+            GetSubGroupTemplate = getMGroup;
+            SetSubGroupTemplate = setMGroup;
+            SpacerType = spacerType;
+
+            var postString = string.Join("_", new[] { baseString, addonString }.Where(s => !string.IsNullOrEmpty(s)));
+
+            SetPostString = postString;
+            GetPostString = postString;
         }
-    }
 
 
-    public class GATemplate(SubGroupTemplate? setMGroup, SubGroupTemplate? getMGroup, string baseString, string? setAddonString = null, string? getAddonString = null)
-    {
-        public string? BaseString { get; private set; } = baseString;
-        public string? SetAddonString { get; private set; } = setAddonString;
-        public string? GetAddonString { get; private set; } = getAddonString;
 
-        public SubGroupTemplate? GetSubGroupTemplate { get; private set; } = getMGroup;
-        public SubGroupTemplate? SetSubGroupTemplate { get; private set; } = setMGroup;
+        // SET + GET GA
+        public GATemplate(SubGroupTemplatePair subGroupTemplatePair, string baseString, string setAddonString = "", string getAddonString = "") :
+            this(subGroupTemplatePair.SetGroup, subGroupTemplatePair.GetGroup, baseString, setAddonString, getAddonString)
+        { }
+
+        public GATemplate(SubGroupTemplate setMGroup, SubGroupTemplate getMGroup, string baseString, string setAddonString = "", string getAddonString = "")
+        {
+            SetPostString = string.Join("_", new[] { baseString, setAddonString }.Where(s => !string.IsNullOrEmpty(s)));
+            GetPostString = string.Join("_", new[] { baseString, getAddonString }.Where(s => !string.IsNullOrEmpty(s)));
+
+            GetSubGroupTemplate = getMGroup;
+            SetSubGroupTemplate = setMGroup;
+        }
 
         public IEnumerable<GA> CreateGA(MainGroup mGroup,int id, string preString)
         {
             var output = new List<GA>();
 
-            if (SetSubGroupTemplate != null) output.Add(new GA(mGroup.GetSubGroup(SetSubGroupTemplate), id, string.Join("_", new[] { preString, BaseString, SetAddonString }.Where(s => !string.IsNullOrEmpty(s)))));
-            if (GetSubGroupTemplate != null) output.Add(new GA(mGroup.GetSubGroup(GetSubGroupTemplate), id, string.Join("_", new[] { preString, BaseString, GetAddonString }.Where(s => !string.IsNullOrEmpty(s)))));
+            var setName = SpacerType == GASpacerType.SetSpacer ? SetPostString : preString + "_" + SetPostString;
+            var getName = SpacerType == GASpacerType.GetSpacer ? GetPostString : preString + "_" + GetPostString;
+
+            if (SetSubGroupTemplate != null && SpacerType != GASpacerType.SetSpacer) output.Add(new GA(mGroup.GetOrCreateSubGroup(SetSubGroupTemplate), id, setName));
+            if (GetSubGroupTemplate != null && SpacerType != GASpacerType.GetSpacer) output.Add(new GA(mGroup.GetOrCreateSubGroup(GetSubGroupTemplate), id, getName));
 
             return output;
         }
@@ -52,19 +84,21 @@ namespace GroupAddress.Core
 
     public class GA 
     {
-        public SubGroup MiddleGroup { get; protected set; }
+        public SubGroup SubGroup { get; protected set; }
         public string Name { get; protected set; }
-        public int Id { get; protected set; }
+        public int Id { get; set; }
 
 
-        public GA(SubGroup mGroup, int id, string name) 
+        public GA(SubGroup subGroup, int id, string name) 
         {
-            MiddleGroup = mGroup;
+            SubGroup = subGroup;
             Id = id;
             Name = name;
+
+            SubGroup.GAs.Add(this);
         }
 
-        public string Address => MiddleGroup + "/" + Id;
+        public string Address => SubGroup + "/" + Id;
 
         public override string ToString()
         {
@@ -73,17 +107,5 @@ namespace GroupAddress.Core
 
     }
 
-    //public class GATemplateGroup : List<GATemplate>
-    //{
-    //    public string BaseString { get; private set; }
-    //    public string SetAddonString { get; private set; }
-    //    public string GetAddonString { get; private set; }
-
-
-    //    private List<GATemplateGroup> TemplateGAs { get; } = [];
-
-    //    public GATemplateGroup() { }
-
-    //}
 
 }
