@@ -1,0 +1,79 @@
+{
+  "templates": {
+    "subgrouppairs": [
+      {
+        "Name": "Switch Pair",
+        "id": 1,
+        "SetGroup": {
+          "id": 1,
+          "name": "Schalten"
+        },
+        "GetGroup": {
+          "id": 2,
+          "name": "Schalten Status"
+        }
+      },
+      {
+        "Name": "Value Pair",
+        "id": 2,
+        "SetGroup": {
+          "id": 3,
+          "name": "Set Value"
+        },
+        "GetGroup": {
+          "id": 4,
+          "name": "Get Value"
+        }
+      },
+      {
+        "Name": "Misc Pair",
+        "id": 3,
+        "SetGroup": {
+          "id": 5,
+          "name": "Set Misc"
+        },
+        "GetGroup": {
+          "id": 6,
+          "name": "Get Misc"
+        }
+      }
+    ],
+    "items": [
+      {
+        "name": "Licht allgemein",
+        "id": 1,
+        "gatemplates": [
+          {
+            "BaseString": "Schalten",
+            "SetAddonString": "",
+            "GetAddonString": "Status",
+            "SubGroupPairId": 1,
+            "SpacerType": 0
+          },
+          {
+            "BaseString": "Sperren",
+            "SetAddonString": "1",
+            "GetAddonString": "Status",
+            "SubGroupPairId": 3,
+            "SpacerType": 0
+          },
+          {
+            "BaseString": "Sperren",
+            "SetAddonString": "2",
+            "GetAddonString": "",
+            "SubGroupPairId": 3,
+            "SpacerType": 2
+          },
+          {
+            "BaseString": "Szene",
+            "SetAddonString": "",
+            "GetAddonString": "",
+            "SubGroupPairId": 3,
+            "SpacerType": 2
+          }
+        ]
+
+      }
+    ]
+  }
+}
