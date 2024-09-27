@@ -45,28 +45,13 @@ namespace GroupAddress.Core
         {
             return [new GATemplatePart(pair.SetGroup, setAddonString), new GATemplatePart(pair.GetGroup, getAddonString)];
         }
-
-
     }
 
     public class GATemplate
     {
-
         public string BaseString { get; set; } = "";
 
-
         public List<GATemplatePart> GAParts { get; set; }
-
-
-
-        //public string SetPostString { get; private set; } = "";
-        //public string GetPostString { get; private set; } = "";
-
-        //public SubGroupTemplate? SetSubGroupTemplate { get; private set; }
-        //public SubGroupTemplate? GetSubGroupTemplate { get; private set; }
-
-        //public GASpacerType SpacerType { get; private set; } = GASpacerType.None;
-
 
         public GATemplate(string baseString, IEnumerable<GATemplatePart> parts)
         {
@@ -80,49 +65,6 @@ namespace GroupAddress.Core
         }
 
 
-
-        //// Single GA
-        //public GATemplate(SubGroupTemplate subGroupTemplate, string baseString, string addonString="")
-        //{
-        //    SetSubGroupTemplate = subGroupTemplate;
-        //    SetPostString = string.Join("_", new[] { baseString, addonString }.Where(s => !string.IsNullOrEmpty(s)));
-        //}
-
-
-
-        //// Single GA + Blocker
-        //public GATemplate(SubGroupTemplatePair subGroupTemplatePair, GASpacerType blockerType, string baseString, string addonString = "") : 
-        //    this(subGroupTemplatePair.SetGroup, subGroupTemplatePair.GetGroup, blockerType,baseString,addonString)
-        //{ }
-
-        //    public GATemplate(SubGroupTemplate setMGroup, SubGroupTemplate getMGroup, GASpacerType spacerType, string baseString, string addonString="")
-        //{
-        //    GetSubGroupTemplate = getMGroup;
-        //    SetSubGroupTemplate = setMGroup;
-        //    SpacerType = spacerType;
-
-        //    var postString = string.Join("_", new[] { baseString, addonString }.Where(s => !string.IsNullOrEmpty(s)));
-
-        //    SetPostString = postString;
-        //    GetPostString = postString;
-        //}
-
-
-
-        //// SET + GET GA
-        //public GATemplate(SubGroupTemplatePair subGroupTemplatePair, string baseString, string setAddonString = "", string getAddonString = "") :
-        //    this(subGroupTemplatePair.SetGroup, subGroupTemplatePair.GetGroup, baseString, setAddonString, getAddonString)
-        //{ }
-
-        //public GATemplate(SubGroupTemplate setMGroup, SubGroupTemplate getMGroup, string baseString, string setAddonString = "", string getAddonString = "")
-        //{
-        //    SetPostString = string.Join("_", new[] { baseString, setAddonString }.Where(s => !string.IsNullOrEmpty(s)));
-        //    GetPostString = string.Join("_", new[] { baseString, getAddonString }.Where(s => !string.IsNullOrEmpty(s)));
-
-        //    GetSubGroupTemplate = getMGroup;
-        //    SetSubGroupTemplate = setMGroup;
-        //}
-
         private string CreateGAString(string preString, GATemplatePart part, string seperator="_")
         {
             return string.Join(seperator, new[] { preString, BaseString, part.AddonString }.Where(s => !string.IsNullOrEmpty(s)));
@@ -132,21 +74,7 @@ namespace GroupAddress.Core
         {
             return GAParts.Select(p => new GA(mGroup.GetOrCreateSubGroup(p.subGroupTemplate), id, CreateGAString(preString, p)));
         }
-
-        
-        
-        //public IEnumerable<GA> CreateGA(MainGroup mGroup,int id, string preString)
-        //{
-        //    var output = new List<GA>();
-
-        //    var setName = SpacerType == GASpacerType.SetSpacer ? SetPostString : preString + "_" + SetPostString;
-        //    var getName = SpacerType == GASpacerType.GetSpacer ? GetPostString : preString + "_" + GetPostString;
-
-        //    if (SetSubGroupTemplate != null && SpacerType != GASpacerType.SetSpacer) output.Add(new GA(mGroup.GetOrCreateSubGroup(SetSubGroupTemplate), id, setName));
-        //    if (GetSubGroupTemplate != null && SpacerType != GASpacerType.GetSpacer) output.Add(new GA(mGroup.GetOrCreateSubGroup(GetSubGroupTemplate), id, getName));
-
-        //    return output;
-        //}
+     
     }
 
     public class GA 

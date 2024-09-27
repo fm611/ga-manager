@@ -11,6 +11,11 @@ namespace GroupAddress.TestConsole
         static void Main(string[] args)
         {
 
+            var dbContext = new AppDbContext();
+
+            dbContext.Database.EnsureCreated();
+
+
          
 
             var lightCommonMainGroup = new MainGroup(1, "Licht allgemein");
