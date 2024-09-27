@@ -1,9 +1,14 @@
-﻿namespace GroupAddress.Core
+﻿using System.Data.SqlTypes;
+
+namespace GroupAddress.Core
 {
     public abstract class Group
     {
+
         public int Id { get; set; }
         public string Name { get; set; }
+
+        public Group() { }
 
         public Group(int id, string name)
         {
@@ -85,7 +90,7 @@
 
         public SubGroup? GetSubGroup(SubGroupTemplate subGroupTemplate)
         {
-            return SubGroups.Where(x => x.Id == subGroupTemplate.Id).FirstOrDefault();
+            return SubGroups.Where(x => x.Id == subGroupTemplate.SubAddress).FirstOrDefault();
         }
 
         public string GetCSVString()
@@ -115,7 +120,7 @@
 
     }
 
-    public class SubGroupTemplate : Group
+    public class SubGroupTemplate
     {
         public static SubGroupTemplate Switch = new SubGroupTemplate(1, "Switch");
         public static SubGroupTemplate SwitchStatus = new SubGroupTemplate(2, "Switch Status");
@@ -132,38 +137,49 @@
 
         public static List<SubGroupTemplate> DefaultLightTemplates = [Switch, SwitchStatus, SetValue, GetValue, SetMisc, GetMisc];
 
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public int SubAddress { get; set; }
 
-        public SubGroupTemplate(int id, string name) : base(id, name)
+        public SubGroupTemplate() => Id = Guid.NewGuid().ToString();
+
+        public SubGroupTemplate(int address, string name) : this()
         {
-
+            SubAddress = address;
+            Name = name;
         }
     }
 
 
     public class SubGroup : Group
     {
-        public MainGroup MainGroup { get; }
+        public MainGroup MainGroup { get; set; }
 
         public List<GA> GAs { get; set; } = [];
+
+        public string Address
+        {
+            get => MainGroup.Id + "/" + Id;
+            set => _ = value;
+        }
+
+        public SubGroup() { }
 
         public SubGroup(int id, string name, MainGroup mainGroup) : base(id, name)
         {
             MainGroup = mainGroup;
             mainGroup.SubGroups.Add(this);
         }
-
-        public SubGroup(SubGroupTemplate template, MainGroup mGroup) : this(template.Id, template.Name, mGroup)
-        {
-        }
+                
 
         public override string ToString()
         {
-            return MainGroup.Id + "/" + Id;
+            return Address;
         }
 
         public static SubGroup Create(SubGroupTemplate t, MainGroup mGroup)
         {
-            return new SubGroup(t.Id, t.Name, mGroup);
+            return new SubGroup(t.SubAddress, t.Name, mGroup);
         }
     }
 }

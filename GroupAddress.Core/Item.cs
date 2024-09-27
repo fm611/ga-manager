@@ -116,10 +116,15 @@ namespace GroupAddress.Core
 
         public List<GATemplate> GATemplates { get; set; } = [];
 
-        public ItemTemplate(string name)
+        public ItemTemplate()
+        {
+
+            Id = Guid.NewGuid().ToString();
+        }
+
+        public ItemTemplate(string name) : this()
         {
             Name = name;
-            Id = Guid.NewGuid().ToString();
         }
 
         public ItemTemplate(string name, IEnumerable<GATemplate> gatemplates) : this(name)
@@ -156,11 +161,19 @@ namespace GroupAddress.Core
     }
 
 
-    public class Item(string name)
+    public class Item
     {
-        public string Name { get; set; } = name;
+        public string Id { get; set; }
+        public string Name { get; set; }
 
         public List<GA> GAs { get; set; } = [];
+
+        public Item() => Id = Guid.NewGuid().ToString();
+
+        public Item(string name) : this()
+        {
+            Name = name;
+        }
 
         public void ShiftGA(int offset)
         {

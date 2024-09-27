@@ -17,15 +17,17 @@ namespace GroupAddress.Core
 
     public class GATemplatePart
     {
-        public SubGroupTemplate subGroupTemplate { get; private set; }
-        public string AddonString { get; private set; } = "";
-        //public bool IsSpacer { get; private set; }
+        public SubGroupTemplate subGroupTemplate { get; set; }
+        public string AddonString { get; set; } = "";
 
-        private GATemplatePart(SubGroupTemplate subGroupTemplate)
-        {
-            this.subGroupTemplate = subGroupTemplate;
+        public string Id { get; set; }
+
+        public GATemplatePart() {
+
+            Id = Guid.NewGuid().ToString();
         }
-        private GATemplatePart(SubGroupTemplate subGroupTemplate, string addonString)
+
+        private GATemplatePart(SubGroupTemplate subGroupTemplate, string addonString = "") : this()
         {
             this.subGroupTemplate = subGroupTemplate;
             AddonString = addonString;
@@ -49,16 +51,22 @@ namespace GroupAddress.Core
 
     public class GATemplate
     {
+        public string Id { get; private set; }
         public string BaseString { get; set; } = "";
 
         public List<GATemplatePart> GAParts { get; set; }
 
-        public GATemplate(string baseString, IEnumerable<GATemplatePart> parts)
+        public GATemplate()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+
+        public GATemplate(string baseString, IEnumerable<GATemplatePart> parts) : this()
         {
             BaseString = baseString;
             GAParts = parts.ToList();
         }
-        public GATemplate(string baseString, GATemplatePart part)
+        public GATemplate(string baseString, GATemplatePart part) : this()
         {
             BaseString = baseString;
             GAParts = [part];
@@ -79,10 +87,11 @@ namespace GroupAddress.Core
 
     public class GA 
     {
-        public SubGroup SubGroup { get; protected set; }
-        public string Name { get; protected set; }
+        public SubGroup SubGroup { get; set; }
+        public string Name { get; set; }
         public int Id { get; set; }
 
+        public GA() { }
 
         public GA(SubGroup subGroup, int id, string name) 
         {
@@ -93,7 +102,11 @@ namespace GroupAddress.Core
             SubGroup.GAs.Add(this);
         }
 
-        public string Address => SubGroup + "/" + Id;
+        public string Address
+        {
+            get => SubGroup.Address + "/" + Id;
+            set => _ = value;
+        }
 
         public override string ToString()
         {

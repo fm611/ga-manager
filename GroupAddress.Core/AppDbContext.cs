@@ -14,14 +14,20 @@ namespace GroupAddress.Core
     {
         //public DbSet<Blog> Blogs { get; set; }
         //public DbSet<Post> Posts { get; set; }
+        public DbSet<MainGroup> MainGroups { get; set; }
+        public DbSet<SubGroup> SubGroups { get; set; }
+        public DbSet<GA> GAs { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<ItemTemplate> ItemTemplates { get; set; }
+
+
+
 
         public string DbPath { get; }
 
         public AppDbContext()
         {
             string folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-            //var folder = Environment.SpecialFolder.LocalApplicationData;
-            //var path = Environment.GetFolderPath(folder);
             DbPath = System.IO.Path.Join(folder, "data.db");
         }
 
@@ -29,5 +35,16 @@ namespace GroupAddress.Core
         // special "local" folder for your platform.
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite($"Data Source={DbPath}");
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<SubGroup>()
+                .HasIndex(x => new { x.Address });
+
+            modelBuilder.Entity<GA>()
+                .HasIndex(x => new { x.Address });
+
+
+        }
     }
 }

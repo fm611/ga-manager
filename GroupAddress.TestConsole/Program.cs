@@ -15,8 +15,13 @@ namespace GroupAddress.TestConsole
 
             dbContext.Database.EnsureCreated();
 
+            dbContext.ItemTemplates.Add(ItemTemplate.Light);
+            dbContext.ItemTemplates.Add(ItemTemplate.LightDimm);
+            dbContext.ItemTemplates.Add(ItemTemplate.LightTW);
+            dbContext.ItemTemplates.Add(ItemTemplate.LightRGBW);
 
-         
+            dbContext.SaveChanges();
+
 
             var lightCommonMainGroup = new MainGroup(1, "Licht allgemein");
 
