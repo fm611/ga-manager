@@ -9,106 +9,124 @@ namespace GroupAddress.Core
 {
 
     // Bspw. RGBW Vorlage
-    public class ItemTemplate : List<GATemplate>
+    public class ItemTemplate
     {
-        public static ItemTemplate Light =
+        public static ItemTemplate Light = new ItemTemplate("Licht allgemein",
         [
-            new GATemplate(SubGroupTemplate.SwitchPair, "Schalten", "", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sperren", "1", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "Sperren","2"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "Szene")
-        ];
-        public static ItemTemplate LightDimm =
+            new GATemplate("Schalten", GATemplatePart.CreatePair(SubGroupTemplate.SwitchPair, "", "Status")),
+            new GATemplate("", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "Sperren1", "Sperren_Status")),
+            new GATemplate("", GATemplatePart.Create(SubGroupTemplate.SetMisc, "Sperren2")),
+            new GATemplate("Szene", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+        ]);
+        public static ItemTemplate LightDimm = new ItemTemplate("Licht dimmbar",
         [
-            new GATemplate(SubGroupTemplate.SwitchPair, "Schalten", "", "Status"),
+            new GATemplate("Schalten", GATemplatePart.CreatePair(SubGroupTemplate.SwitchPair, "", "Status")),
 
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "DimmHell", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "DimmHell", "absolut", "Wert"),
+            new GATemplate("DimmHell", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("DimmHell", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
 
-            new GATemplate(SubGroupTemplate.MiscPair, "Sperren", "1", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "Sperren","2"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "Szene"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","1"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","2"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","3"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","4"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sequenz_1", "", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sequenz_2", "", "Status")
+            new GATemplate("", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "Sperren1", "Sperren_Status")),
+            new GATemplate("", GATemplatePart.Create(SubGroupTemplate.SetMisc, "Sperren2")),
+            new GATemplate("Szene", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
 
-        ];
-        public static ItemTemplate LightTW =
+            new GATemplate("Bitszene1", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Bitszene2", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Bitszene3", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Bitszene4", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Sequenz1", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "", "Status")),
+            new GATemplate("Sequenz2", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "", "Status")),
+        ]);
+        public static ItemTemplate LightTW = new ItemTemplate("Licht TW", [
+
+            new GATemplate("Schalten", GATemplatePart.CreatePair(SubGroupTemplate.SwitchPair, "", "Status")),
+            new GATemplate("HCL", GATemplatePart.CreatePair(SubGroupTemplate.SwitchPair, "", "Status")),
+
+            new GATemplate("DimmHell", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("DimmHell", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
+            new GATemplate("DimmTemp_P", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("DimmTemp_P", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
+            new GATemplate("DimmTemp_K", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("DimmTemp_K", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
+
+            new GATemplate("", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "Sperren1", "Sperren_Status")),
+            new GATemplate("", GATemplatePart.Create(SubGroupTemplate.SetMisc, "Sperren2")),
+            new GATemplate("Szene", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+
+            new GATemplate("Bitszene1", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Bitszene2", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Bitszene3", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Bitszene4", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Sequenz1", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "", "Status")),
+            new GATemplate("Sequenz2", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "", "Status")),
+        ]);
+        public static ItemTemplate LightRGBW = new ItemTemplate("Licht RGBW", 
         [
-            new GATemplate(SubGroupTemplate.SwitchPair, "Schalten", "", "Status"),
-            new GATemplate(SubGroupTemplate.SwitchPair, "HCL", "", "Status"),
+            new GATemplate("Schalten", GATemplatePart.CreatePair(SubGroupTemplate.SwitchPair, "", "Status")),
+            new GATemplate("HCL", GATemplatePart.CreatePair(SubGroupTemplate.SwitchPair, "", "Status")),
+            new GATemplate("R", GATemplatePart.CreatePair(SubGroupTemplate.SwitchPair, "", "Status")),
+            new GATemplate("G", GATemplatePart.CreatePair(SubGroupTemplate.SwitchPair, "", "Status")),
+            new GATemplate("B", GATemplatePart.CreatePair(SubGroupTemplate.SwitchPair, "", "Status")),
+            new GATemplate("W", GATemplatePart.CreatePair(SubGroupTemplate.SwitchPair, "", "Status")),
 
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "DimmHell", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "DimmHell", "absolut", "Wert"),
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "DimmTemp_P", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "DimmTemp_P", "absolut", "Wert"),
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "DimmTemp_K", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "DimmTemp_K", "absolut", "Wert"),
+            new GATemplate("Dimm_H", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("Dimm_H", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
+            new GATemplate("Dimm_S", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("Dimm_S", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
+            new GATemplate("Dimm_V", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("Dimm_V", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
 
-            new GATemplate(SubGroupTemplate.MiscPair, "Sperren", "1", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "Sperren","2"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "Szene"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","1"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","2"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","3"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","4"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sequenz_1", "", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sequenz_2", "", "Status")
-        ];
-        public static ItemTemplate LightRGBW =
-        [
-            new GATemplate(SubGroupTemplate.SwitchPair, "Schalten", "", "Status"),
-            new GATemplate(SubGroupTemplate.SwitchPair, "HCL", "", "Status"),
-            new GATemplate(SubGroupTemplate.SwitchPair, "R", "Schalten", "Status"),
-            new GATemplate(SubGroupTemplate.SwitchPair, "G", "Schalten", "Status"),
-            new GATemplate(SubGroupTemplate.SwitchPair, "B", "Schalten", "Status"),
-            new GATemplate(SubGroupTemplate.SwitchPair, "W", "Schalten", "Status"),
+            new GATemplate("Dimm_R", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("Dimm_R", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
+            new GATemplate("Dimm_G", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("Dimm_G", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
+            new GATemplate("Dimm_B", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("Dimm_B", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
+            new GATemplate("Dimm_W", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("Dimm_W", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
 
+            new GATemplate("DimmTemp_P", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("DimmTemp_P", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
+            new GATemplate("DimmTemp_K", GATemplatePart.Create(SubGroupTemplate.SetValue, "relativ")),
+            new GATemplate("DimmTemp_K", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "absolut", "Wert")),
 
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "Dimm_H", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "Dimm_H", "absolut", "Wert"),
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "Dimm_S", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "Dimm_S", "absolut", "Wert"),
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "Dimm_V", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "Dimm_V", "absolut", "Wert"),
+            new GATemplate("HSV", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "", "Wert")),
+            new GATemplate("RGB", GATemplatePart.CreatePair(SubGroupTemplate.ValuePair, "", "Wert")),
 
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "Dimm_R", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "Dimm_R", "absolut", "Wert"),
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "Dimm_G", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "Dimm_G", "absolut", "Wert"),
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "Dimm_B", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "Dimm_B", "absolut", "Wert"),
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "Dimm_W", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "Dimm_W", "absolut", "Wert"),
-
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "DimmTemp_P", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "DimmTemp_P", "absolut", "Wert"),
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.GetSpacer, "DimmTemp_K", "relativ"),
-            new GATemplate(SubGroupTemplate.ValuePair, "DimmTemp_K", "absolut", "Wert"),
-
-            new GATemplate(SubGroupTemplate.ValuePair, "HSV", "", "Wert"),
-            new GATemplate(SubGroupTemplate.ValuePair, "RGB", "", "Wert"),
-            new GATemplate(SubGroupTemplate.ValuePair, GASpacerType.SetSpacer, "RGBW", "Wert"),
+            new GATemplate("RGBW", GATemplatePart.Create(SubGroupTemplate.GetValue, "Wert")),
 
 
-            new GATemplate(SubGroupTemplate.MiscPair, "Sperren", "1", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "Sperren","2"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "Szene"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","1"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","2"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","3"),
-            new GATemplate(SubGroupTemplate.MiscPair, GASpacerType.GetSpacer, "BitSzene","4"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sequenz_1", "", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sequenz_2", "", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sequenz_3", "", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sequenz_4", "", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sequenz_5", "", "Status"),
-            new GATemplate(SubGroupTemplate.MiscPair, "Sequenz_6", "", "Status")
+            new GATemplate("", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "Sperren1", "Sperren_Status")),
+            new GATemplate("", GATemplatePart.Create(SubGroupTemplate.SetMisc, "Sperren2")),
+            new GATemplate("Szene", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
 
-        ];
+            new GATemplate("Bitszene1", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Bitszene2", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Bitszene3", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Bitszene4", GATemplatePart.Create(SubGroupTemplate.SetMisc, "")),
+            new GATemplate("Sequenz1", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "", "Status")),
+            new GATemplate("Sequenz2", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "", "Status")),
+            new GATemplate("Sequenz3", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "", "Status")),
+            new GATemplate("Sequenz4", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "", "Status")),
+            new GATemplate("Sequenz5", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "", "Status")),
+            new GATemplate("Sequenz6", GATemplatePart.CreatePair(SubGroupTemplate.MiscPair, "", "Status"))
+        ]);
+
+        public string Name { get; set; }
+        public string Id { get; set; }
+
+        public List<GATemplate> GATemplates { get; set; } = [];
+
+        public ItemTemplate(string name)
+        {
+            Name = name;
+            Id = Guid.NewGuid().ToString();
+        }
+
+        public ItemTemplate(string name, IEnumerable<GATemplate> gatemplates) : this(name)
+        {
+            GATemplates = gatemplates.ToList();
+        }
+
 
         public Item CreateItem(MainGroup mGroup, string name)
         {
@@ -116,17 +134,17 @@ namespace GroupAddress.Core
 
             var tempGAs = new List<GA>();
 
-            foreach(var gaTemp in this)
+            foreach(var gaTemp in GATemplates)
             {
                 var grouped = tempGAs.GroupBy(x => x.SubGroup);
                 var filtered = grouped.Where(x => 
-                    new[] { gaTemp.GetSubGroupTemplate , gaTemp.SetSubGroupTemplate }
+                    gaTemp.GAParts.Select(p => p.subGroupTemplate)
                         .Where(s => s != null)
                         .Select(s => mGroup.GetSubGroup(s))
                         .Contains(x.Key)
                 );
-                var groupCounts = filtered.Select(x => x.Count()); 
-                var minGAId = groupCounts.DefaultIfEmpty(0).Max();
+                var ids = filtered.SelectMany(x => x.Select(y => y.Id));
+                var minGAId = !ids.Any() ? 0 : ids.Max()+1;
 
                 tempGAs.AddRange(gaTemp.CreateGA(mGroup, minGAId, name));
             }

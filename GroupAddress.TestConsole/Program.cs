@@ -1,12 +1,17 @@
 ﻿using GroupAddress.Core;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace GroupAddress.TestConsole
 {
     internal class Program
     {
+
+
         static void Main(string[] args)
         {
+
+         
 
             var lightCommonMainGroup = new MainGroup(1, "Licht allgemein");
 
@@ -22,16 +27,18 @@ namespace GroupAddress.TestConsole
 
             lightRGBWMainGroup.AddItem(ItemTemplate.LightRGBW, "EG_WZ_LED_Band_1");
 
-            lightDimmMainGroup.AddItem(ItemTemplate.LightDimm, "EG_KU_Esstisch",10);
-            lightDimmMainGroup.AddItem(ItemTemplate.LightDimm, "EG_EZ_Esstisch",10);
+            lightDimmMainGroup.AddItem(ItemTemplate.LightDimm, "EG_KU_Esstisch", 10);
+            lightDimmMainGroup.AddItem(ItemTemplate.LightDimm, "EG_EZ_Esstisch", 10);
 
 
 
-            lightCommonMainGroup.FillGASpaces = true;
+            lightRGBWMainGroup.FillGASpaces = true;
 
-            var gas = lightDimmMainGroup.GetAllGAs();
+            var gas = lightRGBWMainGroup.GetAllGAs();
 
-            var lightCommonStr = lightCommonMainGroup.GetCSVString();
+            var lightCommonStr = lightRGBWMainGroup.GetCSVString();
+
+            var json = JsonSerializer.Serialize(ItemTemplate.Light);
 
         }
     }
