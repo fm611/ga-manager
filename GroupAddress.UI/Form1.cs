@@ -26,39 +26,26 @@ namespace GroupAddress.UI
 
         public AppDbContext Db { get; set; }
 
-        private List<ItemTemplate> _itemTemplatesBackingList;
-        private BindingList<ItemTemplate> ItemTemplates {  get; set; }
-
-        //private List<MainGroup> _mainGroupsBackingList;
-        //public BindingList<MainGroup> MainGroups { get; set; }
-        public BindingList<SubGroup> SubGroups { get; set; }
-        public BindingList<GA> GAs { get; set; }
-
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
+        public ListBoxWrapper<ItemTemplate> ItemTemplatesWrapper { get; set; }
+        public ListBoxWrapper<SubGroup> SubGroupWrapper { get; set; }
+
+
 
         public Form1()
         {
             InitializeComponent();
 
             Db = new AppDbContext();
-            //Db.Database.EnsureCreated();
             Db.Database.Migrate();
             Db.InitData();
 
-            _itemTemplatesBackingList = [];
-            ItemTemplates = new BindingList<ItemTemplate>(_itemTemplatesBackingList);
-
-            //_mainGroupsBackingList = [];
-            //MainGroups = new BindingList<MainGroup>(_mainGroupsBackingList);
 
             Comparison<Group> groupComparison = (a,b) => a.AddressName.CompareTo(b.AddressName);
 
-            MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox,groupComparison,"AddressName","Id");
-
-
-
-            SubGroups = [];
-            GAs = [];
+            MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, groupComparison, "AddressName", "Id");
+            SubGroupWrapper = new ListBoxWrapper<SubGroup>(SubGroupsListBox, groupComparison, "AddressName", "Id");
+            ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a,b) => a.Name.CompareTo(b.Name), "Name", "Id");
 
 
             AddMainGroupIdTextBox_TextChanged(null, null);
@@ -79,6 +66,7 @@ namespace GroupAddress.UI
             //Main Groups
 
             MainGroupWrapper.Load(Db.MainGroups);
+            ItemTemplatesWrapper.Load(Db.ItemTemplates);
 
 
             //Item Templates
@@ -113,6 +101,8 @@ namespace GroupAddress.UI
 
             AddMainGroupIdTextBox.Text = ((MainGroup?)MainGroupsListBox.SelectedItem)?.SubAddress.ToString();
             AddMainGroupNameTextBox.Text = ((MainGroup?)MainGroupsListBox.SelectedItem)?.Name;
+
+            SubGroupWrapper.Load(Db.SubGroups.Where(x => x.MainGroup.Id == ((string)MainGroupsListBox.SelectedValue)));
 
         }
         private void AddMainGroupIdTextBox_TextChanged(object sender, EventArgs e)
@@ -199,20 +189,7 @@ namespace GroupAddress.UI
             return (IdValidState.Invalid, -1);
         }
 
-        //private void SortAndResetListBox(GroupType groupType)
-        //{
-
-        //    Func<MainGroup, MainGroup, int> blub = (a, b) => a.SubAddress.CompareTo(b.SubAddress);
-
-        //    switch (groupType)
-        //    {
-        //        case GroupType.MainGroup:
-        //            _mainGroupsBackingList.Sort((a, b) => a.SubAddress.CompareTo(b.SubAddress));
-        //            MainGroupWrapper.BindingList.ResetBindings();
-        //            break;
-
-        //    }
-        //}
+  
 
         private void SaveButton_Click(object sender, EventArgs e)
         {

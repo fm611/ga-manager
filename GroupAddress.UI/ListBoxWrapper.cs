@@ -43,10 +43,10 @@ namespace GroupAddress.UI
             BackingList.AddRange(range);
             SortAndReset();
 
-            ListBox.SelectedIndex = -1;
-            ListBox.SelectedIndex = 1;
+           // ListBox.SelectedIndex = -1;
 
-            ListBox.SetSelected(0, true);
+            if(BindingList.Count > 0)
+                ListBox.SetSelected(0, true);
         }
 
 
