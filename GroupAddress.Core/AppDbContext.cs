@@ -21,8 +21,6 @@ namespace GroupAddress.Core
         public DbSet<ItemTemplate> ItemTemplates { get; set; }
 
 
-
-
         public string DbPath { get; }
 
         public AppDbContext()
@@ -31,19 +29,43 @@ namespace GroupAddress.Core
             DbPath = System.IO.Path.Join(folder, "data.db");
         }
 
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+
+        }
+
         // The following configures EF to create a Sqlite database file in the
         // special "local" folder for your platform.
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite($"Data Source={DbPath}");
 
+        public void InitData()
+        {
+            string guidBase = "DA6C8DDB-BC59-4805-84C9-E81A3DF7CB";
+
+            var templates = new List<ItemTemplate>() {
+                ItemTemplate.Light,
+                ItemTemplate.LightDimm,
+                ItemTemplate.LightTW,
+                ItemTemplate.LightRGBW
+            };
+
+            for (int i = 0; i < templates.Count; i++)
+            {
+                var guid = guidBase + i.ToString("D2");
+                var template = templates[i];
+                template.Id = guid;
+
+                if (ItemTemplates.Any(t => t.Id == guid)) continue;
+
+                ItemTemplates.Add(template);
+
+                SaveChanges();
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SubGroup>()
-                .HasIndex(x => new { x.Address });
-
-            modelBuilder.Entity<GA>()
-                .HasIndex(x => new { x.Address });
-
 
         }
     }

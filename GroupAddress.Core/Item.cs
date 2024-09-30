@@ -148,13 +148,13 @@ namespace GroupAddress.Core
                         .Select(s => mGroup.GetSubGroup(s))
                         .Contains(x.Key)
                 );
-                var ids = filtered.SelectMany(x => x.Select(y => y.Id));
+                var ids = filtered.SelectMany(x => x.Select(y => y.SubAddress));
                 var minGAId = !ids.Any() ? 0 : ids.Max()+1;
 
                 tempGAs.AddRange(gaTemp.CreateGA(mGroup, minGAId, name));
             }
 
-            item.GAs = tempGAs.OrderBy(x => x.SubGroup.MainGroup.Id).ThenBy(x => x.SubGroup.Id).ThenBy(x => x.Id).ToList();
+            item.GAs = tempGAs.OrderBy(x => x.SubGroup.MainGroup.SubAddress).ThenBy(x => x.SubGroup.SubAddress).ThenBy(x => x.SubAddress).ToList();
             return item;
         }
 
@@ -179,7 +179,7 @@ namespace GroupAddress.Core
         {
             foreach(var ga in GAs)
             {
-                ga.Id += offset;
+                ga.SubAddress += offset;
             }
         }
     }

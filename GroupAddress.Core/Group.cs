@@ -5,15 +5,28 @@ namespace GroupAddress.Core
     public abstract class Group
     {
 
-        public int Id { get; set; }
+        public string Id { get; set; }
+        public int SubAddress { get; set; }
+
         public string Name { get; set; }
 
-        public Group() { }
+        public Group() {
+            Id = Guid.NewGuid().ToString();
+        }
 
-        public Group(int id, string name)
+        public Group(int subAddress, string name) : this()
         {
-            Id = id;
+            SubAddress = subAddress;
             Name = name;
+        }
+
+        public abstract string Address { get; }
+
+        public string AddressName => Address + " - " + Name;
+
+        public override string ToString()
+        {
+            return Address + " - " + Name;
         }
     }
 
@@ -28,6 +41,7 @@ namespace GroupAddress.Core
 
         public int NextItemId { get; private set; } = 0;
 
+        public MainGroup() : base() { }
         public MainGroup(int id, string name) : base(id, name)
         {
             _items = new ItemCollection();
@@ -38,7 +52,7 @@ namespace GroupAddress.Core
             var newItem = template.CreateItem(this, name);
             newItem.ShiftGA(NextItemId);
 
-            var maxId = newItem.GAs.Select(x => x.Id).Max();
+            var maxId = newItem.GAs.Select(x => x.SubAddress).Max();
             var newItemBlockLength = blockLength != 0 ? blockLength : maxId+1;
             NextItemId += newItemBlockLength;
 
@@ -58,7 +72,7 @@ namespace GroupAddress.Core
                 foreach (var group in subGroups)
                 {
                     var maxGroupId = NextItemId;
-                    var freeIds = Enumerable.Range(0, maxGroupId).Where(x => group.All(ga => ga.Id != x));
+                    var freeIds = Enumerable.Range(0, maxGroupId).Where(x => group.All(ga => ga.SubAddress != x));
                     fillBlockerGAs.AddRange(freeIds.Select(id => new GA(group.Key, id, "Blocker")));
                 }
                 outputGAs.AddRange(fillBlockerGAs);
@@ -70,13 +84,13 @@ namespace GroupAddress.Core
                 foreach (var group in subGroups)
                 {
                     var maxGroupId = 256;
-                    var freeIds = Enumerable.Range(0, maxGroupId).Where(x => group.All(ga => ga.Id != x));
+                    var freeIds = Enumerable.Range(0, maxGroupId).Where(x => group.All(ga => ga.SubAddress != x));
                     fillToEndBlockerGAs.AddRange(freeIds.Select(id => new GA(group.Key, id, "Blocker")));
                 }
                 outputGAs.AddRange(fillToEndBlockerGAs);
             }
 
-            return [.. outputGAs.OrderBy(x => x.SubGroup.MainGroup.Id).ThenBy(x => x.SubGroup.Id).ThenBy(x => x.Id)];
+            return [.. outputGAs.OrderBy(x => x.SubGroup.MainGroup.SubAddress).ThenBy(x => x.SubGroup.SubAddress).ThenBy(x => x.SubAddress)];
 
         }
 
@@ -90,7 +104,7 @@ namespace GroupAddress.Core
 
         public SubGroup? GetSubGroup(SubGroupTemplate subGroupTemplate)
         {
-            return SubGroups.Where(x => x.Id == subGroupTemplate.SubAddress).FirstOrDefault();
+            return SubGroups.Where(x => x.SubAddress == subGroupTemplate.SubAddress).FirstOrDefault();
         }
 
         public string GetCSVString()
@@ -99,18 +113,22 @@ namespace GroupAddress.Core
 
             var grouped = gas.GroupBy(x => x.SubGroup);
 
-            var outputStr = string.Join(";", new string[] { Name, "", "", Id.ToString(), "", "" })+"\n";
+            var outputStr = string.Join(";", new string[] { Name, "", "", SubAddress.ToString(), "", "" })+"\n";
 
             foreach (var subGroup in grouped)
             {
-                var ordered = subGroup.OrderBy(x => x.Id).ToList();
+                var ordered = subGroup.OrderBy(x => x.SubAddress).ToList();
 
-                outputStr += string.Join(";", new string[] { "", subGroup.Key.Name, "", Id.ToString(), subGroup.Key.Id.ToString(), "" }) + "\n";
-                outputStr += string.Join("\n",ordered.Select(g => string.Join(";", new string[] { "", "", g.Name, Id.ToString(), subGroup.Key.Id.ToString(), g.Id.ToString() })));
+                outputStr += string.Join(";", new string[] { "", subGroup.Key.Name, "", SubAddress.ToString(), subGroup.Key.SubAddress.ToString(), "" }) + "\n";
+                outputStr += string.Join("\n",ordered.Select(g => string.Join(";", new string[] { "", "", g.Name, SubAddress.ToString(), subGroup.Key.SubAddress.ToString(), g.SubAddress.ToString() })));
                 outputStr += "\n";
             }
             return outputStr;            
         }
+
+        public override string Address  => SubAddress.ToString(); 
+
+        
     }
 
     public class SubGroupTemplatePair(SubGroupTemplate setGroup, SubGroupTemplate getGroup)
@@ -157,13 +175,9 @@ namespace GroupAddress.Core
 
         public List<GA> GAs { get; set; } = [];
 
-        public string Address
-        {
-            get => MainGroup.Id + "/" + Id;
-            set => _ = value;
-        }
+        public override string Address => MainGroup.SubAddress + "/" + SubAddress;
 
-        public SubGroup() { }
+        public SubGroup() :base() { }
 
         public SubGroup(int id, string name, MainGroup mainGroup) : base(id, name)
         {

@@ -89,24 +89,24 @@ namespace GroupAddress.Core
     {
         public SubGroup SubGroup { get; set; }
         public string Name { get; set; }
-        public int Id { get; set; }
+        public int SubAddress { get; set; }
+        public string Id { get; set; }
 
-        public GA() { }
+        public GA() {
+            Id = Guid.NewGuid().ToString();
+        }
 
-        public GA(SubGroup subGroup, int id, string name) 
+        public GA(SubGroup subGroup, int subAddress, string name) 
         {
             SubGroup = subGroup;
-            Id = id;
+            SubAddress = subAddress;
             Name = name;
 
             SubGroup.GAs.Add(this);
         }
 
-        public string Address
-        {
-            get => SubGroup.Address + "/" + Id;
-            set => _ = value;
-        }
+        public string Address => SubGroup.Address + "/" + SubAddress;
+        
 
         public override string ToString()
         {
