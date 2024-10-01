@@ -34,7 +34,8 @@ namespace GroupAddress.Core
     {
         public List<SubGroup> SubGroups { get; set; } = [];
 
-        private ItemCollection _items;
+        public List<ItemPart> ItemParts { get; set; } = [];
+
 
         public bool FillGASpaces { get; set; }
         public bool FillGAToEnd { get; set; }
@@ -44,24 +45,25 @@ namespace GroupAddress.Core
         public MainGroup() : base() { }
         public MainGroup(int id, string name) : base(id, name)
         {
-            _items = new ItemCollection();
+
         }
 
-        public void AddItem(ItemTemplate template, string name, int blockLength=0)
+        public ItemPart AddItemPart(ItemPartTemplate template, string gaPrefix, int blockLength=0)
         {
-            var newItem = template.CreateItem(this, name);
-            newItem.ShiftGA(NextItemId);
+            var newItemPart = template.CreateItemPart(this, gaPrefix);
+            newItemPart.ShiftGA(NextItemId);
 
-            var maxId = newItem.GAs.Select(x => x.SubAddress).Max();
+            var maxId = newItemPart.GAs.Select(x => x.SubAddress).Max();
             var newItemBlockLength = blockLength != 0 ? blockLength : maxId+1;
             NextItemId += newItemBlockLength;
 
-            _items.Add(newItem);
+            ItemParts.Add(newItemPart);
+            return newItemPart;
         }
 
         public List<GA> GetAllGAs() 
         {
-            var itemGAs = _items.SelectMany(x => x.GAs);
+            var itemGAs = ItemParts.SelectMany(x => x.GAs);
             var subGroups = itemGAs.GroupBy(x => x.SubGroup);
 
             var outputGAs = new List<GA>(itemGAs);
@@ -128,6 +130,11 @@ namespace GroupAddress.Core
 
         public override string Address  => SubAddress.ToString(); 
 
+        public int ItemCount()
+        {
+            return ItemParts.Count;
+        }
+
         
     }
 
@@ -161,6 +168,7 @@ namespace GroupAddress.Core
 
         public SubGroupTemplate() => Id = Guid.NewGuid().ToString();
 
+
         public SubGroupTemplate(int address, string name) : this()
         {
             SubAddress = address;
@@ -188,7 +196,7 @@ namespace GroupAddress.Core
 
         public override string ToString()
         {
-            return Address;
+            return Address + " - " + Name;
         }
 
         public static SubGroup Create(SubGroupTemplate t, MainGroup mGroup)

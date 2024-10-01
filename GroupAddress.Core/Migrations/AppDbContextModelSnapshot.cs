@@ -21,7 +21,7 @@ namespace GroupAddress.Core.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ItemId")
+                    b.Property<string>("ItemPartId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -36,7 +36,7 @@ namespace GroupAddress.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemId");
+                    b.HasIndex("ItemPartId");
 
                     b.HasIndex("SubGroupId");
 
@@ -52,12 +52,12 @@ namespace GroupAddress.Core.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ItemTemplateId")
+                    b.Property<string>("ItemPartTemplateId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemTemplateId");
+                    b.HasIndex("ItemPartTemplateId");
 
                     b.ToTable("GATemplate");
                 });
@@ -98,6 +98,49 @@ namespace GroupAddress.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("GroupAddress.Core.ItemPart", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ItemId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("MainGroupId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("MainGroupId");
+
+                    b.ToTable("ItemParts");
+                });
+
+            modelBuilder.Entity("GroupAddress.Core.ItemPartTemplate", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ItemTemplateId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemTemplateId");
+
+                    b.ToTable("ItemPartTemplate");
                 });
 
             modelBuilder.Entity("GroupAddress.Core.ItemTemplate", b =>
@@ -182,9 +225,9 @@ namespace GroupAddress.Core.Migrations
 
             modelBuilder.Entity("GroupAddress.Core.GA", b =>
                 {
-                    b.HasOne("GroupAddress.Core.Item", null)
+                    b.HasOne("GroupAddress.Core.ItemPart", null)
                         .WithMany("GAs")
-                        .HasForeignKey("ItemId");
+                        .HasForeignKey("ItemPartId");
 
                     b.HasOne("GroupAddress.Core.SubGroup", "SubGroup")
                         .WithMany("GAs")
@@ -195,9 +238,9 @@ namespace GroupAddress.Core.Migrations
 
             modelBuilder.Entity("GroupAddress.Core.GATemplate", b =>
                 {
-                    b.HasOne("GroupAddress.Core.ItemTemplate", null)
+                    b.HasOne("GroupAddress.Core.ItemPartTemplate", null)
                         .WithMany("GATemplates")
-                        .HasForeignKey("ItemTemplateId");
+                        .HasForeignKey("ItemPartTemplateId");
                 });
 
             modelBuilder.Entity("GroupAddress.Core.GATemplatePart", b =>
@@ -211,6 +254,30 @@ namespace GroupAddress.Core.Migrations
                         .HasForeignKey("subGroupTemplateId");
 
                     b.Navigation("subGroupTemplate");
+                });
+
+            modelBuilder.Entity("GroupAddress.Core.ItemPart", b =>
+                {
+                    b.HasOne("GroupAddress.Core.Item", "Item")
+                        .WithMany("Parts")
+                        .HasForeignKey("ItemId");
+
+                    b.HasOne("GroupAddress.Core.MainGroup", "MainGroup")
+                        .WithMany("ItemParts")
+                        .HasForeignKey("MainGroupId");
+
+                    b.Navigation("Item");
+
+                    b.Navigation("MainGroup");
+                });
+
+            modelBuilder.Entity("GroupAddress.Core.ItemPartTemplate", b =>
+                {
+                    b.HasOne("GroupAddress.Core.ItemTemplate", "ItemTemplate")
+                        .WithMany("PartTemplates")
+                        .HasForeignKey("ItemTemplateId");
+
+                    b.Navigation("ItemTemplate");
                 });
 
             modelBuilder.Entity("GroupAddress.Core.SubGroup", b =>
@@ -231,16 +298,28 @@ namespace GroupAddress.Core.Migrations
 
             modelBuilder.Entity("GroupAddress.Core.Item", b =>
                 {
+                    b.Navigation("Parts");
+                });
+
+            modelBuilder.Entity("GroupAddress.Core.ItemPart", b =>
+                {
                     b.Navigation("GAs");
                 });
 
-            modelBuilder.Entity("GroupAddress.Core.ItemTemplate", b =>
+            modelBuilder.Entity("GroupAddress.Core.ItemPartTemplate", b =>
                 {
                     b.Navigation("GATemplates");
                 });
 
+            modelBuilder.Entity("GroupAddress.Core.ItemTemplate", b =>
+                {
+                    b.Navigation("PartTemplates");
+                });
+
             modelBuilder.Entity("GroupAddress.Core.MainGroup", b =>
                 {
+                    b.Navigation("ItemParts");
+
                     b.Navigation("SubGroups");
                 });
 

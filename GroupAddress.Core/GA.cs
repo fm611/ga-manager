@@ -96,7 +96,7 @@ namespace GroupAddress.Core
             Id = Guid.NewGuid().ToString();
         }
 
-        public GA(SubGroup subGroup, int subAddress, string name) 
+        public GA(SubGroup subGroup, int subAddress, string name) :this()
         {
             SubGroup = subGroup;
             SubAddress = subAddress;
@@ -106,7 +106,8 @@ namespace GroupAddress.Core
         }
 
         public string Address => SubGroup.Address + "/" + SubAddress;
-        
+
+        public string AddressName => Address + " - " + Name;
 
         public override string ToString()
         {

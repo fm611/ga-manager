@@ -10,7 +10,7 @@ namespace GroupAddress.Core
     {
         public List<SubGroupTemplatePair> SubGroupTemplatePairs { get; set; }
 
-        public List<ItemTemplate> ItemTemplates { get; set; }
+        public List<ItemPartTemplate> ItemTemplates { get; set; }
 
 
 

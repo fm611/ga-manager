@@ -52,11 +52,12 @@
             // 
             // MainGroupsListBox
             // 
+            MainGroupsListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             MainGroupsListBox.FormattingEnabled = true;
             MainGroupsListBox.ItemHeight = 15;
             MainGroupsListBox.Location = new Point(12, 67);
             MainGroupsListBox.Name = "MainGroupsListBox";
-            MainGroupsListBox.Size = new Size(207, 394);
+            MainGroupsListBox.Size = new Size(207, 379);
             MainGroupsListBox.TabIndex = 0;
             MainGroupsListBox.SelectedIndexChanged += MainGroupsListBox_SelectedIndexChanged;
             // 
@@ -80,13 +81,15 @@
             // 
             // SubGroupsListBox
             // 
+            SubGroupsListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             SubGroupsListBox.FormattingEnabled = true;
             SubGroupsListBox.ItemHeight = 15;
             SubGroupsListBox.Location = new Point(225, 67);
             SubGroupsListBox.Name = "SubGroupsListBox";
-            SubGroupsListBox.Size = new Size(207, 484);
+            SubGroupsListBox.Size = new Size(207, 379);
             SubGroupsListBox.Sorted = true;
             SubGroupsListBox.TabIndex = 10;
+            SubGroupsListBox.SelectedIndexChanged += SubGroupsListBox_SelectedIndexChanged;
             // 
             // label3
             // 
@@ -99,25 +102,28 @@
             // 
             // GAsListBox
             // 
+            GAsListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             GAsListBox.FormattingEnabled = true;
             GAsListBox.ItemHeight = 15;
             GAsListBox.Location = new Point(438, 67);
             GAsListBox.Name = "GAsListBox";
-            GAsListBox.Size = new Size(207, 484);
+            GAsListBox.Size = new Size(313, 379);
             GAsListBox.TabIndex = 20;
             // 
             // ItemTemplatesListBox
             // 
+            ItemTemplatesListBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             ItemTemplatesListBox.FormattingEnabled = true;
             ItemTemplatesListBox.ItemHeight = 15;
-            ItemTemplatesListBox.Location = new Point(703, 67);
+            ItemTemplatesListBox.Location = new Point(757, 67);
             ItemTemplatesListBox.Name = "ItemTemplatesListBox";
             ItemTemplatesListBox.Size = new Size(236, 184);
             ItemTemplatesListBox.TabIndex = 30;
             // 
             // AddItemButton
             // 
-            AddItemButton.Location = new Point(945, 114);
+            AddItemButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            AddItemButton.Location = new Point(999, 114);
             AddItemButton.Name = "AddItemButton";
             AddItemButton.Size = new Size(75, 23);
             AddItemButton.TabIndex = 32;
@@ -126,15 +132,17 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(945, 85);
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            textBox1.Location = new Point(999, 85);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(280, 23);
             textBox1.TabIndex = 31;
             // 
             // label4
             // 
+            label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             label4.AutoSize = true;
-            label4.Location = new Point(945, 67);
+            label4.Location = new Point(999, 67);
             label4.Name = "label4";
             label4.Size = new Size(125, 15);
             label4.TabIndex = 9;
@@ -142,7 +150,8 @@
             // 
             // AddMainGroupButton
             // 
-            AddMainGroupButton.Location = new Point(144, 496);
+            AddMainGroupButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            AddMainGroupButton.Location = new Point(144, 499);
             AddMainGroupButton.Name = "AddMainGroupButton";
             AddMainGroupButton.Size = new Size(75, 23);
             AddMainGroupButton.TabIndex = 4;
@@ -152,7 +161,8 @@
             // 
             // AddMainGroupIdTextBox
             // 
-            AddMainGroupIdTextBox.Location = new Point(12, 467);
+            AddMainGroupIdTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            AddMainGroupIdTextBox.Location = new Point(12, 470);
             AddMainGroupIdTextBox.Name = "AddMainGroupIdTextBox";
             AddMainGroupIdTextBox.Size = new Size(41, 23);
             AddMainGroupIdTextBox.TabIndex = 1;
@@ -161,7 +171,8 @@
             // 
             // AddMainGroupNameTextBox
             // 
-            AddMainGroupNameTextBox.Location = new Point(59, 467);
+            AddMainGroupNameTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            AddMainGroupNameTextBox.Location = new Point(59, 470);
             AddMainGroupNameTextBox.Name = "AddMainGroupNameTextBox";
             AddMainGroupNameTextBox.Size = new Size(160, 23);
             AddMainGroupNameTextBox.TabIndex = 2;
@@ -170,7 +181,8 @@
             // 
             // DeleteMainGroupButton
             // 
-            DeleteMainGroupButton.Location = new Point(144, 525);
+            DeleteMainGroupButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            DeleteMainGroupButton.Location = new Point(144, 528);
             DeleteMainGroupButton.Name = "DeleteMainGroupButton";
             DeleteMainGroupButton.Size = new Size(75, 23);
             DeleteMainGroupButton.TabIndex = 5;
@@ -180,9 +192,9 @@
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { StatusInfoLabel });
-            statusStrip1.Location = new Point(0, 597);
+            statusStrip1.Location = new Point(0, 562);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(1250, 22);
+            statusStrip1.Size = new Size(1289, 22);
             statusStrip1.TabIndex = 10;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -194,8 +206,9 @@
             // 
             // EditMainGroupButton
             // 
+            EditMainGroupButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             EditMainGroupButton.Enabled = false;
-            EditMainGroupButton.Location = new Point(63, 496);
+            EditMainGroupButton.Location = new Point(63, 499);
             EditMainGroupButton.Name = "EditMainGroupButton";
             EditMainGroupButton.Size = new Size(75, 23);
             EditMainGroupButton.TabIndex = 4;
@@ -205,7 +218,8 @@
             // 
             // SaveButton
             // 
-            SaveButton.Location = new Point(1150, 558);
+            SaveButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            SaveButton.Location = new Point(1204, 528);
             SaveButton.Name = "SaveButton";
             SaveButton.Size = new Size(75, 23);
             SaveButton.TabIndex = 33;
@@ -215,7 +229,8 @@
             // 
             // LoadButton
             // 
-            LoadButton.Location = new Point(1069, 558);
+            LoadButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            LoadButton.Location = new Point(1123, 528);
             LoadButton.Name = "LoadButton";
             LoadButton.Size = new Size(75, 23);
             LoadButton.TabIndex = 33;
@@ -227,7 +242,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1250, 619);
+            ClientSize = new Size(1289, 584);
             Controls.Add(LoadButton);
             Controls.Add(SaveButton);
             Controls.Add(statusStrip1);

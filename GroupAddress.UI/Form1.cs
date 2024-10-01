@@ -29,6 +29,7 @@ namespace GroupAddress.UI
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
         public ListBoxWrapper<ItemTemplate> ItemTemplatesWrapper { get; set; }
         public ListBoxWrapper<SubGroup> SubGroupWrapper { get; set; }
+        public ListBoxWrapper<GA> GAWrapper { get; set; }
 
 
 
@@ -41,11 +42,12 @@ namespace GroupAddress.UI
             Db.InitData();
 
 
-            Comparison<Group> groupComparison = (a,b) => a.AddressName.CompareTo(b.AddressName);
+            Comparison<Group> groupComparison = (a, b) => a.AddressName.CompareTo(b.AddressName);
 
             MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, groupComparison, "AddressName", "Id");
             SubGroupWrapper = new ListBoxWrapper<SubGroup>(SubGroupsListBox, groupComparison, "AddressName", "Id");
-            ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a,b) => a.Name.CompareTo(b.Name), "Name", "Id");
+            ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a, b) => a.Name.CompareTo(b.Name), "Name", "Id");
+            GAWrapper = new ListBoxWrapper<GA>(GAsListBox, (a, b) => a.Address.CompareTo(b.Address), "AddressName", "Id");
 
 
             AddMainGroupIdTextBox_TextChanged(null, null);
@@ -105,6 +107,8 @@ namespace GroupAddress.UI
             SubGroupWrapper.Load(Db.SubGroups.Where(x => x.MainGroup.Id == ((string)MainGroupsListBox.SelectedValue)));
 
         }
+
+
         private void AddMainGroupIdTextBox_TextChanged(object sender, EventArgs e)
         {
             var (state, addresse) = ValidateSubAddress(GroupType.MainGroup);
@@ -167,7 +171,12 @@ namespace GroupAddress.UI
         }
 
         #endregion
+        
+        private void SubGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            GAWrapper.Load(Db.GAs.Where(x => x.SubGroup.Id == ((string)SubGroupsListBox.SelectedValue)));
 
+        }
 
         private (IdValidState, int) ValidateSubAddress(GroupType type)
         {
@@ -189,7 +198,7 @@ namespace GroupAddress.UI
             return (IdValidState.Invalid, -1);
         }
 
-  
+
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
@@ -200,5 +209,7 @@ namespace GroupAddress.UI
         {
             Load();
         }
+
+
     }
 }
