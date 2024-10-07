@@ -8,13 +8,6 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace GroupAddress.Core
 {
 
-    public enum GASpacerType
-    {
-        None,
-        SetSpacer,
-        GetSpacer
-    }
-
     public class GATemplatePart
     {
         public SubGroupTemplate subGroupTemplate { get; set; }
@@ -38,10 +31,6 @@ namespace GroupAddress.Core
         {
             return new GATemplatePart(subGroupTemplate, addonString);
         }
-        //public static GATemplatePart CreateSpacer(SubGroupTemplate subGroupTemplate)
-        //{
-        //    return new GATemplatePart(subGroupTemplate) { IsSpacer = true };
-        //}
 
         public static GATemplatePart[] CreatePair(SubGroupTemplatePair pair, string setAddonString, string getAddonString)
         {
@@ -53,6 +42,8 @@ namespace GroupAddress.Core
     {
         public string Id { get; private set; }
         public string BaseString { get; set; } = "";
+
+        public int SubAddress { get; set; }
 
         public List<GATemplatePart> GAParts { get; set; }
 

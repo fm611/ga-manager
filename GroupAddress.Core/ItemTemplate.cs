@@ -64,9 +64,6 @@ namespace GroupAddress.Core
 
             return item;
         }
-
-
-
     }
 
     // Bspw. RGBW Vorlage
@@ -78,6 +75,16 @@ namespace GroupAddress.Core
         public List<GATemplate> GATemplates { get; set; } = [];
 
         public ItemTemplate? ItemTemplate { get; set; }
+
+        public Dictionary<int, string> SubGroupTemplatesDict => GATemplates
+            .SelectMany(x => x.GAParts)
+            .Select(x => x.subGroupTemplate).Select(x => new { SubAddress = x.SubAddress, Name = x.Name })
+            .GroupBy(x => x).Select(x => x.Key).ToDictionary(x => x.SubAddress, x => x.Name);
+
+
+
+
+
 
         public ItemPartTemplate()
         {
@@ -91,8 +98,51 @@ namespace GroupAddress.Core
 
         public ItemPartTemplate(string name, IEnumerable<GATemplate> gatemplates) : this(name)
         {
-            GATemplates = gatemplates.ToList();
+            gatemplates.ToList().ForEach(x => AddGaTemplate(x));
+
+            //GATemplates = gatemplates.ToList();
+
+            //GenerateSubAddresses();
         }
+
+
+        public void AddGaTemplate(GATemplate gat)
+        {
+
+            var currGas = GATemplates
+                .Select(x => new { GaAddress = x.SubAddress, SubGroups = x.GAParts.Select(x => x.subGroupTemplate.SubAddress) });
+            var filtered = currGas.Where(x => x.SubGroups.SequenceEqual(gat.GAParts.Select(x => x.subGroupTemplate.SubAddress)));
+            var maxId = filtered.Select(x => x.GaAddress).DefaultIfEmpty(-1).Max();
+
+            gat.SubAddress = maxId+1;    
+            GATemplates.Add(gat);
+        }
+
+        public void GenerateSubAddresses()
+        {
+            var subGroupMaxIdDict = GATemplates
+                .SelectMany(x => x.GAParts)
+                .GroupBy(gap => gap.subGroupTemplate.SubAddress)
+                .ToDictionary(x => x.Key, x => -1);
+
+            foreach(var gaTemplate in  GATemplates)
+            {
+                var subs = gaTemplate.GAParts.Select(x => x.subGroupTemplate.SubAddress);
+
+                var c = subGroupMaxIdDict
+                    .Where(x => subs.Contains(x.Key))
+                    .Max(x => x.Value)+1;
+
+                gaTemplate.SubAddress = c;
+
+                foreach(var sub in subs)
+                {
+                    subGroupMaxIdDict[sub] = c;
+                }
+            }
+
+        }
+
 
 
         public ItemPart CreateItemPart(MainGroup mGroup, string gaPrefix)
@@ -103,13 +153,6 @@ namespace GroupAddress.Core
 
             foreach (var gaTemp in GATemplates)
             {
-                //var grouped = tempGAs.GroupBy(x => x.SubGroup);
-                //var filtered = grouped.Where(x =>
-                //    gaTemp.GAParts.Select(p => p.subGroupTemplate)
-                //        .Where(s => s != null)
-                //        .Select(s => mGroup.GetSubGroup(s))
-                //        .Contains(x.Key)
-                //);
                 var grouped = tempGAs.GroupBy(x => x.SubGroup.SubAddress);
                 var filtered = grouped.Where(x =>
                     gaTemp.GAParts.Select(p => p.subGroupTemplate.SubAddress)

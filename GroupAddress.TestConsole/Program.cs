@@ -11,6 +11,8 @@ namespace GroupAddress.TestConsole
         static void Main(string[] args)
         {
 
+
+
             //var dbContext = new AppDbContext();
 
             //dbContext.Database.EnsureCreated();
