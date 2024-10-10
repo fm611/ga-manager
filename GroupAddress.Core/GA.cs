@@ -10,7 +10,7 @@ namespace GroupAddress.Core
 
     public class GATemplatePart
     {
-        public SubGroupTemplate subGroupTemplate { get; set; }
+        public SubGroupTemplate SubGroupTemplate { get; set; }
         public string AddonString { get; set; } = "";
 
         public string Id { get; set; }
@@ -22,7 +22,7 @@ namespace GroupAddress.Core
 
         private GATemplatePart(SubGroupTemplate subGroupTemplate, string addonString = "") : this()
         {
-            this.subGroupTemplate = subGroupTemplate;
+            this.SubGroupTemplate = subGroupTemplate;
             AddonString = addonString;
             //IsSpacer = false;
         }
@@ -35,6 +35,11 @@ namespace GroupAddress.Core
         public static GATemplatePart[] CreatePair(SubGroupTemplatePair pair, string setAddonString, string getAddonString)
         {
             return [new GATemplatePart(pair.SetGroup, setAddonString), new GATemplatePart(pair.GetGroup, getAddonString)];
+        }
+
+        public override string ToString()
+        {
+            return "x/" + SubGroupTemplate.SubAddress + "/x : " + AddonString; 
         }
     }
 
@@ -69,11 +74,16 @@ namespace GroupAddress.Core
             return string.Join(seperator, new[] { preString, BaseString, part.AddonString }.Where(s => !string.IsNullOrEmpty(s)));
         }
 
-        public IEnumerable<GA> CreateGA(MainGroup mGroup, int id, string preString)
+        public IEnumerable<GA> CreateGA(MainGroup mGroup, string preString)
         {
-            return GAParts.Select(p => new GA(mGroup.GetOrCreateSubGroup(p.subGroupTemplate), id, CreateGAString(preString, p)));
+            return GAParts.Select(p => new GA(mGroup.GetOrCreateSubGroup(p.SubGroupTemplate), SubAddress, CreateGAString(preString, p)));
         }
-     
+
+        public override string ToString()
+        {
+            return "x/x/" + SubAddress + " : " + BaseString;
+        }
+
     }
 
     public class GA 

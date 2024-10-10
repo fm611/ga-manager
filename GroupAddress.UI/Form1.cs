@@ -2,6 +2,7 @@ using GroupAddress.Core;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.ComponentModel;
+using System.Data;
 using System.Xml;
 
 namespace GroupAddress.UI
@@ -31,6 +32,8 @@ namespace GroupAddress.UI
         public ListBoxWrapper<SubGroup> SubGroupWrapper { get; set; }
         public ListBoxWrapper<GA> GAWrapper { get; set; }
 
+        public MainGroup? SelectedMainGroup { get; set; }
+
 
 
         public Form1()
@@ -45,9 +48,9 @@ namespace GroupAddress.UI
             Comparison<Group> groupComparison = (a, b) => a.AddressName.CompareTo(b.AddressName);
 
             MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, groupComparison, "AddressName", "Id");
-            SubGroupWrapper = new ListBoxWrapper<SubGroup>(SubGroupsListBox, groupComparison, "AddressName", "Id");
+            //SubGroupWrapper = new ListBoxWrapper<SubGroup>(SubGroupsListBox, groupComparison, "AddressName", "Id");
             ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a, b) => a.Name.CompareTo(b.Name), "Name", "Id");
-            GAWrapper = new ListBoxWrapper<GA>(GAsListBox, (a, b) => a.Address.CompareTo(b.Address), "AddressName", "Id");
+            //GAWrapper = new ListBoxWrapper<GA>(GAsListBox, (a, b) => a.Address.CompareTo(b.Address), "AddressName", "Id");
 
 
             AddMainGroupIdTextBox_TextChanged(null, null);
@@ -67,7 +70,7 @@ namespace GroupAddress.UI
 
             //Main Groups
 
-            MainGroupWrapper.Load(Db.MainGroups);
+            MainGroupWrapper.Load(Db.MainGroups.Include(x => x.SubGroups).ThenInclude(x => x.GAs));
             ItemTemplatesWrapper.Load(Db.ItemTemplates);
 
 
@@ -101,10 +104,51 @@ namespace GroupAddress.UI
         private void MainGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
-            AddMainGroupIdTextBox.Text = ((MainGroup?)MainGroupsListBox.SelectedItem)?.SubAddress.ToString();
-            AddMainGroupNameTextBox.Text = ((MainGroup?)MainGroupsListBox.SelectedItem)?.Name;
+            SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
 
-            SubGroupWrapper.Load(Db.SubGroups.Where(x => x.MainGroup.Id == ((string)MainGroupsListBox.SelectedValue)));
+
+
+            AddMainGroupIdTextBox.Text = SelectedMainGroup?.SubAddress.ToString();
+            AddMainGroupNameTextBox.Text = SelectedMainGroup?.Name;
+
+            SubGroupWrapper.Load(Db.SubGroups.Where(x => x.MainGroup.Id == ((string?)MainGroupsListBox.SelectedValue)));
+
+            var table = new DataTable();
+
+            if (SelectedMainGroup != null)
+            {
+                var cols = Enumerable
+                    .Range(0, 8)
+                    .Select(x =>
+                        new DataColumn(x + " - " + SelectedMainGroup.SubGroups.FirstOrDefault(y => y.SubAddress == x)?.Name))
+                    .ToArray();
+
+
+
+                //table.Columns.Add("Addr");
+                table.Columns.AddRange(cols);
+
+                for (int i = 0; i < 256; i++)
+                {
+                    var newRow = table.NewRow();
+                    //newRow[0] = i;
+
+                    for (int j = 0; j < 8; j++)
+                    {
+                        newRow[j] = SelectedMainGroup
+                            .SubGroups
+                            .FirstOrDefault(x => x.SubAddress == j)?
+                            .GAs
+                            .FirstOrDefault(x => x.SubAddress == i)?
+                            .AddressName;
+                    }
+
+                    table.Rows.Add(newRow);
+                }
+            }
+
+            GADataTable.DataSource = table;
+            GADataTable.AutoResizeColumns();
 
         }
 
@@ -171,12 +215,7 @@ namespace GroupAddress.UI
         }
 
         #endregion
-        
-        private void SubGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            GAWrapper.Load(Db.GAs.Where(x => x.SubGroup.Id == ((string)SubGroupsListBox.SelectedValue)));
 
-        }
 
         private (IdValidState, int) ValidateSubAddress(GroupType type)
         {
@@ -210,6 +249,9 @@ namespace GroupAddress.UI
             Load();
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
 
+        }
     }
 }
