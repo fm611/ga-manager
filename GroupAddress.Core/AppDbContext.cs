@@ -21,6 +21,8 @@ namespace GroupAddress.Core
         public DbSet<Item> Items { get; set; }
         public DbSet<ItemTemplate> ItemTemplates { get; set; }
         public DbSet<ItemPartTemplate> ItemPartTemplates { get; set; }
+        public DbSet<GATemplate> GATemplates { get; set; }
+        public DbSet<GATemplatePart> GATemplateParts { get; set; }
 
 
         public string DbPath { get; }

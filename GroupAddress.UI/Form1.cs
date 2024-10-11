@@ -115,13 +115,11 @@ namespace GroupAddress.UI
                         new DataColumn(x + " - " + SelectedMainGroup.SubGroups.FirstOrDefault(y => y.SubAddress == x)?.Name))
                     .ToArray();
 
-                //table.Columns.Add("Addr");
                 table.Columns.AddRange(cols);
 
                 for (int i = 0; i < 256; i++)
                 {
                     var newRow = table.NewRow();
-                    //newRow[0] = i;
 
                     for (int j = 0; j < 8; j++)
                     {
@@ -132,7 +130,6 @@ namespace GroupAddress.UI
                             .FirstOrDefault(x => x.SubAddress == i)?
                             .AddressName;
                     }
-
                     table.Rows.Add(newRow);
                 }
             }

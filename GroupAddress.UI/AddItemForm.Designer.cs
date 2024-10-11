@@ -43,21 +43,24 @@
             // 
             // GADataTable
             // 
+            GADataTable.AllowUserToAddRows = false;
+            GADataTable.AllowUserToDeleteRows = false;
+            GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.Window;
             dataGridViewCellStyle1.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.SelectionBackColor = Color.GreenYellow;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
             GADataTable.DefaultCellStyle = dataGridViewCellStyle1;
             GADataTable.Location = new Point(254, 56);
             GADataTable.Name = "GADataTable";
             GADataTable.ReadOnly = true;
             GADataTable.RowHeadersVisible = false;
-            GADataTable.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            GADataTable.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             GADataTable.ShowEditingIcon = false;
             GADataTable.Size = new Size(1062, 695);
             GADataTable.TabIndex = 39;
@@ -117,6 +120,7 @@
             ItemPartTemplatesListBox.Name = "ItemPartTemplatesListBox";
             ItemPartTemplatesListBox.Size = new Size(236, 169);
             ItemPartTemplatesListBox.TabIndex = 36;
+            ItemPartTemplatesListBox.SelectedIndexChanged += ItemPartTemplatesListBox_SelectedIndexChanged;
             // 
             // label2
             // 

@@ -15,6 +15,8 @@ namespace GroupAddress.Core
 
         public string Id { get; set; }
 
+        public string GATemplateId { get; set; }
+
         public GATemplatePart() {
 
             Id = Guid.NewGuid().ToString();
@@ -49,6 +51,8 @@ namespace GroupAddress.Core
         public string BaseString { get; set; } = "";
 
         public int SubAddress { get; set; }
+
+        public string ItemPartTemplateId { get; set; }
 
         public List<GATemplatePart> GAParts { get; set; }
 
