@@ -28,9 +28,6 @@ namespace GroupAddress.UI
         public AppDbContext Db { get; set; }
 
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
-        public ListBoxWrapper<ItemTemplate> ItemTemplatesWrapper { get; set; }
-        public ListBoxWrapper<SubGroup> SubGroupWrapper { get; set; }
-        public ListBoxWrapper<GA> GAWrapper { get; set; }
 
         public MainGroup? SelectedMainGroup { get; set; }
 
@@ -49,7 +46,7 @@ namespace GroupAddress.UI
 
             MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, groupComparison, "AddressName", "Id");
             //SubGroupWrapper = new ListBoxWrapper<SubGroup>(SubGroupsListBox, groupComparison, "AddressName", "Id");
-            ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a, b) => a.Name.CompareTo(b.Name), "Name", "Id");
+            //ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a, b) => a.Name.CompareTo(b.Name), "Name", "Id");
             //GAWrapper = new ListBoxWrapper<GA>(GAsListBox, (a, b) => a.Address.CompareTo(b.Address), "AddressName", "Id");
 
 
@@ -71,8 +68,6 @@ namespace GroupAddress.UI
             //Main Groups
 
             MainGroupWrapper.Load(Db.MainGroups.Include(x => x.SubGroups).ThenInclude(x => x.GAs));
-            ItemTemplatesWrapper.Load(Db.ItemTemplates);
-
 
             //Item Templates
 
@@ -106,12 +101,9 @@ namespace GroupAddress.UI
 
             SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
 
-
-
             AddMainGroupIdTextBox.Text = SelectedMainGroup?.SubAddress.ToString();
             AddMainGroupNameTextBox.Text = SelectedMainGroup?.Name;
 
-            SubGroupWrapper.Load(Db.SubGroups.Where(x => x.MainGroup.Id == ((string?)MainGroupsListBox.SelectedValue)));
 
             var table = new DataTable();
 
@@ -122,8 +114,6 @@ namespace GroupAddress.UI
                     .Select(x =>
                         new DataColumn(x + " - " + SelectedMainGroup.SubGroups.FirstOrDefault(y => y.SubAddress == x)?.Name))
                     .ToArray();
-
-
 
                 //table.Columns.Add("Addr");
                 table.Columns.AddRange(cols);
@@ -252,6 +242,12 @@ namespace GroupAddress.UI
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void AddItemButton_Click(object sender, EventArgs e)
+        {
+            var addItemForm = new AddItemForm(Db);
+            addItemForm.ShowDialog();
         }
     }
 }

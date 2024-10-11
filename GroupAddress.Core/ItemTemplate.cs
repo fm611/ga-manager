@@ -77,6 +77,7 @@ namespace GroupAddress.Core
 
         public List<GATemplate> GATemplates { get; set; } = [];
 
+        public string? ItemTemplateId { get; set; }
         public ItemTemplate? ItemTemplate { get; set; }
 
         public ItemPartTemplate()

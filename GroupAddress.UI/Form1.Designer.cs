@@ -29,14 +29,10 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             MainGroupsListBox = new ListBox();
             label1 = new Label();
-            ItemTemplatesListBox = new ListBox();
-            AddItemButton = new Button();
-            textBox1 = new TextBox();
-            label4 = new Label();
             AddMainGroupButton = new Button();
             AddMainGroupIdTextBox = new TextBox();
             AddMainGroupNameTextBox = new TextBox();
@@ -50,7 +46,7 @@
             toolStripButton1 = new ToolStripButton();
             toolStripButton3 = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
-            toolStripButton2 = new ToolStripButton();
+            AddItemButton = new ToolStripButton();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
             ((System.ComponentModel.ISupportInitialize)mainGroupBindingSource).BeginInit();
@@ -76,44 +72,6 @@
             label1.Size = new Size(85, 15);
             label1.TabIndex = 1;
             label1.Text = "Hauptgruppen";
-            // 
-            // ItemTemplatesListBox
-            // 
-            ItemTemplatesListBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            ItemTemplatesListBox.FormattingEnabled = true;
-            ItemTemplatesListBox.ItemHeight = 15;
-            ItemTemplatesListBox.Location = new Point(870, 560);
-            ItemTemplatesListBox.Name = "ItemTemplatesListBox";
-            ItemTemplatesListBox.Size = new Size(236, 214);
-            ItemTemplatesListBox.TabIndex = 30;
-            // 
-            // AddItemButton
-            // 
-            AddItemButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            AddItemButton.Location = new Point(1112, 607);
-            AddItemButton.Name = "AddItemButton";
-            AddItemButton.Size = new Size(75, 23);
-            AddItemButton.TabIndex = 32;
-            AddItemButton.Text = "Add Item";
-            AddItemButton.UseVisualStyleBackColor = true;
-            // 
-            // textBox1
-            // 
-            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            textBox1.Location = new Point(1112, 578);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(197, 23);
-            textBox1.TabIndex = 31;
-            // 
-            // label4
-            // 
-            label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label4.AutoSize = true;
-            label4.Location = new Point(1112, 560);
-            label4.Name = "label4";
-            label4.Size = new Size(125, 15);
-            label4.TabIndex = 9;
-            label4.Text = "Item Name (PreString)";
             // 
             // AddMainGroupButton
             // 
@@ -187,14 +145,14 @@
             // 
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.Window;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
-            GADataTable.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
             GADataTable.Location = new Point(225, 67);
             GADataTable.Name = "GADataTable";
             GADataTable.ReadOnly = true;
@@ -210,7 +168,7 @@
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton3, toolStripSeparator1, toolStripButton2 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton3, toolStripSeparator1, AddItemButton });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(1324, 25);
@@ -243,14 +201,15 @@
             toolStripSeparator1.Name = "toolStripSeparator1";
             toolStripSeparator1.Size = new Size(6, 25);
             // 
-            // toolStripButton2
+            // AddItemButton
             // 
-            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
-            toolStripButton2.ImageTransparentColor = Color.Magenta;
-            toolStripButton2.Name = "toolStripButton2";
-            toolStripButton2.Size = new Size(60, 22);
-            toolStripButton2.Text = "Add Item";
+            AddItemButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            AddItemButton.Image = (Image)resources.GetObject("AddItemButton.Image");
+            AddItemButton.ImageTransparentColor = Color.Magenta;
+            AddItemButton.Name = "AddItemButton";
+            AddItemButton.Size = new Size(60, 22);
+            AddItemButton.Text = "Add Item";
+            AddItemButton.Click += this.AddItemButton_Click;
             // 
             // Form1
             // 
@@ -260,15 +219,11 @@
             Controls.Add(toolStrip1);
             Controls.Add(GADataTable);
             Controls.Add(statusStrip1);
-            Controls.Add(label4);
             Controls.Add(AddMainGroupNameTextBox);
             Controls.Add(AddMainGroupIdTextBox);
-            Controls.Add(textBox1);
             Controls.Add(DeleteMainGroupButton);
             Controls.Add(EditMainGroupButton);
             Controls.Add(AddMainGroupButton);
-            Controls.Add(AddItemButton);
-            Controls.Add(ItemTemplatesListBox);
             Controls.Add(label1);
             Controls.Add(MainGroupsListBox);
             Name = "Form1";
@@ -287,8 +242,6 @@
 
         private ListBox MainGroupsListBox;
         private Label label1;
-        private ListBox ItemTemplatesListBox;
-        private Button AddItemButton;
         private TextBox textBox1;
         private Label label4;
         private Button AddMainGroupButton;
@@ -310,6 +263,6 @@
         private ToolStripButton toolStripButton1;
         private ToolStripButton toolStripButton3;
         private ToolStripSeparator toolStripSeparator1;
-        private ToolStripButton toolStripButton2;
+        private ToolStripButton AddItemButton;
     }
 }

@@ -35,6 +35,9 @@
             ItemTemplatesListBox = new ListBox();
             MainGroupsListBox = new ListBox();
             label1 = new Label();
+            ItemPartTemplatesListBox = new ListBox();
+            label2 = new Label();
+            label3 = new Label();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
             SuspendLayout();
             // 
@@ -62,9 +65,9 @@
             // textBox1
             // 
             textBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            textBox1.Location = new Point(1039, 769);
+            textBox1.Location = new Point(982, 769);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(197, 23);
+            textBox1.Size = new Size(254, 23);
             textBox1.TabIndex = 37;
             // 
             // AddItemButton
@@ -85,6 +88,7 @@
             ItemTemplatesListBox.Name = "ItemTemplatesListBox";
             ItemTemplatesListBox.Size = new Size(236, 169);
             ItemTemplatesListBox.TabIndex = 36;
+            ItemTemplatesListBox.SelectedIndexChanged += ItemTemplatesListBox_SelectedIndexChanged;
             // 
             // MainGroupsListBox
             // 
@@ -105,19 +109,50 @@
             label1.TabIndex = 40;
             label1.Text = "Templates";
             // 
+            // ItemPartTemplatesListBox
+            // 
+            ItemPartTemplatesListBox.FormattingEnabled = true;
+            ItemPartTemplatesListBox.ItemHeight = 15;
+            ItemPartTemplatesListBox.Location = new Point(12, 268);
+            ItemPartTemplatesListBox.Name = "ItemPartTemplatesListBox";
+            ItemPartTemplatesListBox.Size = new Size(236, 169);
+            ItemPartTemplatesListBox.TabIndex = 36;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(12, 239);
+            label2.Name = "label2";
+            label2.Size = new Size(122, 15);
+            label2.TabIndex = 40;
+            label2.Text = "Parts (Hauptgruppen)";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(877, 773);
+            label3.Name = "label3";
+            label3.Size = new Size(80, 15);
+            label3.TabIndex = 40;
+            label3.Text = "Name / Prefix";
+            // 
             // AddItemForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1328, 804);
+            Controls.Add(label3);
+            Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(GADataTable);
             Controls.Add(textBox1);
             Controls.Add(AddItemButton);
+            Controls.Add(ItemPartTemplatesListBox);
             Controls.Add(ItemTemplatesListBox);
             Controls.Add(MainGroupsListBox);
             Name = "AddItemForm";
             Text = "AddItemForm";
+            Load += AddItemForm_Load;
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -131,5 +166,8 @@
         private ListBox ItemTemplatesListBox;
         private ListBox MainGroupsListBox;
         private Label label1;
+        private ListBox ItemPartTemplatesListBox;
+        private Label label2;
+        private Label label3;
     }
 }
