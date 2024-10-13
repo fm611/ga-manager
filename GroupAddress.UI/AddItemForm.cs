@@ -43,10 +43,41 @@ namespace GroupAddress.UI
 
         }
 
+        private void SetupItemPartTemplatesDataGrid(List<ItemPartTemplate> parts, List<MainGroup> mGroups)
+        {
+
+
+
+            var dgv = ItemPartTemplatesDataGridView;
+
+            dgv.Columns.Add(new DataGridViewColumn()
+            {
+                Name = "Template"
+            });
+
+            dgv.Columns.Add(new DataGridViewComboBoxColumn()
+            {
+                Name = "Hauptgruppe",
+                DataSource = mGroups,
+                DisplayMember = "Name",
+                ValueMember = "Id"
+            });
+
+            //dgv.DataSource = 
+
+
+
+        }
+
+
+
+
         private void ItemTemplatesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectedItemTemplate = (ItemTemplate?)ItemTemplatesListBox.SelectedItem;
             ItemPartTemplatesWrapper.Load(Db.ItemPartTemplates.Where(x => x.ItemTemplateId == (string?)ItemTemplatesListBox.SelectedValue));
+
+
         }
 
         private void ItemPartTemplatesListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -59,7 +90,7 @@ namespace GroupAddress.UI
             if (SelectedItemPartTemplate != null)
             {
                 var subGroups = Db.GATemplates
-                    .Where(x => x.ItemPartTemplateId == (string?)ItemPartTemplatesListBox.SelectedValue)                    
+                    .Where(x => x.ItemPartTemplateId == (string?)ItemPartTemplatesListBox.SelectedValue)
                     .SelectMany(x => x.GAParts).Select(x => x.SubGroupTemplate)
                     .GroupBy(x => x.SubAddress)
                     .Select(x => new { SubAddress = x.Key, Name = x.First().Name });
@@ -74,7 +105,7 @@ namespace GroupAddress.UI
                     {
                         SubGroupAddress = y.SubGroupTemplate.SubAddress,
                         GAAddress = x.SubAddress,
-                        Name = "x/"+ y.SubGroupTemplate.SubAddress+"/"+x.SubAddress+" - "+string.Join("_", new[] { x.BaseString, y.AddonString }.Where(s => !string.IsNullOrEmpty(s)))
+                        Name = "x/" + y.SubGroupTemplate.SubAddress + "/" + x.SubAddress + " - " + string.Join("_", new[] { x.BaseString, y.AddonString }.Where(s => !string.IsNullOrEmpty(s)))
                     })).ToList();
 
                 var cols = Enumerable
@@ -85,7 +116,7 @@ namespace GroupAddress.UI
 
                 table.Columns.AddRange(cols);
 
-                
+
 
                 for (int i = 0; i < 256; i++)
                 {
@@ -105,7 +136,11 @@ namespace GroupAddress.UI
 
             GADataTable.DataSource = table;
             GADataTable.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-            //GADataTable.AutoResizeColumns();
+
+        }
+
+        private void AddItemButton_Click(object sender, EventArgs e)
+        {
 
         }
     }

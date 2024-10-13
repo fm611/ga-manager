@@ -51,17 +51,14 @@ namespace GroupAddress.Core
             {
                 var partTemp = PartTemplates[i];
                 var mGroup = mGroups[i];
-
-                
+                                
 
                 var itemPart = mGroup.AddItemPart(partTemp, itemName);
                 itemPart.Item = item;
 
-
                 tempParts.Add(itemPart);
 
             }
-
             item.Parts = tempParts.OrderBy(x => x.MainGroup.SubAddress).ToList();
 
             return item;
