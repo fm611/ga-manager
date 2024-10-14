@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Windows.Forms;
 using System.Xml;
 
 namespace GroupAddress.UI
@@ -43,7 +44,7 @@ namespace GroupAddress.UI
 
             Comparison<Group> groupComparison = (a, b) => a.AddressName.CompareTo(b.AddressName);
 
-            MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, groupComparison, "AddressName", "Id");
+            MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, groupComparison, "AddressNameMaxGA", "Id");
 
             AddMainGroupIdTextBox_TextChanged(null, null);
         }
@@ -63,7 +64,10 @@ namespace GroupAddress.UI
 
         private void LoadDatabase()
         {
-            MainGroupWrapper.Load(Db.MainGroups.Include(x => x.SubGroups).ThenInclude(x => x.GAs));
+            MainGroupWrapper.Load(Db.MainGroups
+                .Include(x => x.SubGroups)
+                .ThenInclude(x => x.GAs)
+                .Include(x => x.Items));
 
         }
 
@@ -98,39 +102,7 @@ namespace GroupAddress.UI
             AddMainGroupIdTextBox.Text = SelectedMainGroup?.SubAddress.ToString();
             AddMainGroupNameTextBox.Text = SelectedMainGroup?.Name;
 
-
-            var table = new DataTable();
-
-            if (SelectedMainGroup != null)
-            {
-                var cols = Enumerable
-                    .Range(0, 8)
-                    .Select(x =>
-                        new DataColumn(x + " - " + SelectedMainGroup.SubGroups.FirstOrDefault(y => y.SubAddress == x)?.Name))
-                    .ToArray();
-
-                table.Columns.AddRange(cols);
-
-                for (int i = 0; i < 256; i++)
-                {
-                    var newRow = table.NewRow();
-
-                    for (int j = 0; j < 8; j++)
-                    {
-                        newRow[j] = SelectedMainGroup
-                            .SubGroups
-                            .FirstOrDefault(x => x.SubAddress == j)?
-                            .GAs
-                            .FirstOrDefault(x => x.SubAddress == i)?
-                            .AddressName;
-                    }
-                    table.Rows.Add(newRow);
-                }
-            }
-
-            GADataTable.DataSource = table;
-            GADataTable.AutoResizeColumns();
-
+            FillGADataTable();
         }
 
 
@@ -213,6 +185,47 @@ namespace GroupAddress.UI
         }
 
 
+        private void FillGADataTable()
+        {
+            var table = new DataTable();
+
+            if (SelectedMainGroup != null)
+            {
+                var cols = Enumerable
+                    .Range(0, 8)
+                    .Select(x =>
+                        new DataColumn(x + " - " + SelectedMainGroup.SubGroups.FirstOrDefault(y => y.SubAddress == x)?.Name))
+                    .ToArray();
+
+
+                table.Columns.Add(new DataColumn("#"));
+                table.Columns.AddRange(cols);
+
+                for (int i = 0; i < SelectedMainGroup.MaxGASubAddress; i++)
+                {
+                    var newRow = table.NewRow();
+                    newRow[0] = i;
+                    for (int j = 0; j < 8; j++)
+                    {
+                        newRow[j+1] = SelectedMainGroup
+                            .SubGroups
+                            .FirstOrDefault(x => x.SubAddress == j)?
+                            .GAs
+                            .FirstOrDefault(x => x.SubAddress == i)?
+                            .AddressName;
+                    }
+                    table.Rows.Add(newRow);
+                }
+            }
+
+            GADataTable.DataSource = table;
+            if (GADataTable.Columns.Count > 0)
+            {
+                GADataTable.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                GADataTable.Columns[0].DefaultCellStyle.BackColor = Color.LightGray;
+            }
+            GADataTable.AutoResizeColumns();
+        }
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
@@ -228,7 +241,16 @@ namespace GroupAddress.UI
         private void AddItemButton_Click(object sender, EventArgs e)
         {
             var addItemForm = new AddItemForm(Db);
+
+            addItemForm.SelectMainGroup(SelectedMainGroup?.Id);
+
             addItemForm.ShowDialog();
+
+
+            LoadDatabase();
+
+            MainGroupsListBox.SelectedValue = addItemForm.SelectedMainGroup?.Id;
+            GADataTable.FirstDisplayedScrollingRowIndex = GADataTable.RowCount - 1;
         }
 
     }

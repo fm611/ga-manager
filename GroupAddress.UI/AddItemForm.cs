@@ -31,10 +31,6 @@ namespace GroupAddress.UI
 
             Db = db;
 
-        }
-
-        private void AddItemForm_Load(object sender, EventArgs e)
-        {
             ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a, b) => a.Name.CompareTo(b.Name), "Name", "Id");
             ItemTemplatesWrapper.Load(Db.ItemTemplates);
 
@@ -47,8 +43,20 @@ namespace GroupAddress.UI
 
             if (MainGroupsListBox.Items.Count > 0)
                 MainGroupsListBox.SelectedIndex = 0;
+
+
+
         }
 
+        public void SelectMainGroup(string? id)
+        {
+            MainGroupsListBox.SelectedValue = id;
+        }
+
+        private void AddItemForm_Load(object sender, EventArgs e)
+        {
+
+        }
 
 
 
@@ -114,7 +122,11 @@ namespace GroupAddress.UI
 
         private void AddItemButton_Click(object sender, EventArgs e)
         {
+            if(SelectedMainGroup != null)
+                if(SelectedItemTemplate != null)
+                    SelectedMainGroup.AddItem(SelectedItemTemplate, NewItemPreStringTextBox.Text);
 
+            DialogResult = DialogResult.OK;
         }
 
         private void MainGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)

@@ -143,6 +143,9 @@
             // 
             // GADataTable
             // 
+            GADataTable.AllowUserToAddRows = false;
+            GADataTable.AllowUserToDeleteRows = false;
+            GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
@@ -150,14 +153,14 @@
             dataGridViewCellStyle1.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
             dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
             GADataTable.DefaultCellStyle = dataGridViewCellStyle1;
             GADataTable.Location = new Point(225, 67);
             GADataTable.Name = "GADataTable";
             GADataTable.ReadOnly = true;
             GADataTable.RowHeadersVisible = false;
-            GADataTable.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            GADataTable.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             GADataTable.ShowEditingIcon = false;
             GADataTable.Size = new Size(1087, 484);
             GADataTable.TabIndex = 34;
@@ -228,7 +231,7 @@
             Controls.Add(MainGroupsListBox);
             Name = "Form1";
             Text = "Form1";
-            this.Load += this.Form1_Load;
+            Load += Form1_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();

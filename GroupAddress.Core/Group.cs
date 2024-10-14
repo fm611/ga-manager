@@ -34,8 +34,11 @@ namespace GroupAddress.Core
     {
         public List<SubGroup> SubGroups { get; set; } = [];
 
-        public List<Item> ItemParts { get; set; } = [];
+        public List<Item> Items { get; set; } = [];
 
+        public List<GA> GAs => Items.SelectMany(x => x.GAs).ToList();
+
+        public int MaxGASubAddress => GAs.Select(x => x.SubAddress).DefaultIfEmpty(0).Max();
 
         public bool FillGASpaces { get; set; }
         public bool FillGAToEnd { get; set; }
@@ -57,13 +60,15 @@ namespace GroupAddress.Core
             var newItemBlockLength = blockLength != 0 ? blockLength : maxId+1;
             NextItemId += newItemBlockLength;
 
-            ItemParts.Add(newItemPart);
+            Items.Add(newItemPart);
             return newItemPart;
         }
 
+
+
         public List<GA> GetAllGAs() 
         {
-            var itemGAs = ItemParts.SelectMany(x => x.GAs);
+            var itemGAs = Items.SelectMany(x => x.GAs);
             var subGroups = itemGAs.GroupBy(x => x.SubGroup);
 
             var outputGAs = new List<GA>(itemGAs);
@@ -131,8 +136,10 @@ namespace GroupAddress.Core
 
         public int ItemCount()
         {
-            return ItemParts.Count;
+            return Items.Count;
         }
+
+        public string AddressNameMaxGA => AddressName + " (" + (MaxGASubAddress == 0 ? "-" : MaxGASubAddress-1) + ")";
 
         
     }

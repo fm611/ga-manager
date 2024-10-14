@@ -2,6 +2,7 @@
 using GroupAddress.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GroupAddress.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241014141342_GA")]
+    partial class GA
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -239,7 +242,7 @@ namespace GroupAddress.Core.Migrations
             modelBuilder.Entity("GroupAddress.Core.Item", b =>
                 {
                     b.HasOne("GroupAddress.Core.MainGroup", "MainGroup")
-                        .WithMany("Items")
+                        .WithMany("ItemParts")
                         .HasForeignKey("MainGroupId");
 
                     b.Navigation("MainGroup");
@@ -275,7 +278,7 @@ namespace GroupAddress.Core.Migrations
                 {
                     b.Navigation("GAs");
 
-                    b.Navigation("Items");
+                    b.Navigation("ItemParts");
 
                     b.Navigation("SubGroups");
                 });

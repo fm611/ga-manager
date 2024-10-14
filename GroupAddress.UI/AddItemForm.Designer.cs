@@ -157,7 +157,6 @@
             Controls.Add(ItemTemplatesListBox);
             Name = "AddItemForm";
             Text = "AddItemForm";
-            Load += AddItemForm_Load;
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
             ResumeLayout(false);
             PerformLayout();
