@@ -34,7 +34,7 @@ namespace GroupAddress.Core
     {
         public List<SubGroup> SubGroups { get; set; } = [];
 
-        public List<ItemPart> ItemParts { get; set; } = [];
+        public List<Item> ItemParts { get; set; } = [];
 
 
         public bool FillGASpaces { get; set; }
@@ -48,7 +48,7 @@ namespace GroupAddress.Core
 
         }
 
-        public ItemPart AddItemPart(ItemPartTemplate template, string gaPrefix, int blockLength=0)
+        public Item AddItem(ItemTemplate template, string gaPrefix, int blockLength=0)
         {
             var newItemPart = template.CreateItemPart(this, gaPrefix);
             newItemPart.ShiftGA(NextItemId);
@@ -103,7 +103,6 @@ namespace GroupAddress.Core
             return res ?? SubGroup.Create(subGroupTemplate, this);
 
         }
-
         public SubGroup? GetSubGroup(SubGroupTemplate subGroupTemplate)
         {
             return SubGroups.Where(x => x.SubAddress == subGroupTemplate.SubAddress).FirstOrDefault();

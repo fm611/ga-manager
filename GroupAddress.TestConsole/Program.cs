@@ -20,7 +20,7 @@ namespace GroupAddress.TestConsole
             //dbContext.InitData();
 
 
-            var lightCommonMainGroup = new MainGroup(1, "Licht allgemein");
+            //var lightCommonMainGroup = new MainGroup(1, "Licht allgemein");
 
             //var lightDimmMainGroup = new MainGroup(2, "Licht dimmbar");
 
@@ -28,7 +28,7 @@ namespace GroupAddress.TestConsole
 
             //var lightRGBWMainGroup = new MainGroup(4, "Licht RGBW");
 
-            var hwr_light = DefaultItemTemplates.Light.CreateItem([lightCommonMainGroup], "EG_HWR_Licht_Decke");
+            //var hwr_light = DefaultItemTemplates.Light.CreateItem([lightCommonMainGroup], "EG_HWR_Licht_Decke");
 
 
             //lightCommonMainGroup.AddItem(ItemPartTemplate.Light, "EG_HWR_Licht_Decke", 20);

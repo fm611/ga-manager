@@ -10,84 +10,79 @@ namespace GroupAddress.Core
 
     // Mehrere Hauptgruppen
 
-    public class ItemTemplate
-    {
-        public string Name { get; set; }
-        public string Id { get; set; }
+    //public class ItemTemplateOLD
+    //{
+    //    public string Name { get; set; }
+    //    public string Id { get; set; }
 
-        public List<ItemPartTemplate> PartTemplates { get; set; } = [];
+    //    public List<ItemPartTemplate> PartTemplates { get; set; } = [];
 
-        public ItemTemplate()
-        {
-            Id = Guid.NewGuid().ToString();
-            Name = "";
-        }
+    //    public ItemTemplateOLD()
+    //    {
+    //        Id = Guid.NewGuid().ToString();
+    //        Name = "";
+    //    }
 
-        public ItemTemplate(string name) : this()
-        {
-            Name = name;
-        }
+    //    public ItemTemplateOLD(string name) : this()
+    //    {
+    //        Name = name;
+    //    }
 
-        public ItemTemplate(string name, IEnumerable<ItemPartTemplate> partTemplates) : this(name)
-        {
-            PartTemplates = partTemplates.ToList();
-            foreach (ItemPartTemplate partTemplate in PartTemplates)
-            {
-                partTemplate.ItemTemplate = this;
-            }
-        }
-
-
-        public Item CreateItem(List<MainGroup> mGroups, string itemName)
-        {
-            var item = new Item(itemName);
-
-            if (mGroups.Count != PartTemplates.Count) throw new Exception("Invalid number of MainGroups");
-
-            var tempParts =new List<ItemPart>();
+    //    public ItemTemplateOLD(string name, IEnumerable<ItemPartTemplate> partTemplates) : this(name)
+    //    {
+    //        PartTemplates = partTemplates.ToList();
+    //        foreach (ItemPartTemplate partTemplate in PartTemplates)
+    //        {
+    //            partTemplate.ItemTemplate = this;
+    //        }
+    //    }
 
 
-            for (int i = 0; i < PartTemplates.Count; i++)
-            {
-                var partTemp = PartTemplates[i];
-                var mGroup = mGroups[i];
+    //    //public ItemOLD CreateItem(List<MainGroup> mGroups, string itemName)
+    //    //{
+    //    //    var item = new ItemOLD(itemName);
+
+    //    //    if (mGroups.Count != PartTemplates.Count) throw new Exception("Invalid number of MainGroups");
+
+    //    //    var tempParts =new List<Item>();
+
+
+    //    //    for (int i = 0; i < PartTemplates.Count; i++)
+    //    //    {
+    //    //        var partTemp = PartTemplates[i];
+    //    //        var mGroup = mGroups[i];
                                 
 
-                var itemPart = mGroup.AddItemPart(partTemp, itemName);
-                itemPart.Item = item;
+    //    //        var itemPart = mGroup.AddItemPart(partTemp, itemName);
+    //    //        itemPart.Item = item;
 
-                tempParts.Add(itemPart);
+    //    //        tempParts.Add(itemPart);
 
-            }
-            item.Parts = tempParts.OrderBy(x => x.MainGroup.SubAddress).ToList();
+    //    //    }
+    //    //    item.Parts = tempParts.OrderBy(x => x.MainGroup.SubAddress).ToList();
 
-            return item;
-        }
-    }
+    //    //    return item;
+    //    //}
+    //}
 
     // Bspw. RGBW Vorlage
     // je Hauptgruppe
-    public class ItemPartTemplate
+    public class ItemTemplate
     {
         public string Name { get; set; } = "";
         public string Id { get; set; }
 
         public List<GATemplate> GATemplates { get; set; } = [];
 
-        public string? ItemTemplateId { get; set; }
-        public ItemTemplate? ItemTemplate { get; set; }
-
-        public ItemPartTemplate()
+        public ItemTemplate()
         {
             Id = Guid.NewGuid().ToString();
         }
-
-        public ItemPartTemplate(string name) : this()
+        public ItemTemplate(string name) : this()
         {
             Name = name;
         }
-
-        public ItemPartTemplate(string name, IEnumerable<GATemplate> gatemplates) : this(name)
+        public ItemTemplate(string name, IEnumerable<GATemplate> gatemplates) : this(name)
         {
             gatemplates.ToList().ForEach(x => AddGaTemplate(x));
         }
@@ -111,9 +106,10 @@ namespace GroupAddress.Core
         }
 
 
-        public ItemPart CreateItemPart(MainGroup mGroup, string gaPrefix)
+
+        public Item CreateItemPart(MainGroup mGroup, string gaPrefix)
         {
-            var itemPart = new ItemPart(Name,mGroup);
+            var itemPart = new Item(Name,mGroup);
 
             var tempGAs = GATemplates.SelectMany(x => x.CreateGA(mGroup, gaPrefix));
 
@@ -126,4 +122,5 @@ namespace GroupAddress.Core
         }
 
     }
+
 }

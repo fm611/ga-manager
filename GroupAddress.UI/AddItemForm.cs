@@ -16,12 +16,13 @@ namespace GroupAddress.UI
     {
 
         public AppDbContext Db { get; set; }
-
         public ListBoxWrapper<ItemTemplate> ItemTemplatesWrapper { get; set; }
-        public ListBoxWrapper<ItemPartTemplate> ItemPartTemplatesWrapper { get; set; }
+        public ListBoxWrapper<MainGroup> MainGroupsWrapper { get; set; }
 
         public ItemTemplate? SelectedItemTemplate { get; set; }
-        public ItemPartTemplate? SelectedItemPartTemplate { get; set; }
+        public string? SelectedItemTemplateId { get; set; }
+        public MainGroup? SelectedMainGroup { get; set; }
+        public string? SelectedMainGroupId { get; set; }
 
         public AddItemForm(AppDbContext db)
         {
@@ -35,38 +36,17 @@ namespace GroupAddress.UI
         private void AddItemForm_Load(object sender, EventArgs e)
         {
             ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a, b) => a.Name.CompareTo(b.Name), "Name", "Id");
-            ItemPartTemplatesWrapper = new ListBoxWrapper<ItemPartTemplate>(ItemPartTemplatesListBox, (a, b) => a.Name.CompareTo(b.Name), "Name", "Id");
-
             ItemTemplatesWrapper.Load(Db.ItemTemplates);
-            ItemTemplatesListBox.SelectedIndex = 0;
+
+            if (ItemTemplatesListBox.Items.Count > 0)
+                ItemTemplatesListBox.SelectedIndex = 0;
 
 
-        }
+            MainGroupsWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, (a, b) => a.AddressName.CompareTo(b.AddressName), "AddressName", "Id");
+            MainGroupsWrapper.Load(Db.MainGroups);
 
-        private void SetupItemPartTemplatesDataGrid(List<ItemPartTemplate> parts, List<MainGroup> mGroups)
-        {
-
-
-
-            var dgv = ItemPartTemplatesDataGridView;
-
-            dgv.Columns.Add(new DataGridViewColumn()
-            {
-                Name = "Template"
-            });
-
-            dgv.Columns.Add(new DataGridViewComboBoxColumn()
-            {
-                Name = "Hauptgruppe",
-                DataSource = mGroups,
-                DisplayMember = "Name",
-                ValueMember = "Id"
-            });
-
-            //dgv.DataSource = 
-
-
-
+            if (MainGroupsListBox.Items.Count > 0)
+                MainGroupsListBox.SelectedIndex = 0;
         }
 
 
@@ -75,29 +55,22 @@ namespace GroupAddress.UI
         private void ItemTemplatesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectedItemTemplate = (ItemTemplate?)ItemTemplatesListBox.SelectedItem;
-            ItemPartTemplatesWrapper.Load(Db.ItemPartTemplates.Where(x => x.ItemTemplateId == (string?)ItemTemplatesListBox.SelectedValue));
-
-
-        }
-
-        private void ItemPartTemplatesListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            SelectedItemPartTemplate = (ItemPartTemplate?)ItemPartTemplatesListBox.SelectedItem;
+            SelectedItemTemplateId = (string?)ItemTemplatesListBox.SelectedValue;
 
 
             var table = new DataTable();
 
-            if (SelectedItemPartTemplate != null)
+            if (SelectedItemTemplate != null)
             {
                 var subGroups = Db.GATemplates
-                    .Where(x => x.ItemPartTemplateId == (string?)ItemPartTemplatesListBox.SelectedValue)
+                    .Where(x => x.ItemTemplateId == (string?)ItemTemplatesListBox.SelectedValue)
                     .SelectMany(x => x.GAParts).Select(x => x.SubGroupTemplate)
                     .GroupBy(x => x.SubAddress)
                     .Select(x => new { SubAddress = x.Key, Name = x.First().Name });
 
 
                 var gatemps = Db.GATemplates
-                    .Where(x => x.ItemPartTemplateId == (string?)ItemPartTemplatesListBox.SelectedValue)
+                    .Where(x => x.ItemTemplateId == (string?)ItemTemplatesListBox.SelectedValue)
                     .Include(x => x.GAParts)
                     .ThenInclude(x => x.SubGroupTemplate)
                     .ToList()
@@ -142,6 +115,12 @@ namespace GroupAddress.UI
         private void AddItemButton_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void MainGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
+            SelectedMainGroupId = (string?)MainGroupsListBox.SelectedValue;
         }
     }
 }

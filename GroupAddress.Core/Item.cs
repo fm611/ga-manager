@@ -9,36 +9,35 @@ namespace GroupAddress.Core
 {
 
 
+    //public class ItemOLD
+    //{
+
+    //    public string Id { get; set; }
+    //    public string Name { get; set; }
+    //    public List<Item> Parts { get; set; }
+
+    //    public ItemOLD() => Id = Guid.NewGuid().ToString();
+
+    //    public ItemOLD(string name) : this()
+    //    {
+    //        Name = name;
+    //    }
+    //}
+
     public class Item
     {
-
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public List<ItemPart> Parts { get; set; }
-
-        public Item() => Id = Guid.NewGuid().ToString();
-
-        public Item(string name) : this()
-        {
-            Name = name;
-        }
-
-    }
-
-    public class ItemPart
-    {
         public string Id { get; set; }
         public string Name { get; set; }
 
-        public Item Item { get; set; }
+        //public ItemOLD Item { get; set; }
 
         public List<GA> GAs { get; set; } = [];
 
         public MainGroup MainGroup { get; set; }
 
-        public ItemPart() => Id = Guid.NewGuid().ToString();
+        public Item() => Id = Guid.NewGuid().ToString();
 
-        public ItemPart(string name,MainGroup mGroup) : this()
+        public Item(string name,MainGroup mGroup) : this()
         {
             Name = name;
             MainGroup = mGroup;

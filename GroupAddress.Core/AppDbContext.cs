@@ -17,10 +17,8 @@ namespace GroupAddress.Core
         public DbSet<MainGroup> MainGroups { get; set; }
         public DbSet<SubGroup> SubGroups { get; set; }
         public DbSet<GA> GAs { get; set; }
-        public DbSet<ItemPart> ItemParts { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<ItemTemplate> ItemTemplates { get; set; }
-        public DbSet<ItemPartTemplate> ItemPartTemplates { get; set; }
         public DbSet<GATemplate> GATemplates { get; set; }
         public DbSet<GATemplatePart> GATemplateParts { get; set; }
 
@@ -104,12 +102,12 @@ namespace GroupAddress.Core
 
         public void InitItem()
         {
-            if(ItemParts.Any()) return;
+            if(Items.Any()) return;
 
             var mGroup1 = MainGroups.FirstOrDefault();
             if(mGroup1 ==  null) return;
 
-            var newItem = DefaultItemTemplates.Light.CreateItem([mGroup1], "EG_HWR_Licht_Decke");
+            mGroup1.AddItem(DefaultItemTemplates.Light, "EG_HWR_Licht_Decke");
 
             SaveChanges();
 

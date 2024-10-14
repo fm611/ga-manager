@@ -26,7 +26,6 @@ namespace GroupAddress.Core
         {
             this.SubGroupTemplate = subGroupTemplate;
             AddonString = addonString;
-            //IsSpacer = false;
         }
 
         public static GATemplatePart Create(SubGroupTemplate subGroupTemplate, string addonString = "")
@@ -52,7 +51,7 @@ namespace GroupAddress.Core
 
         public int SubAddress { get; set; }
 
-        public string ItemPartTemplateId { get; set; }
+        public string ItemTemplateId { get; set; }
 
         public List<GATemplatePart> GAParts { get; set; }
 

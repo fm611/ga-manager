@@ -41,18 +41,17 @@ namespace GroupAddress.UI
             Db.Database.Migrate();
             Db.InitData();
 
-
             Comparison<Group> groupComparison = (a, b) => a.AddressName.CompareTo(b.AddressName);
 
             MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, groupComparison, "AddressName", "Id");
-            //SubGroupWrapper = new ListBoxWrapper<SubGroup>(SubGroupsListBox, groupComparison, "AddressName", "Id");
-            //ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a, b) => a.Name.CompareTo(b.Name), "Name", "Id");
-            //GAWrapper = new ListBoxWrapper<GA>(GAsListBox, (a, b) => a.Address.CompareTo(b.Address), "AddressName", "Id");
-
 
             AddMainGroupIdTextBox_TextChanged(null, null);
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            LoadDatabase();
+        }
 
         private void Save()
         {
@@ -62,14 +61,9 @@ namespace GroupAddress.UI
             Db.SaveChanges();
         }
 
-        private void Load()
+        private void LoadDatabase()
         {
-
-            //Main Groups
-
             MainGroupWrapper.Load(Db.MainGroups.Include(x => x.SubGroups).ThenInclude(x => x.GAs));
-
-            //Item Templates
 
         }
 
@@ -213,12 +207,6 @@ namespace GroupAddress.UI
                     if (!Int32.TryParse(AddMainGroupIdTextBox.Text, out var id)) return (IdValidState.Invalid, -1);
                     if (id < 0 || id >= 32) return (IdValidState.Invalid, -1);
                     return (MainGroupWrapper.BindingList.Any(x => x.SubAddress == id) ? IdValidState.ValidExisting : IdValidState.ValidNew, id);
-                    //case IdType.SubGroup:
-                    //    if (id < 0 || id >= 8) return (IdValidState.Invalid, -1);
-                    //    return (SubGroups.Any(x => x.Id == id) ? IdValidState.ValidExisting : IdValidState.ValidNew, id);
-                    //case IdType.GA:
-                    //    if (id < 0 || id >= 256) return (IdValidState.Invalid, -1);
-                    //    return (GAs.Any(x => x.Id == id) ? IdValidState.ValidExisting : IdValidState.ValidNew, id);
             }
 
             return (IdValidState.Invalid, -1);
@@ -233,18 +221,15 @@ namespace GroupAddress.UI
 
         private void LoadButton_Click(object sender, EventArgs e)
         {
-            Load();
+            LoadDatabase();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
 
         private void AddItemButton_Click(object sender, EventArgs e)
         {
             var addItemForm = new AddItemForm(Db);
             addItemForm.ShowDialog();
         }
+
     }
 }

@@ -33,14 +33,12 @@
             NewItemPreStringTextBox = new TextBox();
             AddItemButton = new Button();
             ItemTemplatesListBox = new ListBox();
-            MainGroupsListBox = new ListBox();
             label1 = new Label();
-            ItemPartTemplatesListBox = new ListBox();
-            label2 = new Label();
             label3 = new Label();
-            ItemPartTemplatesDataGridView = new DataGridView();
+            MainGroupsListBox = new ListBox();
+            label2 = new Label();
+            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)ItemPartTemplatesDataGridView).BeginInit();
             SuspendLayout();
             // 
             // GADataTable
@@ -64,21 +62,21 @@
             GADataTable.RowHeadersVisible = false;
             GADataTable.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             GADataTable.ShowEditingIcon = false;
-            GADataTable.Size = new Size(911, 483);
+            GADataTable.Size = new Size(911, 524);
             GADataTable.TabIndex = 39;
             // 
             // NewItemPreStringTextBox
             // 
-            NewItemPreStringTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            NewItemPreStringTextBox.Location = new Point(831, 537);
+            NewItemPreStringTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            NewItemPreStringTextBox.Location = new Point(12, 275);
             NewItemPreStringTextBox.Name = "NewItemPreStringTextBox";
-            NewItemPreStringTextBox.Size = new Size(254, 23);
+            NewItemPreStringTextBox.Size = new Size(236, 23);
             NewItemPreStringTextBox.TabIndex = 37;
             // 
             // AddItemButton
             // 
-            AddItemButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            AddItemButton.Location = new Point(1091, 537);
+            AddItemButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            AddItemButton.Location = new Point(173, 537);
             AddItemButton.Name = "AddItemButton";
             AddItemButton.Size = new Size(75, 23);
             AddItemButton.TabIndex = 38;
@@ -92,19 +90,9 @@
             ItemTemplatesListBox.ItemHeight = 15;
             ItemTemplatesListBox.Location = new Point(12, 36);
             ItemTemplatesListBox.Name = "ItemTemplatesListBox";
-            ItemTemplatesListBox.Size = new Size(236, 169);
+            ItemTemplatesListBox.Size = new Size(236, 199);
             ItemTemplatesListBox.TabIndex = 36;
             ItemTemplatesListBox.SelectedIndexChanged += ItemTemplatesListBox_SelectedIndexChanged;
-            // 
-            // MainGroupsListBox
-            // 
-            MainGroupsListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            MainGroupsListBox.FormattingEnabled = true;
-            MainGroupsListBox.ItemHeight = 15;
-            MainGroupsListBox.Location = new Point(-250, -128);
-            MainGroupsListBox.Name = "MainGroupsListBox";
-            MainGroupsListBox.Size = new Size(207, 559);
-            MainGroupsListBox.TabIndex = 35;
             // 
             // label1
             // 
@@ -115,25 +103,6 @@
             label1.TabIndex = 40;
             label1.Text = "Templates";
             // 
-            // ItemPartTemplatesListBox
-            // 
-            ItemPartTemplatesListBox.FormattingEnabled = true;
-            ItemPartTemplatesListBox.ItemHeight = 15;
-            ItemPartTemplatesListBox.Location = new Point(12, 248);
-            ItemPartTemplatesListBox.Name = "ItemPartTemplatesListBox";
-            ItemPartTemplatesListBox.Size = new Size(236, 79);
-            ItemPartTemplatesListBox.TabIndex = 36;
-            ItemPartTemplatesListBox.SelectedIndexChanged += ItemPartTemplatesListBox_SelectedIndexChanged;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(12, 219);
-            label2.Name = "label2";
-            label2.Size = new Size(122, 15);
-            label2.TabIndex = 40;
-            label2.Text = "Parts (Hauptgruppen)";
-            // 
             // label3
             // 
             label3.AutoSize = true;
@@ -143,34 +112,53 @@
             label3.TabIndex = 40;
             label3.Text = "Name / Prefix";
             // 
-            // ItemPartTemplatesDataGridView
+            // MainGroupsListBox
             // 
-            ItemPartTemplatesDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            ItemPartTemplatesDataGridView.Location = new Point(12, 359);
-            ItemPartTemplatesDataGridView.Name = "ItemPartTemplatesDataGridView";
-            ItemPartTemplatesDataGridView.Size = new Size(177, 122);
-            ItemPartTemplatesDataGridView.TabIndex = 41;
+            MainGroupsListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            MainGroupsListBox.FormattingEnabled = true;
+            MainGroupsListBox.ItemHeight = 15;
+            MainGroupsListBox.Location = new Point(12, 321);
+            MainGroupsListBox.Name = "MainGroupsListBox";
+            MainGroupsListBox.Size = new Size(236, 214);
+            MainGroupsListBox.TabIndex = 36;
+            MainGroupsListBox.SelectedIndexChanged += MainGroupsListBox_SelectedIndexChanged;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(12, 257);
+            label2.Name = "label2";
+            label2.Size = new Size(125, 15);
+            label2.TabIndex = 40;
+            label2.Text = "Item Name (PreString)";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(12, 301);
+            label4.Name = "label4";
+            label4.Size = new Size(78, 15);
+            label4.TabIndex = 40;
+            label4.Text = "Hauptgruppe";
             // 
             // AddItemForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1177, 572);
-            Controls.Add(ItemPartTemplatesDataGridView);
             Controls.Add(label3);
+            Controls.Add(label4);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(GADataTable);
             Controls.Add(NewItemPreStringTextBox);
             Controls.Add(AddItemButton);
-            Controls.Add(ItemPartTemplatesListBox);
-            Controls.Add(ItemTemplatesListBox);
             Controls.Add(MainGroupsListBox);
+            Controls.Add(ItemTemplatesListBox);
             Name = "AddItemForm";
             Text = "AddItemForm";
             Load += AddItemForm_Load;
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
-            ((System.ComponentModel.ISupportInitialize)ItemPartTemplatesDataGridView).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -181,11 +169,10 @@
         private TextBox NewItemPreStringTextBox;
         private Button AddItemButton;
         private ListBox ItemTemplatesListBox;
-        private ListBox MainGroupsListBox;
         private Label label1;
-        private ListBox ItemPartTemplatesListBox;
-        private Label label2;
         private Label label3;
-        private DataGridView ItemPartTemplatesDataGridView;
+        private ListBox MainGroupsListBox;
+        private Label label2;
+        private Label label4;
     }
 }

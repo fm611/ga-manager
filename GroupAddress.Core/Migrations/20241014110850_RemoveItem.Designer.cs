@@ -2,6 +2,7 @@
 using GroupAddress.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GroupAddress.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241014110850_RemoveItem")]
+    partial class RemoveItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -52,8 +55,11 @@ namespace GroupAddress.Core.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ItemTemplateId")
+                    b.Property<string>("ItemPartTemplateId")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ItemTemplateId")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("SubAddress")
@@ -113,6 +119,9 @@ namespace GroupAddress.Core.Migrations
             modelBuilder.Entity("GroupAddress.Core.ItemTemplate", b =>
                 {
                     b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ItemTemplateId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -207,9 +216,7 @@ namespace GroupAddress.Core.Migrations
                 {
                     b.HasOne("GroupAddress.Core.ItemTemplate", null)
                         .WithMany("GATemplates")
-                        .HasForeignKey("ItemTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ItemTemplateId");
                 });
 
             modelBuilder.Entity("GroupAddress.Core.GATemplatePart", b =>
