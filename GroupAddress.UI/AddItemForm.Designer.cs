@@ -80,6 +80,7 @@ namespace GroupAddress.UI
             NewItemPreStringTextBox.Name = "NewItemPreStringTextBox";
             NewItemPreStringTextBox.Size = new Size(236, 23);
             NewItemPreStringTextBox.TabIndex = 37;
+            NewItemPreStringTextBox.Enter += NewItemPreStringTextBox_Enter;
             // 
             // AddItemButton
             // 
@@ -243,6 +244,7 @@ namespace GroupAddress.UI
             Name = "AddItemForm";
             Text = "AddItemForm";
             Load += AddItemForm_Load;
+            Shown += AddItemForm_Shown;
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
             ResumeLayout(false);
             PerformLayout();

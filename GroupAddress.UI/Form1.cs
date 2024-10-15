@@ -32,6 +32,7 @@ namespace GroupAddress.UI
 
         public MainGroup? SelectedMainGroup { get; set; }
 
+        public AddItemForm AddItemForm { get; set; }
 
 
         public Form1()
@@ -259,16 +260,19 @@ namespace GroupAddress.UI
 
         private void AddItemButton_Click(object sender, EventArgs e)
         {
-            var addItemForm = new AddItemForm(Db);
+            if(AddItemForm == null)
+                AddItemForm = new AddItemForm(Db);
 
-            addItemForm.SelectMainGroup(SelectedMainGroup?.Id);
+            AddItemForm.LoadData();
 
-            addItemForm.ShowDialog();
+            AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);
+
+            AddItemForm.ShowDialog();
 
 
             LoadDatabase();
 
-            MainGroupsListBox.SelectedValue = addItemForm.SelectedMainGroup?.Id;
+            MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
             GADataTable.FirstDisplayedScrollingRowIndex = GADataTable.RowCount - 1;
         }
 

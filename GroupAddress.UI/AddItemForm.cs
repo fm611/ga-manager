@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -24,31 +25,58 @@ namespace GroupAddress.UI
         public MainGroup? SelectedMainGroup { get; set; }
         public string? SelectedMainGroupId { get; set; }
 
+        private string? _lastInsertTemplateId;
+        private string? _lastInsertMainGroupId;
+
+
         public AddItemForm(AppDbContext db)
         {
-
             InitializeComponent();
 
             Db = db;
 
+            LoadData();
+        }
+
+        private void AddItemForm_Shown(object sender, EventArgs e)
+        {
+
+            SelectLastInsert();
+        }
+
+
+        private void AddItemForm_Load(object sender, EventArgs e)
+        {
+        }
+
+        public void LoadData()
+        {
             ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a, b) => a.Name.CompareTo(b.Name), "Name", "Id");
             ItemTemplatesWrapper.Load(Db.ItemTemplates);
 
-            if (ItemTemplatesListBox.Items.Count > 0)
+            if (ItemTemplatesListBox.Items.Count > 0 && ItemTemplatesListBox.SelectedItem == null)
                 ItemTemplatesListBox.SelectedIndex = 0;
 
 
             MainGroupsWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, (a, b) => a.AddressName.CompareTo(b.AddressName), "AddressName", "Id");
             MainGroupsWrapper.Load(Db.MainGroups);
 
-            if (MainGroupsListBox.Items.Count > 0)
+            if (MainGroupsListBox.Items.Count > 0 && MainGroupsListBox.SelectedItem == null)
                 MainGroupsListBox.SelectedIndex = 0;
 
-        }
-        private void AddItemForm_Load(object sender, EventArgs e)
-        {
+
             GADataTable.AutoResizeColumns();
         }
+
+        public void SelectLastInsert()
+        {
+            if (!string.IsNullOrEmpty(_lastInsertMainGroupId)) MainGroupsListBox.SelectedValue = _lastInsertMainGroupId;
+            if (!string.IsNullOrEmpty(_lastInsertTemplateId)) ItemTemplatesListBox.SelectedValue = _lastInsertTemplateId;
+
+            NewItemPreStringTextBox.Focus();
+        }
+
+
 
         public void SelectMainGroup(string? id)
         {
@@ -130,9 +158,13 @@ namespace GroupAddress.UI
             {
                 DialogResult = DialogResult.Abort;
                 return;
-            }                       
+            }
 
-            SelectedMainGroup.AddItem(SelectedItemTemplate, NewItemPreStringTextBox.Text,GetInsertIndex());
+            SelectedMainGroup.AddItem(SelectedItemTemplate, NewItemPreStringTextBox.Text, GetInsertIndex());
+
+            _lastInsertMainGroupId = SelectedMainGroup.Id;
+            _lastInsertTemplateId = SelectedItemTemplate.Id;
+
             DialogResult = DialogResult.OK;
         }
 
@@ -179,5 +211,12 @@ namespace GroupAddress.UI
         {
             BeginInvoke(new Action(() => (sender as TextBox).SelectAll()));
         }
+
+        private void NewItemPreStringTextBox_Enter(object sender, EventArgs e)
+        {
+            BeginInvoke(new Action(() => (sender as TextBox).SelectAll()));
+
+        }
+
     }
 }
