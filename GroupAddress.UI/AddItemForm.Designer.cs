@@ -1,4 +1,6 @@
-﻿namespace GroupAddress.UI
+﻿using System.Windows.Forms;
+
+namespace GroupAddress.UI
 {
     partial class AddItemForm
     {
@@ -38,6 +40,13 @@
             MainGroupsListBox = new ListBox();
             label2 = new Label();
             label4 = new Label();
+            InsertAtRadioButton = new RadioButton();
+            InsertNextFreeRadioButton = new RadioButton();
+            label5 = new Label();
+            InsertAtTextBox = new TextBox();
+            InsertAtNextBlockRadioButton = new RadioButton();
+            NextBlockStartingIndexTextBox = new TextBox();
+            InsertAtNextFreeTextBox = new TextBox();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
             SuspendLayout();
             // 
@@ -47,12 +56,12 @@
             GADataTable.AllowUserToDeleteRows = false;
             GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.Window;
             dataGridViewCellStyle1.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = Color.GreenYellow;
+            dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
             GADataTable.DefaultCellStyle = dataGridViewCellStyle1;
@@ -62,12 +71,11 @@
             GADataTable.RowHeadersVisible = false;
             GADataTable.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             GADataTable.ShowEditingIcon = false;
-            GADataTable.Size = new Size(911, 524);
+            GADataTable.Size = new Size(911, 699);
             GADataTable.TabIndex = 39;
             // 
             // NewItemPreStringTextBox
             // 
-            NewItemPreStringTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             NewItemPreStringTextBox.Location = new Point(12, 275);
             NewItemPreStringTextBox.Name = "NewItemPreStringTextBox";
             NewItemPreStringTextBox.Size = new Size(236, 23);
@@ -76,7 +84,7 @@
             // AddItemButton
             // 
             AddItemButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            AddItemButton.Location = new Point(173, 537);
+            AddItemButton.Location = new Point(173, 712);
             AddItemButton.Name = "AddItemButton";
             AddItemButton.Size = new Size(75, 23);
             AddItemButton.TabIndex = 38;
@@ -119,7 +127,7 @@
             MainGroupsListBox.ItemHeight = 15;
             MainGroupsListBox.Location = new Point(12, 321);
             MainGroupsListBox.Name = "MainGroupsListBox";
-            MainGroupsListBox.Size = new Size(236, 214);
+            MainGroupsListBox.Size = new Size(236, 244);
             MainGroupsListBox.TabIndex = 36;
             MainGroupsListBox.SelectedIndexChanged += MainGroupsListBox_SelectedIndexChanged;
             // 
@@ -141,13 +149,90 @@
             label4.TabIndex = 40;
             label4.Text = "Hauptgruppe";
             // 
+            // InsertAtRadioButton
+            // 
+            InsertAtRadioButton.AutoSize = true;
+            InsertAtRadioButton.Location = new Point(19, 630);
+            InsertAtRadioButton.Name = "InsertAtRadioButton";
+            InsertAtRadioButton.Size = new Size(40, 19);
+            InsertAtRadioButton.TabIndex = 41;
+            InsertAtRadioButton.TabStop = true;
+            InsertAtRadioButton.Text = "At:";
+            InsertAtRadioButton.UseVisualStyleBackColor = true;
+            InsertAtRadioButton.CheckedChanged += InsertAtRadioButton_CheckedChanged;
+            // 
+            // InsertNextFreeRadioButton
+            // 
+            InsertNextFreeRadioButton.AutoSize = true;
+            InsertNextFreeRadioButton.Location = new Point(19, 655);
+            InsertNextFreeRadioButton.Name = "InsertNextFreeRadioButton";
+            InsertNextFreeRadioButton.Size = new Size(53, 19);
+            InsertNextFreeRadioButton.TabIndex = 41;
+            InsertNextFreeRadioButton.TabStop = true;
+            InsertNextFreeRadioButton.Text = "Next:";
+            InsertNextFreeRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(12, 579);
+            label5.Name = "label5";
+            label5.Size = new Size(82, 15);
+            label5.TabIndex = 40;
+            label5.Text = "Insert Position";
+            // 
+            // InsertAtTextBox
+            // 
+            InsertAtTextBox.Location = new Point(134, 626);
+            InsertAtTextBox.Name = "InsertAtTextBox";
+            InsertAtTextBox.ReadOnly = true;
+            InsertAtTextBox.Size = new Size(69, 23);
+            InsertAtTextBox.TabIndex = 42;
+            InsertAtTextBox.Enter += InsertAtTextBox_Enter;
+            // 
+            // InsertAtNextBlockRadioButton
+            // 
+            InsertAtNextBlockRadioButton.AutoSize = true;
+            InsertAtNextBlockRadioButton.Checked = true;
+            InsertAtNextBlockRadioButton.Location = new Point(19, 605);
+            InsertAtNextBlockRadioButton.Name = "InsertAtNextBlockRadioButton";
+            InsertAtNextBlockRadioButton.Size = new Size(85, 19);
+            InsertAtNextBlockRadioButton.TabIndex = 41;
+            InsertAtNextBlockRadioButton.TabStop = true;
+            InsertAtNextBlockRadioButton.Text = "Next Block:";
+            InsertAtNextBlockRadioButton.UseVisualStyleBackColor = true;
+            InsertAtNextBlockRadioButton.CheckedChanged += InsertAtRadioButton_CheckedChanged;
+            // 
+            // NextBlockStartingIndexTextBox
+            // 
+            NextBlockStartingIndexTextBox.Location = new Point(134, 601);
+            NextBlockStartingIndexTextBox.Name = "NextBlockStartingIndexTextBox";
+            NextBlockStartingIndexTextBox.ReadOnly = true;
+            NextBlockStartingIndexTextBox.Size = new Size(69, 23);
+            NextBlockStartingIndexTextBox.TabIndex = 42;
+            // 
+            // InsertAtNextFreeTextBox
+            // 
+            InsertAtNextFreeTextBox.Location = new Point(134, 651);
+            InsertAtNextFreeTextBox.Name = "InsertAtNextFreeTextBox";
+            InsertAtNextFreeTextBox.ReadOnly = true;
+            InsertAtNextFreeTextBox.Size = new Size(69, 23);
+            InsertAtNextFreeTextBox.TabIndex = 42;
+            // 
             // AddItemForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1177, 572);
+            ClientSize = new Size(1177, 747);
+            Controls.Add(NextBlockStartingIndexTextBox);
+            Controls.Add(InsertAtNextFreeTextBox);
+            Controls.Add(InsertAtTextBox);
+            Controls.Add(InsertNextFreeRadioButton);
+            Controls.Add(InsertAtNextBlockRadioButton);
+            Controls.Add(InsertAtRadioButton);
             Controls.Add(label3);
             Controls.Add(label4);
+            Controls.Add(label5);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(GADataTable);
@@ -157,6 +242,7 @@
             Controls.Add(ItemTemplatesListBox);
             Name = "AddItemForm";
             Text = "AddItemForm";
+            Load += AddItemForm_Load;
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -173,5 +259,12 @@
         private ListBox MainGroupsListBox;
         private Label label2;
         private Label label4;
+        private RadioButton InsertAtRadioButton;
+        private RadioButton InsertNextFreeRadioButton;
+        private Label label5;
+        private TextBox InsertAtTextBox;
+        private RadioButton InsertAtNextBlockRadioButton;
+        private TextBox NextBlockStartingIndexTextBox;
+        private TextBox InsertAtNextFreeTextBox;
     }
 }

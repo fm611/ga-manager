@@ -56,10 +56,10 @@ namespace GroupAddress.Core
             string guidBase = "DA6C8DDB-BC59-4805-84C9-E81A3DF7CB";
 
             var templates = new List<MainGroup>() {
-                new MainGroup(1, "Licht allgemein"),
-                new MainGroup(2, "Licht dimmbar"),
-                new MainGroup(3, "Licht TW"),
-                new MainGroup(4, "Licht RGBW #1")
+                new MainGroup(1, "Licht allgemein", 10),
+                new MainGroup(2, "Licht dimmbar", 10),
+                new MainGroup(3, "Licht TW", 10),
+                new MainGroup(4, "Licht RGBW #1", 50)
             };
 
             for (int i = 0; i < templates.Count; i++)

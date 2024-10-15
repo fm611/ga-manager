@@ -32,74 +32,98 @@ namespace GroupAddress.Core
 
     public class MainGroup : Group
     {
+        private int defaultBlockLength = 1;
+
         public List<SubGroup> SubGroups { get; set; } = [];
 
         public List<Item> Items { get; set; } = [];
 
         public List<GA> GAs => Items.SelectMany(x => x.GAs).ToList();
 
-        public int MaxGASubAddress => GAs.Select(x => x.SubAddress).DefaultIfEmpty(0).Max();
+        public int MaxGASubAddress => GAs.Select(x => x.SubAddress).DefaultIfEmpty(-1).Max();
 
         public bool FillGASpaces { get; set; }
         public bool FillGAToEnd { get; set; }
 
-        public int NextItemId { get; private set; } = 0;
 
-        public MainGroup() : base() { }
-        public MainGroup(int id, string name) : base(id, name)
-        {
-
+        public int DefaultBlockLength { get => defaultBlockLength; set
+            {
+                defaultBlockLength = value;
+            }
         }
 
-        public Item AddItem(ItemTemplate template, string gaPrefix, int blockLength=0)
+
+        //public int NextItemId { get; private set; } = 0;
+
+        public MainGroup() : base() 
+        { 
+        }
+        public MainGroup(int id, string name, int defaultBlockLength = 1) : base(id, name)
+        {
+            DefaultBlockLength = defaultBlockLength;
+        }
+
+
+        public Item AddItem(ItemTemplate template, string gaPrefix, int startIndex=-1)
         {
             var newItemPart = template.CreateItemPart(this, gaPrefix);
-            newItemPart.ShiftGA(NextItemId);
 
-            var maxId = newItemPart.GAs.Select(x => x.SubAddress).Max();
-            var newItemBlockLength = blockLength != 0 ? blockLength : maxId+1;
-            NextItemId += newItemBlockLength;
+            startIndex = startIndex <= MaxGASubAddress ? MaxGASubAddress + 1 : startIndex;
+            newItemPart.ShiftGA(startIndex);
+
+            //var maxId = newItemPart.GAs.Select(x => x.SubAddress).Max();
+            //var newItemBlockLength = blockLength != 0 ? blockLength : maxId+1;
+            //NextItemId += newItemBlockLength;
 
             Items.Add(newItemPart);
             return newItemPart;
         }
 
-
-
-        public List<GA> GetAllGAs() 
+        public int GetNextStartingBlockIndex()
         {
-            var itemGAs = Items.SelectMany(x => x.GAs);
-            var subGroups = itemGAs.GroupBy(x => x.SubGroup);
+            var blockCount = (double)(MaxGASubAddress + 1) / defaultBlockLength;
+            var ceiled = (int)Math.Ceiling(blockCount);
+            var next = ceiled * defaultBlockLength;
 
-            var outputGAs = new List<GA>(itemGAs);
-
-            if (FillGASpaces)
-            {
-                var fillBlockerGAs = new List<GA>();
-                foreach (var group in subGroups)
-                {
-                    var maxGroupId = NextItemId;
-                    var freeIds = Enumerable.Range(0, maxGroupId).Where(x => group.All(ga => ga.SubAddress != x));
-                    fillBlockerGAs.AddRange(freeIds.Select(id => new GA(group.Key, id, "Blocker")));
-                }
-                outputGAs.AddRange(fillBlockerGAs);
-            }
-
-            if (FillGAToEnd)
-            {
-                var fillToEndBlockerGAs = new List<GA>();
-                foreach (var group in subGroups)
-                {
-                    var maxGroupId = 256;
-                    var freeIds = Enumerable.Range(0, maxGroupId).Where(x => group.All(ga => ga.SubAddress != x));
-                    fillToEndBlockerGAs.AddRange(freeIds.Select(id => new GA(group.Key, id, "Blocker")));
-                }
-                outputGAs.AddRange(fillToEndBlockerGAs);
-            }
-
-            return [.. outputGAs.OrderBy(x => x.SubGroup.MainGroup.SubAddress).ThenBy(x => x.SubGroup.SubAddress).ThenBy(x => x.SubAddress)];
-
+            //var nextBlockIndex = Convert.ToInt32(Math.Ceiling((double)(MaxGASubAddress + 1) / defaultBlockLength) * defaultBlockLength);
+            return next;
         }
+
+
+        //public List<GA> GetAllGAs() 
+        //{
+        //    var itemGAs = Items.SelectMany(x => x.GAs);
+        //    var subGroups = itemGAs.GroupBy(x => x.SubGroup);
+
+        //    var outputGAs = new List<GA>(itemGAs);
+
+        //    if (FillGASpaces)
+        //    {
+        //        var fillBlockerGAs = new List<GA>();
+        //        foreach (var group in subGroups)
+        //        {
+        //            var maxGroupId = NextItemId;
+        //            var freeIds = Enumerable.Range(0, maxGroupId).Where(x => group.All(ga => ga.SubAddress != x));
+        //            fillBlockerGAs.AddRange(freeIds.Select(id => new GA(group.Key, id, "Blocker")));
+        //        }
+        //        outputGAs.AddRange(fillBlockerGAs);
+        //    }
+
+        //    if (FillGAToEnd)
+        //    {
+        //        var fillToEndBlockerGAs = new List<GA>();
+        //        foreach (var group in subGroups)
+        //        {
+        //            var maxGroupId = 256;
+        //            var freeIds = Enumerable.Range(0, maxGroupId).Where(x => group.All(ga => ga.SubAddress != x));
+        //            fillToEndBlockerGAs.AddRange(freeIds.Select(id => new GA(group.Key, id, "Blocker")));
+        //        }
+        //        outputGAs.AddRange(fillToEndBlockerGAs);
+        //    }
+
+        //    return [.. outputGAs.OrderBy(x => x.SubGroup.MainGroup.SubAddress).ThenBy(x => x.SubGroup.SubAddress).ThenBy(x => x.SubAddress)];
+
+        //}
 
         public SubGroup GetOrCreateSubGroup(SubGroupTemplate subGroupTemplate)
         {
@@ -113,24 +137,24 @@ namespace GroupAddress.Core
             return SubGroups.Where(x => x.SubAddress == subGroupTemplate.SubAddress).FirstOrDefault();
         }
 
-        public string GetCSVString()
-        {
-            var gas = GetAllGAs();
+        //public string GetCSVString()
+        //{
+        //    var gas = GetAllGAs();
 
-            var grouped = gas.GroupBy(x => x.SubGroup);
+        //    var grouped = gas.GroupBy(x => x.SubGroup);
 
-            var outputStr = string.Join(";", new string[] { Name, "", "", SubAddress.ToString(), "", "" })+"\n";
+        //    var outputStr = string.Join(";", new string[] { Name, "", "", SubAddress.ToString(), "", "" })+"\n";
 
-            foreach (var subGroup in grouped)
-            {
-                var ordered = subGroup.OrderBy(x => x.SubAddress).ToList();
+        //    foreach (var subGroup in grouped)
+        //    {
+        //        var ordered = subGroup.OrderBy(x => x.SubAddress).ToList();
 
-                outputStr += string.Join(";", new string[] { "", subGroup.Key.Name, "", SubAddress.ToString(), subGroup.Key.SubAddress.ToString(), "" }) + "\n";
-                outputStr += string.Join("\n",ordered.Select(g => string.Join(";", new string[] { "", "", g.Name, SubAddress.ToString(), subGroup.Key.SubAddress.ToString(), g.SubAddress.ToString() })));
-                outputStr += "\n";
-            }
-            return outputStr;            
-        }
+        //        outputStr += string.Join(";", new string[] { "", subGroup.Key.Name, "", SubAddress.ToString(), subGroup.Key.SubAddress.ToString(), "" }) + "\n";
+        //        outputStr += string.Join("\n",ordered.Select(g => string.Join(";", new string[] { "", "", g.Name, SubAddress.ToString(), subGroup.Key.SubAddress.ToString(), g.SubAddress.ToString() })));
+        //        outputStr += "\n";
+        //    }
+        //    return outputStr;            
+        //}
 
         public override string Address  => SubAddress.ToString(); 
 
@@ -139,48 +163,16 @@ namespace GroupAddress.Core
             return Items.Count;
         }
 
-        public string AddressNameMaxGA => AddressName + " (" + (MaxGASubAddress == 0 ? "-" : MaxGASubAddress-1) + ")";
+        public string ListBoxString => AddressName + " ("+DefaultBlockLength + " / " + (MaxGASubAddress == -1 ? "-" : MaxGASubAddress) + ")";
 
         
     }
 
-    public class SubGroupTemplatePair(SubGroupTemplate setGroup, SubGroupTemplate getGroup)
-    {
-        public SubGroupTemplate GetGroup { get; set; } = getGroup;
-        public SubGroupTemplate SetGroup { get; set; } = setGroup;
-
-    }
-
-    public class SubGroupTemplate
-    {
-        public static SubGroupTemplate Switch = new SubGroupTemplate(1, "Switch");
-        public static SubGroupTemplate SwitchStatus = new SubGroupTemplate(2, "Switch Status");
-        public static SubGroupTemplate SetValue = new SubGroupTemplate(3, "Set Value");
-        public static SubGroupTemplate GetValue = new SubGroupTemplate(4, "Get Value");
-        public static SubGroupTemplate SetMisc = new SubGroupTemplate(5, "Set Misc");
-        public static SubGroupTemplate GetMisc = new SubGroupTemplate(6, "Get Misc");
-
-        public static SubGroupTemplatePair SwitchPair = new SubGroupTemplatePair(Switch, SwitchStatus);
-        public static SubGroupTemplatePair ValuePair = new SubGroupTemplatePair(SetValue, GetValue);
-        public static SubGroupTemplatePair MiscPair = new SubGroupTemplatePair(SetMisc, GetMisc);
 
 
 
-        public static List<SubGroupTemplate> DefaultLightTemplates = [Switch, SwitchStatus, SetValue, GetValue, SetMisc, GetMisc];
-
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public int SubAddress { get; set; }
-
-        public SubGroupTemplate() => Id = Guid.NewGuid().ToString();
 
 
-        public SubGroupTemplate(int address, string name) : this()
-        {
-            SubAddress = address;
-            Name = name;
-        }
-    }
 
 
     public class SubGroup : Group

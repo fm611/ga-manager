@@ -44,7 +44,7 @@ namespace GroupAddress.UI
 
             Comparison<Group> groupComparison = (a, b) => a.AddressName.CompareTo(b.AddressName);
 
-            MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, groupComparison, "AddressNameMaxGA", "Id");
+            MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, groupComparison, nameof(MainGroup.ListBoxString), "Id");
 
             AddMainGroupIdTextBox_TextChanged(null, null);
         }
@@ -83,7 +83,14 @@ namespace GroupAddress.UI
                 return;
             }
 
-            var newMainGroup = new MainGroup(addresse, AddMainGroupNameTextBox.Text);
+            if (!int.TryParse(AddMainGroupDefaultBlockLengthTextBox.Text, out var defaultBlockLength))
+            {
+                StatusInfoLabel.Text = "Blocklänge ungültig";
+                return;
+            }
+
+
+            var newMainGroup = new MainGroup(addresse, AddMainGroupNameTextBox.Text, defaultBlockLength);
             MainGroupWrapper.BindingList.Add(newMainGroup);
 
             MainGroupsListBox.SelectedValue = newMainGroup.Id;
@@ -101,6 +108,7 @@ namespace GroupAddress.UI
 
             AddMainGroupIdTextBox.Text = SelectedMainGroup?.SubAddress.ToString();
             AddMainGroupNameTextBox.Text = SelectedMainGroup?.Name;
+            AddMainGroupDefaultBlockLengthTextBox.Text = SelectedMainGroup?.DefaultBlockLength.ToString();
 
             FillGADataTable();
         }
@@ -140,9 +148,19 @@ namespace GroupAddress.UI
         private void EditMainGroupButton_Click(object sender, EventArgs e)
         {
             var (state, addresse) = ValidateSubAddress(GroupType.MainGroup);
+            if (state != IdValidState.ValidExisting)
+            {
+                StatusInfoLabel.Text = "Id ungültig";
+                return;
+            }
 
+            if (!int.TryParse(AddMainGroupDefaultBlockLengthTextBox.Text, out var defaultBlockLength))
+            {
+                StatusInfoLabel.Text = "Blocklänge ungültig";
+                return;
+            }
 
-            var mGroup = MainGroupWrapper.BindingList.FirstOrDefault(g => g.Id == (string)MainGroupsListBox.SelectedValue);
+            var mGroup = MainGroupWrapper.BindingList.FirstOrDefault(g => g.Id == (string?)MainGroupsListBox.SelectedValue);
 
             if (mGroup == null)
             {
@@ -152,6 +170,7 @@ namespace GroupAddress.UI
 
             mGroup.SubAddress = addresse;
             mGroup.Name = AddMainGroupNameTextBox.Text;
+            mGroup.DefaultBlockLength = defaultBlockLength;
 
 
             MainGroupWrapper.SortAndReset();
@@ -201,7 +220,7 @@ namespace GroupAddress.UI
                 table.Columns.Add(new DataColumn("#"));
                 table.Columns.AddRange(cols);
 
-                for (int i = 0; i < SelectedMainGroup.MaxGASubAddress; i++)
+                for (int i = 0; i <= SelectedMainGroup.MaxGASubAddress; i++)
                 {
                     var newRow = table.NewRow();
                     newRow[0] = i;
