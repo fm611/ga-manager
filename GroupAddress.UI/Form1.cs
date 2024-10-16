@@ -269,7 +269,6 @@ namespace GroupAddress.UI
 
             AddItemForm.ShowDialog();
 
-
             LoadDatabase();
 
             MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;

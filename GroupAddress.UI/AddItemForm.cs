@@ -193,7 +193,6 @@ namespace GroupAddress.UI
                 InsertAtTextBox.Text = SelectedMainGroup.GetNextStartingBlockIndex().ToString();
                 InsertAtNextFreeTextBox.Text = (SelectedMainGroup.MaxGASubAddress + 1).ToString();
             }
-
         }
 
         private void InsertAtRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -206,7 +205,6 @@ namespace GroupAddress.UI
             }
         }
 
-
         private void InsertAtTextBox_Enter(object sender, EventArgs e)
         {
             BeginInvoke(new Action(() => (sender as TextBox).SelectAll()));
@@ -218,5 +216,12 @@ namespace GroupAddress.UI
 
         }
 
+        private void NewItemPreStringTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyValue == (char)Keys.Return)
+            {
+                AddItemButton_Click(null, null);
+            }
+        }
     }
 }

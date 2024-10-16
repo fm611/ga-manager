@@ -81,6 +81,7 @@ namespace GroupAddress.UI
             NewItemPreStringTextBox.Size = new Size(236, 23);
             NewItemPreStringTextBox.TabIndex = 37;
             NewItemPreStringTextBox.Enter += NewItemPreStringTextBox_Enter;
+            NewItemPreStringTextBox.KeyUp += NewItemPreStringTextBox_KeyUp;
             // 
             // AddItemButton
             // 
