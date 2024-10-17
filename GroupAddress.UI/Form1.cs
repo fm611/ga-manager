@@ -228,16 +228,14 @@ namespace GroupAddress.UI
                     .ToArray();
 
 
-                table.Columns.Add(new DataColumn("#"));
                 table.Columns.AddRange(cols);
 
                 for (int i = 0; i < 256; i++)
                 {
                     var newRow = table.NewRow();
-                    newRow[0] = i;
                     for (int j = 0; j < 8; j++)
                     {
-                        newRow[j + 1] = SelectedMainGroup
+                        newRow[j] = SelectedMainGroup
                             .SubGroups
                             .FirstOrDefault(x => x.SubAddress == j)?
                             .GAs
@@ -247,13 +245,8 @@ namespace GroupAddress.UI
                     table.Rows.Add(newRow);
                 }
             }
-            //GADataTable.DataSource = null;
             GADataTable.DataSource = table;
-            if (GADataTable.Columns.Count > 0)
-            {
-                GADataTable.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                GADataTable.Columns[0].DefaultCellStyle.BackColor = Color.LightGray;
-            }
+
             GADataTable.AutoResizeColumns();
         }
 
@@ -284,7 +277,6 @@ namespace GroupAddress.UI
                 LoadDatabase();
 
                 MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
-                //GADataTable.FirstDisplayedScrollingRowIndex = GADataTable.RowCount - 1;
                 GADataTable.FirstDisplayedScrollingRowIndex = AddItemForm.LastInsertedItem.MinGaAddress;
 
             }
@@ -300,9 +292,11 @@ namespace GroupAddress.UI
             {
                 var ga = SelectedMainGroup
                             .SubGroups
-                            .FirstOrDefault(x => x.SubAddress == currCell.ColumnIndex - 1)?
+                            .FirstOrDefault(x => x.SubAddress == currCell.ColumnIndex)?
                             .GAs
                             .FirstOrDefault(x => x.SubAddress == currCell.RowIndex);
+
+                if (ga == null) return;
                 currCell.Value = ga.Name;
             }
         }
@@ -315,7 +309,7 @@ namespace GroupAddress.UI
 
             if (!string.IsNullOrEmpty(currCell.Value as string))
             {
-                var subGroupAddress = e.ColumnIndex - 1;
+                var subGroupAddress = e.ColumnIndex;
 
                 var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == subGroupAddress);
 
@@ -356,7 +350,7 @@ namespace GroupAddress.UI
         {
             if (SelectedMainGroup == null) return;
 
-            var subGroupAddress = e.ColumnIndex - 1;
+            var subGroupAddress = e.ColumnIndex;
 
             var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == subGroupAddress);
 
@@ -396,20 +390,22 @@ namespace GroupAddress.UI
 
             if (e.KeyValue == (char)Keys.Delete)
             {
+                var selectedCells = GADataTable
+                    .SelectedCells
+                    .Cast<DataGridViewCell>()
+                    .Select(x => new { SubGroupAddress = x.ColumnIndex, GAAddress = x.RowIndex });
+
+                var gas = SelectedMainGroup
+                    .GAs
+                    .Where(x => selectedCells
+                        .Contains(new { SubGroupAddress = x.SubGroup.SubAddress, GAAddress = x.SubAddress }))
+                    .GroupBy(x => x.SubGroup).ToList();
+
+                if (gas.Count == 0) return;
+
                 var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (res == DialogResult.Yes)
                 {
-                    var selectedCells = GADataTable
-                        .SelectedCells
-                        .Cast<DataGridViewCell>()
-                        .Select(x => new { SubGroupAddress = x.ColumnIndex - 1, GAAddress = x.RowIndex }); ;
-
-                    var gas = SelectedMainGroup
-                        .GAs
-                        .Where(x => selectedCells
-                            .Contains(new { SubGroupAddress = x.SubGroup.SubAddress, GAAddress = x.SubAddress }))
-                        .GroupBy(x => x.SubGroup).ToList();
-
                     gas.ForEach(x =>
                         x.ToList().ForEach(ga =>
                             SelectedMainGroup
@@ -418,7 +414,6 @@ namespace GroupAddress.UI
 
                     LoadDatabase();
                 }
-
             }
 
         }
@@ -433,18 +428,18 @@ namespace GroupAddress.UI
 
         private void GADataTable_KeyDown(object sender, KeyEventArgs e)
         {
-            if(SelectedMainGroup == null) return;
+            if (SelectedMainGroup == null) return;
 
             var currCell = GADataTable.CurrentCell;
-            if(currCell == null) return;
+            if (currCell == null) return;
 
             if (e.KeyData == (Keys.Control | Keys.C) && GADataTable.SelectedCells.Count == 1)
             {
                 var subGroup = SelectedMainGroup
                     .SubGroups
-                    .FirstOrDefault(x => x.SubAddress == currCell.ColumnIndex - 1);
+                    .FirstOrDefault(x => x.SubAddress == currCell.ColumnIndex);
 
-                if(subGroup == null) return;
+                if (subGroup == null) return;
 
                 var ga = subGroup
                     .GAs
@@ -461,11 +456,119 @@ namespace GroupAddress.UI
                 currCell.Value = Clipboard.GetText();
 
                 GADataTable_CellEndEdit(GADataTable, new DataGridViewCellEventArgs(currCell.ColumnIndex, currCell.RowIndex));
-                              
+
 
                 e.Handled = true;
             }
+        }
 
+        private void AddRowButton_Click(object sender, EventArgs e)
+        {
+            if (SelectedMainGroup == null) return;
+            if (!int.TryParse(AddRowNumTextBox.Text, out var numRows)) return;
+
+            var selectedCells = GADataTable
+                .SelectedCells
+                .Cast<DataGridViewCell>()
+                .Select(x => new { Row = x.RowIndex, Column = x.ColumnIndex })
+                .ToList();
+
+
+            var colMinRow = selectedCells
+                .GroupBy(x => x.Column)
+                .Select(x => new { SubGroupAddress = x.Key, MinRow = x.Min(y => y.Row) }).ToList();
+
+            foreach (var col in colMinRow)
+            {
+                var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == col.SubGroupAddress);
+                if (subGroup == null) continue;
+
+                var gas = subGroup.GAs.Where(x => x.SubAddress >= col.MinRow);
+
+                foreach (var g in gas)
+                {
+                    g.SubAddress += numRows;
+                }
+            }
+
+            LoadDatabase();
+
+            GADataTable.ClearSelection();
+
+            foreach (var cell in colMinRow)
+            {
+                GADataTable.Rows[cell.MinRow].Cells[cell.SubGroupAddress].Selected = true;
+            }
+        }
+
+        private void AddRowNumTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar)) e.Handled = true;
+        }
+
+        private void DeleteCellsButton_Click(object sender, EventArgs e)
+        {
+            if (SelectedMainGroup == null) return;
+
+            var selectedCells = GADataTable
+                .SelectedCells
+                .Cast<DataGridViewCell>()
+                .Select(x => new { SubGroupAddress = x.ColumnIndex, GAAddress = x.RowIndex }).ToList();
+
+            var gasDelete = SelectedMainGroup
+                .GAs
+                .Where(x => selectedCells
+                    .Contains(new { SubGroupAddress = x.SubGroup.SubAddress, GAAddress = x.SubAddress }))
+                .GroupBy(x => x.SubGroup).ToList();
+            if (gasDelete.Count > 0)
+            {
+                var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (res == DialogResult.Yes)
+                {
+                    gasDelete.ForEach(x =>
+                        x.ToList().ForEach(ga =>
+                            SelectedMainGroup
+                                .SubGroups
+                                .First(sub => sub.Id == x.Key.Id).GAs.Remove(ga)));
+                }
+            }
+
+            foreach (var cell in selectedCells)
+            {
+                var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == cell.SubGroupAddress);
+                if (subGroup == null) continue;
+
+                var gasMoveUp = subGroup.GAs.Where(x => x.SubAddress > cell.GAAddress);
+
+                gasMoveUp.ToList().ForEach(x => x.SubAddress--);
+            }
+
+            LoadDatabase();
+
+
+            GADataTable.ClearSelection();
+
+            foreach (var cell in selectedCells)
+            {
+                GADataTable.Rows[cell.GAAddress].Cells[cell.SubGroupAddress].Selected = true;
+            }
+
+        }
+
+        private void GADataTable_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            var grid = sender as DataGridView;
+            var rowIdx = (e.RowIndex + 1).ToString();
+
+            var centerFormat = new StringFormat()
+            {
+                // right alignment might actually make more sense for numbers
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
+            var headerBounds = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, grid.RowHeadersWidth, e.RowBounds.Height);
+            e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);
 
         }
     }

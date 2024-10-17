@@ -48,6 +48,11 @@
             toolStripButton3 = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
             AddItemButton = new ToolStripButton();
+            toolStripSeparator2 = new ToolStripSeparator();
+            AddRowNumTextBox = new ToolStripTextBox();
+            AddRowButton = new ToolStripButton();
+            toolStripSeparator3 = new ToolStripSeparator();
+            DeleteCellsButton = new ToolStripButton();
             AddMainGroupDefaultBlockLengthTextBox = new TextBox();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
@@ -170,8 +175,6 @@
             GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(266, 67);
             GADataTable.Name = "GADataTable";
-            GADataTable.RowHeadersVisible = false;
-            GADataTable.SelectionMode = DataGridViewSelectionMode.CellSelect;
             GADataTable.ShowEditingIcon = false;
             GADataTable.Size = new Size(1046, 484);
             GADataTable.TabIndex = 34;
@@ -179,6 +182,7 @@
             GADataTable.CellEndEdit += GADataTable_CellEndEdit;
             GADataTable.ColumnAdded += GADataTable_ColumnAdded;
             GADataTable.ColumnHeaderMouseDoubleClick += GADataTable_ColumnHeaderMouseDoubleClick;
+            GADataTable.RowPostPaint += GADataTable_RowPostPaint;
             GADataTable.Scroll += GADataTable_Scroll;
             GADataTable.KeyDown += GADataTable_KeyDown;
             GADataTable.KeyUp += GADataTable_KeyUp;
@@ -189,7 +193,7 @@
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton3, toolStripSeparator1, AddItemButton });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton3, toolStripSeparator1, AddItemButton, toolStripSeparator2, AddRowNumTextBox, AddRowButton, toolStripSeparator3, DeleteCellsButton });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(1324, 25);
@@ -231,6 +235,43 @@
             AddItemButton.Size = new Size(60, 22);
             AddItemButton.Text = "Add Item";
             AddItemButton.Click += AddItemButton_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(6, 25);
+            // 
+            // AddRowNumTextBox
+            // 
+            AddRowNumTextBox.Name = "AddRowNumTextBox";
+            AddRowNumTextBox.Size = new Size(50, 25);
+            AddRowNumTextBox.Text = "1";
+            AddRowNumTextBox.KeyPress += AddRowNumTextBox_KeyPress;
+            // 
+            // AddRowButton
+            // 
+            AddRowButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            AddRowButton.Image = (Image)resources.GetObject("AddRowButton.Image");
+            AddRowButton.ImageTransparentColor = Color.Magenta;
+            AddRowButton.Name = "AddRowButton";
+            AddRowButton.Size = new Size(23, 22);
+            AddRowButton.Text = "Zeile einfügen";
+            AddRowButton.Click += AddRowButton_Click;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 25);
+            // 
+            // DeleteCellsButton
+            // 
+            DeleteCellsButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            DeleteCellsButton.Image = (Image)resources.GetObject("DeleteCellsButton.Image");
+            DeleteCellsButton.ImageTransparentColor = Color.Magenta;
+            DeleteCellsButton.Name = "DeleteCellsButton";
+            DeleteCellsButton.Size = new Size(23, 22);
+            DeleteCellsButton.Text = "Zellen löschen";
+            DeleteCellsButton.Click += DeleteCellsButton_Click;
             // 
             // AddMainGroupDefaultBlockLengthTextBox
             // 
@@ -298,5 +339,10 @@
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripButton AddItemButton;
         private TextBox AddMainGroupDefaultBlockLengthTextBox;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripTextBox AddRowNumTextBox;
+        private ToolStripButton AddRowButton;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripButton DeleteCellsButton;
     }
 }
