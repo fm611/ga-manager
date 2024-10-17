@@ -69,10 +69,11 @@ namespace GroupAddress.UI
             GADataTable.Name = "GADataTable";
             GADataTable.ReadOnly = true;
             GADataTable.RowHeadersVisible = false;
-            GADataTable.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            GADataTable.SelectionMode = DataGridViewSelectionMode.CellSelect;
             GADataTable.ShowEditingIcon = false;
             GADataTable.Size = new Size(911, 699);
             GADataTable.TabIndex = 39;
+            GADataTable.ColumnAdded += GADataTable_ColumnAdded;
             // 
             // NewItemPreStringTextBox
             // 

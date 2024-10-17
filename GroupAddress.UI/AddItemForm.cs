@@ -28,6 +28,8 @@ namespace GroupAddress.UI
         private string? _lastInsertTemplateId;
         private string? _lastInsertMainGroupId;
 
+        public Item LastInsertedItem { get; set; }
+
 
         public AddItemForm(AppDbContext db)
         {
@@ -51,15 +53,25 @@ namespace GroupAddress.UI
 
         public void LoadData()
         {
-            ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(ItemTemplatesListBox, (a, b) => a.Name.CompareTo(b.Name), "Name", "Id");
-            ItemTemplatesWrapper.Load(Db.ItemTemplates);
+            ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(
+                ItemTemplatesListBox, 
+                (a, b) => a.Name.CompareTo(b.Name), 
+                nameof(ItemTemplate.Name),
+                nameof(ItemTemplate.Id),
+                () => Db.ItemTemplates);
+            ItemTemplatesWrapper.Load();
 
             if (ItemTemplatesListBox.Items.Count > 0 && ItemTemplatesListBox.SelectedItem == null)
                 ItemTemplatesListBox.SelectedIndex = 0;
 
 
-            MainGroupsWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, (a, b) => a.AddressName.CompareTo(b.AddressName), "AddressName", "Id");
-            MainGroupsWrapper.Load(Db.MainGroups);
+            MainGroupsWrapper = new ListBoxWrapper<MainGroup>(
+                MainGroupsListBox, 
+                (a, b) => a.AddressName.CompareTo(b.AddressName), 
+                nameof(MainGroup.AddressName),
+                nameof(MainGroup.Id),
+                () => Db.MainGroups);
+            MainGroupsWrapper.Load();
 
             if (MainGroupsListBox.Items.Count > 0 && MainGroupsListBox.SelectedItem == null)
                 MainGroupsListBox.SelectedIndex = 0;
@@ -160,7 +172,7 @@ namespace GroupAddress.UI
                 return;
             }
 
-            SelectedMainGroup.AddItem(SelectedItemTemplate, NewItemPreStringTextBox.Text, GetInsertIndex());
+            LastInsertedItem = SelectedMainGroup.AddItem(SelectedItemTemplate, NewItemPreStringTextBox.Text, GetInsertIndex());
 
             _lastInsertMainGroupId = SelectedMainGroup.Id;
             _lastInsertTemplateId = SelectedItemTemplate.Id;
@@ -222,6 +234,11 @@ namespace GroupAddress.UI
             {
                 AddItemButton_Click(null, null);
             }
+        }
+
+        private void GADataTable_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
+        {
+            ((DataGridView)sender).Columns[e.Column.Index].SortMode = DataGridViewColumnSortMode.NotSortable;
         }
     }
 }

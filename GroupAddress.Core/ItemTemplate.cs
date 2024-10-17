@@ -107,18 +107,18 @@ namespace GroupAddress.Core
 
 
 
-        public Item CreateItemPart(MainGroup mGroup, string gaPrefix)
+        public Item CreateItem(MainGroup mGroup, string gaPrefix)
         {
-            var itemPart = new Item(Name,mGroup);
+            var item = new Item(Name,mGroup);
 
             var tempGAs = GATemplates.SelectMany(x => x.CreateGA(mGroup, gaPrefix));
 
-            itemPart.GAs = [.. GATemplates
+            item.GAs = [.. GATemplates
                 .SelectMany(x => x.CreateGA(mGroup, gaPrefix))
                 .OrderBy(x => x.SubGroup.MainGroup.SubAddress)
                 .ThenBy(x => x.SubGroup.SubAddress)
                 .ThenBy(x => x.SubAddress)];
-            return itemPart;
+            return item;
         }
 
     }

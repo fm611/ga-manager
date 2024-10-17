@@ -31,8 +31,12 @@ namespace GroupAddress.UI
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
 
         public MainGroup? SelectedMainGroup { get; set; }
+        public string? SelectedMainGroupId { get; set; }
 
         public AddItemForm AddItemForm { get; set; }
+
+        public int CurrentGARowScrollIndex { get; set; }
+
 
 
         public Form1()
@@ -45,7 +49,15 @@ namespace GroupAddress.UI
 
             Comparison<Group> groupComparison = (a, b) => a.AddressName.CompareTo(b.AddressName);
 
-            MainGroupWrapper = new ListBoxWrapper<MainGroup>(MainGroupsListBox, groupComparison, nameof(MainGroup.ListBoxString), "Id");
+            MainGroupWrapper = new ListBoxWrapper<MainGroup>(
+                MainGroupsListBox,
+                groupComparison,
+                nameof(MainGroup.ListBoxString),
+                "Id",
+                () => Db.MainGroups
+                .Include(x => x.SubGroups)
+                .ThenInclude(x => x.GAs)
+                .Include(x => x.Items));
 
             AddMainGroupIdTextBox_TextChanged(null, null);
         }
@@ -65,11 +77,9 @@ namespace GroupAddress.UI
 
         private void LoadDatabase()
         {
-            MainGroupWrapper.Load(Db.MainGroups
-                .Include(x => x.SubGroups)
-                .ThenInclude(x => x.GAs)
-                .Include(x => x.Items));
+            MainGroupWrapper.Load();
 
+            GADataTable.FirstDisplayedScrollingRowIndex = CurrentGARowScrollIndex;
         }
 
 
@@ -106,6 +116,7 @@ namespace GroupAddress.UI
         {
 
             SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
+            SelectedMainGroupId = (string?)MainGroupsListBox.SelectedValue;
 
             AddMainGroupIdTextBox.Text = SelectedMainGroup?.SubAddress.ToString();
             AddMainGroupNameTextBox.Text = SelectedMainGroup?.Name;
@@ -113,7 +124,6 @@ namespace GroupAddress.UI
 
             FillGADataTable();
         }
-
 
         private void AddMainGroupIdTextBox_TextChanged(object sender, EventArgs e)
         {
@@ -221,13 +231,13 @@ namespace GroupAddress.UI
                 table.Columns.Add(new DataColumn("#"));
                 table.Columns.AddRange(cols);
 
-                for (int i = 0; i <= SelectedMainGroup.MaxGASubAddress; i++)
+                for (int i = 0; i < 256; i++)
                 {
                     var newRow = table.NewRow();
                     newRow[0] = i;
                     for (int j = 0; j < 8; j++)
                     {
-                        newRow[j+1] = SelectedMainGroup
+                        newRow[j + 1] = SelectedMainGroup
                             .SubGroups
                             .FirstOrDefault(x => x.SubAddress == j)?
                             .GAs
@@ -237,7 +247,7 @@ namespace GroupAddress.UI
                     table.Rows.Add(newRow);
                 }
             }
-
+            //GADataTable.DataSource = null;
             GADataTable.DataSource = table;
             if (GADataTable.Columns.Count > 0)
             {
@@ -260,7 +270,7 @@ namespace GroupAddress.UI
 
         private void AddItemButton_Click(object sender, EventArgs e)
         {
-            if(AddItemForm == null)
+            if (AddItemForm == null)
                 AddItemForm = new AddItemForm(Db);
 
             AddItemForm.LoadData();
@@ -269,11 +279,194 @@ namespace GroupAddress.UI
 
             AddItemForm.ShowDialog();
 
-            LoadDatabase();
+            if (AddItemForm.DialogResult == DialogResult.OK)
+            {
+                LoadDatabase();
 
-            MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
-            GADataTable.FirstDisplayedScrollingRowIndex = GADataTable.RowCount - 1;
+                MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
+                //GADataTable.FirstDisplayedScrollingRowIndex = GADataTable.RowCount - 1;
+                GADataTable.FirstDisplayedScrollingRowIndex = AddItemForm.LastInsertedItem.MinGaAddress;
+
+            }
         }
 
+        private void GADataTable_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            if (SelectedMainGroup == null) return;
+
+            var currCell = ((DataGridView)sender).CurrentCell;
+
+            if (!string.IsNullOrEmpty(currCell.Value as string))
+            {
+                var ga = SelectedMainGroup
+                            .SubGroups
+                            .FirstOrDefault(x => x.SubAddress == currCell.ColumnIndex - 1)?
+                            .GAs
+                            .FirstOrDefault(x => x.SubAddress == currCell.RowIndex);
+                currCell.Value = ga.Name;
+            }
+        }
+
+        private void GADataTable_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if (SelectedMainGroup == null) return;
+
+            var currCell = ((DataGridView)sender).CurrentCell;
+
+            if (!string.IsNullOrEmpty(currCell.Value as string))
+            {
+                var subGroupAddress = e.ColumnIndex - 1;
+
+                var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == subGroupAddress);
+
+                if (subGroup == null)
+                {
+                    var editSubGroupForm = new EditSubGroupForm("Neue Mittelgruppe");
+                    editSubGroupForm.ShowDialog();
+
+                    if (editSubGroupForm.DialogResult == DialogResult.OK)
+                    {
+                        subGroup = SubGroup.Create(subGroupAddress, editSubGroupForm.SubGroupName, SelectedMainGroup);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                var ga = subGroup
+                            .GAs
+                            .FirstOrDefault(x => x.SubAddress == currCell.RowIndex);
+
+                // new GA
+                if (ga == null)
+                    new GA(subGroup, currCell.RowIndex, (string)currCell.Value);
+                else
+                    ga.Name = (string)currCell.Value;
+            }
+
+            this.BeginInvoke(new MethodInvoker(() =>
+            {
+                LoadDatabase();
+            }));
+
+        }
+
+        private void GADataTable_ColumnHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (SelectedMainGroup == null) return;
+
+            var subGroupAddress = e.ColumnIndex - 1;
+
+            var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == subGroupAddress);
+
+            if (subGroup == null)
+            {
+                var editSubGroupForm = new EditSubGroupForm("Neue Mittelgruppe");
+                editSubGroupForm.ShowDialog();
+
+                if (editSubGroupForm.DialogResult == DialogResult.OK)
+                {
+                    SubGroup.Create(subGroupAddress, editSubGroupForm.SubGroupName, SelectedMainGroup);
+                }
+            }
+            else
+            {
+                var editSubGroupForm = new EditSubGroupForm(subGroup.Name);
+                editSubGroupForm.ShowDialog();
+
+                if (editSubGroupForm.DialogResult == DialogResult.OK)
+                {
+                    subGroup.Name = editSubGroupForm.SubGroupName;
+                }
+            }
+            LoadDatabase();
+
+        }
+
+        private void GADataTable_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
+        {
+            ((DataGridView)sender).Columns[e.Column.Index].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+        }
+
+        private void GADataTable_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (SelectedMainGroup == null) return;
+
+            if (e.KeyValue == (char)Keys.Delete)
+            {
+                var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (res == DialogResult.Yes)
+                {
+                    var selectedCells = GADataTable
+                        .SelectedCells
+                        .Cast<DataGridViewCell>()
+                        .Select(x => new { SubGroupAddress = x.ColumnIndex - 1, GAAddress = x.RowIndex }); ;
+
+                    var gas = SelectedMainGroup
+                        .GAs
+                        .Where(x => selectedCells
+                            .Contains(new { SubGroupAddress = x.SubGroup.SubAddress, GAAddress = x.SubAddress }))
+                        .GroupBy(x => x.SubGroup).ToList();
+
+                    gas.ForEach(x =>
+                        x.ToList().ForEach(ga =>
+                            SelectedMainGroup
+                                .SubGroups
+                                .First(sub => sub.Id == x.Key.Id).GAs.Remove(ga)));
+
+                    LoadDatabase();
+                }
+
+            }
+
+        }
+
+        private void GADataTable_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
+            {
+                CurrentGARowScrollIndex = e.NewValue;
+            }
+        }
+
+        private void GADataTable_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(SelectedMainGroup == null) return;
+
+            var currCell = GADataTable.CurrentCell;
+            if(currCell == null) return;
+
+            if (e.KeyData == (Keys.Control | Keys.C) && GADataTable.SelectedCells.Count == 1)
+            {
+                var subGroup = SelectedMainGroup
+                    .SubGroups
+                    .FirstOrDefault(x => x.SubAddress == currCell.ColumnIndex - 1);
+
+                if(subGroup == null) return;
+
+                var ga = subGroup
+                    .GAs
+                    .FirstOrDefault(x => x.SubAddress == currCell.RowIndex);
+
+                if (ga == null) return;
+                Clipboard.SetText(ga.Name);
+
+                e.Handled = true;
+            }
+
+            if (e.KeyData == (Keys.Control | Keys.V) && GADataTable.SelectedCells.Count == 1)
+            {
+                currCell.Value = Clipboard.GetText();
+
+                GADataTable_CellEndEdit(GADataTable, new DataGridViewCellEventArgs(currCell.ColumnIndex, currCell.RowIndex));
+                              
+
+                e.Handled = true;
+            }
+
+
+        }
     }
 }

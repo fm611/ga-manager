@@ -8,34 +8,20 @@ using System.Threading.Tasks;
 namespace GroupAddress.Core
 {
 
-
-    //public class ItemOLD
-    //{
-
-    //    public string Id { get; set; }
-    //    public string Name { get; set; }
-    //    public List<Item> Parts { get; set; }
-
-    //    public ItemOLD() => Id = Guid.NewGuid().ToString();
-
-    //    public ItemOLD(string name) : this()
-    //    {
-    //        Name = name;
-    //    }
-    //}
-
     public class Item
     {
         public string Id { get; set; }
         public string Name { get; set; }
 
-        //public ItemOLD Item { get; set; }
 
         public List<GA> GAs { get; set; } = [];
 
         public MainGroup MainGroup { get; set; }
 
         public Item() => Id = Guid.NewGuid().ToString();
+
+        public int MinGaAddress => GAs.Min(x => x.SubAddress);
+        public int MaxGaAddress => GAs.Max(x => x.SubAddress);
 
         public Item(string name,MainGroup mGroup) : this()
         {

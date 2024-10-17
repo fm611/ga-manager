@@ -29,7 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             MainGroupsListBox = new ListBox();
             label1 = new Label();
@@ -148,23 +149,39 @@
             GADataTable.AllowUserToDeleteRows = false;
             GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.ControlLight;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.Padding = new Padding(0, 5, 0, 5);
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.Window;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
-            GADataTable.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
+            GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(266, 67);
             GADataTable.Name = "GADataTable";
-            GADataTable.ReadOnly = true;
             GADataTable.RowHeadersVisible = false;
-            GADataTable.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            GADataTable.SelectionMode = DataGridViewSelectionMode.CellSelect;
             GADataTable.ShowEditingIcon = false;
             GADataTable.Size = new Size(1046, 484);
             GADataTable.TabIndex = 34;
+            GADataTable.CellBeginEdit += GADataTable_CellBeginEdit;
+            GADataTable.CellEndEdit += GADataTable_CellEndEdit;
+            GADataTable.ColumnAdded += GADataTable_ColumnAdded;
+            GADataTable.ColumnHeaderMouseDoubleClick += GADataTable_ColumnHeaderMouseDoubleClick;
+            GADataTable.Scroll += GADataTable_Scroll;
+            GADataTable.KeyDown += GADataTable_KeyDown;
+            GADataTable.KeyUp += GADataTable_KeyUp;
             // 
             // mainGroupBindingSource
             // 

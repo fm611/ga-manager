@@ -17,11 +17,14 @@ namespace GroupAddress.UI
 
         public Comparison<T> Comparison {get;set;}
 
-        public ListBoxWrapper(ListBox listbox, Comparison<T> comp, string displayMember, string valueMember)
+        public Func<IEnumerable<T>> SourceFunc {get;set;}
+
+        public ListBoxWrapper(ListBox listbox, Comparison<T> comp, string displayMember, string valueMember, Func<IEnumerable<T>> sourceFunc)
         {
             ListBox = listbox;
             BackingList = [];
             BindingList = new BindingList<T>(BackingList);
+            SourceFunc = sourceFunc;
 
             Comparison = comp;
 
@@ -37,16 +40,17 @@ namespace GroupAddress.UI
             BindingList.ResetBindings();
         }
 
-        public void Load(IEnumerable<T> range)
+        public void Load()
         {
+            var currSelectedIndex = ListBox.SelectedIndex >= 0 ? ListBox.SelectedIndex : 0;
+
+
             BindingList.Clear();
-            BackingList.AddRange(range);
+            BackingList.AddRange(SourceFunc());
             SortAndReset();
 
-           // ListBox.SelectedIndex = -1;
-
-            if(BindingList.Count > 0)
-                ListBox.SetSelected(0, true);
+            if (BindingList.Count > 0)
+                ListBox.SetSelected(currSelectedIndex, true);
         }
 
 

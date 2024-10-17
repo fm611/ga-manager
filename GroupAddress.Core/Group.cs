@@ -38,7 +38,7 @@ namespace GroupAddress.Core
 
         public List<Item> Items { get; set; } = [];
 
-        public List<GA> GAs => Items.SelectMany(x => x.GAs).ToList();
+        public List<GA> GAs => SubGroups.SelectMany(x => x.GAs).ToList();
 
         public int MaxGASubAddress => GAs.Select(x => x.SubAddress).DefaultIfEmpty(-1).Max();
 
@@ -64,19 +64,19 @@ namespace GroupAddress.Core
         }
 
 
-        public Item AddItem(ItemTemplate template, string gaPrefix, int startIndex=-1)
+        public Item AddItem(ItemTemplate template, string gaPrefix, int startIndex=0)
         {
-            var newItemPart = template.CreateItemPart(this, gaPrefix);
+            var newItem = template.CreateItem(this, gaPrefix);
 
-            startIndex = startIndex <= MaxGASubAddress ? MaxGASubAddress + 1 : startIndex;
-            newItemPart.ShiftGA(startIndex);
+            //startIndex = startIndex <= MaxGASubAddress ? MaxGASubAddress + 1 : startIndex;
+            newItem.ShiftGA(startIndex);
 
             //var maxId = newItemPart.GAs.Select(x => x.SubAddress).Max();
             //var newItemBlockLength = blockLength != 0 ? blockLength : maxId+1;
             //NextItemId += newItemBlockLength;
 
-            Items.Add(newItemPart);
-            return newItemPart;
+            Items.Add(newItem);
+            return newItem;
         }
 
         public int GetNextStartingBlockIndex()
@@ -125,16 +125,26 @@ namespace GroupAddress.Core
 
         //}
 
+        public SubGroup GetOrCreateSubGroup(int subAddress, string name="Neue MIttelgruppe")
+        {
+            var res = GetSubGroup(subAddress);
+            return res ?? SubGroup.Create(subAddress,name, this);
+        }
+
         public SubGroup GetOrCreateSubGroup(SubGroupTemplate subGroupTemplate)
         {
             var res = GetSubGroup(subGroupTemplate);
 
             return res ?? SubGroup.Create(subGroupTemplate, this);
-
         }
         public SubGroup? GetSubGroup(SubGroupTemplate subGroupTemplate)
         {
-            return SubGroups.Where(x => x.SubAddress == subGroupTemplate.SubAddress).FirstOrDefault();
+            return GetSubGroup(subGroupTemplate.SubAddress);
+        }
+
+        public SubGroup? GetSubGroup(int subGroupAddress)
+        {
+            return SubGroups.Where(x => x.SubAddress == subGroupAddress).FirstOrDefault();
         }
 
         //public string GetCSVString()
@@ -157,11 +167,6 @@ namespace GroupAddress.Core
         //}
 
         public override string Address  => SubAddress.ToString(); 
-
-        public int ItemCount()
-        {
-            return Items.Count;
-        }
 
         public string ListBoxString => AddressName + " ("+DefaultBlockLength + " / " + (MaxGASubAddress == -1 ? "-" : MaxGASubAddress) + ")";
 
@@ -199,7 +204,12 @@ namespace GroupAddress.Core
 
         public static SubGroup Create(SubGroupTemplate t, MainGroup mGroup)
         {
-            return new SubGroup(t.SubAddress, t.Name, mGroup);
+            return Create(t.SubAddress, t.Name, mGroup);
+        }
+
+        public static SubGroup Create(int subAddress, string name, MainGroup mainGroup)
+        {
+            return new SubGroup(subAddress, name, mainGroup);
         }
     }
 }
