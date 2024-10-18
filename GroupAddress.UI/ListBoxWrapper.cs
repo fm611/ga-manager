@@ -44,10 +44,11 @@ namespace GroupAddress.UI
         {
             var currSelectedIndex = ListBox.SelectedIndex >= 0 ? ListBox.SelectedIndex : 0;
 
-
             BindingList.Clear();
             BackingList.AddRange(SourceFunc());
             SortAndReset();
+
+            currSelectedIndex = ListBox.Items.Count <= currSelectedIndex ? ListBox.Items.Count-1 : currSelectedIndex;
 
             if (BindingList.Count > 0)
                 ListBox.SetSelected(currSelectedIndex, true);

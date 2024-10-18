@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace GroupAddress.UI
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
 
         private enum IdValidState
@@ -39,7 +39,7 @@ namespace GroupAddress.UI
 
 
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
 
@@ -57,7 +57,9 @@ namespace GroupAddress.UI
                 () => Db.MainGroups
                 .Include(x => x.SubGroups)
                 .ThenInclude(x => x.GAs)
-                .Include(x => x.Items));
+                .Include(x => x.Items)
+                .ToList()
+                .Where(x => Db.Entry(x).State != EntityState.Deleted));
 
             AddMainGroupIdTextBox_TextChanged(null, null);
         }
@@ -66,6 +68,8 @@ namespace GroupAddress.UI
         {
             LoadDatabase();
         }
+
+
 
         private void Save()
         {
@@ -115,14 +119,20 @@ namespace GroupAddress.UI
         private void MainGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+
             SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
             SelectedMainGroupId = (string?)MainGroupsListBox.SelectedValue;
 
-            AddMainGroupIdTextBox.Text = SelectedMainGroup?.SubAddress.ToString();
-            AddMainGroupNameTextBox.Text = SelectedMainGroup?.Name;
-            AddMainGroupDefaultBlockLengthTextBox.Text = SelectedMainGroup?.DefaultBlockLength.ToString();
+            if (SelectedMainGroup == null) return;
 
-            FillGADataTable();
+            AddMainGroupIdTextBox.Text = SelectedMainGroup.SubAddress.ToString();
+            AddMainGroupNameTextBox.Text = SelectedMainGroup.Name;
+            AddMainGroupDefaultBlockLengthTextBox.Text = SelectedMainGroup.DefaultBlockLength.ToString();
+
+
+            GADataTable.SetMainGroup(SelectedMainGroup);
+
+            //FillGADataTable();
         }
 
         private void AddMainGroupIdTextBox_TextChanged(object sender, EventArgs e)
@@ -214,42 +224,6 @@ namespace GroupAddress.UI
             return (IdValidState.Invalid, -1);
         }
 
-
-        private void FillGADataTable()
-        {
-            var table = new DataTable();
-
-            if (SelectedMainGroup != null)
-            {
-                var cols = Enumerable
-                    .Range(0, 8)
-                    .Select(x =>
-                        new DataColumn(x + " - " + SelectedMainGroup.SubGroups.FirstOrDefault(y => y.SubAddress == x)?.Name))
-                    .ToArray();
-
-
-                table.Columns.AddRange(cols);
-
-                for (int i = 0; i < 256; i++)
-                {
-                    var newRow = table.NewRow();
-                    for (int j = 0; j < 8; j++)
-                    {
-                        newRow[j] = SelectedMainGroup
-                            .SubGroups
-                            .FirstOrDefault(x => x.SubAddress == j)?
-                            .GAs
-                            .FirstOrDefault(x => x.SubAddress == i)?
-                            .AddressName;
-                    }
-                    table.Rows.Add(newRow);
-                }
-            }
-            GADataTable.DataSource = table;
-
-            GADataTable.AutoResizeColumns();
-        }
-
         private void SaveButton_Click(object sender, EventArgs e)
         {
             Save();
@@ -257,6 +231,10 @@ namespace GroupAddress.UI
 
         private void LoadButton_Click(object sender, EventArgs e)
         {
+            Db = new AppDbContext();
+            Db.Database.Migrate();
+            Db.InitData();
+
             LoadDatabase();
         }
 
@@ -555,21 +533,18 @@ namespace GroupAddress.UI
 
         }
 
-        private void GADataTable_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+
+        private void DeleteMainGroupButton_Click(object sender, EventArgs e)
         {
-            var grid = sender as DataGridView;
-            var rowIdx = (e.RowIndex + 1).ToString();
+            if(SelectedMainGroup == null) return;
 
-            var centerFormat = new StringFormat()
+            if (MessageBox.Show("Haupgruppe löschen?", "Hauptgruppe löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                // right alignment might actually make more sense for numbers
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Center
-            };
+                Db.MainGroups.Remove(SelectedMainGroup);
+                //Db.SaveChanges();
+            }
 
-            var headerBounds = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, grid.RowHeadersWidth, e.RowBounds.Height);
-            e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);
-
+            LoadDatabase();
         }
     }
 }

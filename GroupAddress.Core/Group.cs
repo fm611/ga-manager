@@ -38,12 +38,9 @@ namespace GroupAddress.Core
 
         public List<Item> Items { get; set; } = [];
 
-        public List<GA> GAs => SubGroups.SelectMany(x => x.GAs).ToList();
+        public List<GA> GAs { get; set; } = [];
 
         public int MaxGASubAddress => GAs.Select(x => x.SubAddress).DefaultIfEmpty(-1).Max();
-
-        public bool FillGASpaces { get; set; }
-        public bool FillGAToEnd { get; set; }
 
 
         public int DefaultBlockLength { get => defaultBlockLength; set
@@ -52,8 +49,6 @@ namespace GroupAddress.Core
             }
         }
 
-
-        //public int NextItemId { get; private set; } = 0;
 
         public MainGroup() : base() 
         { 

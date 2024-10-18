@@ -95,6 +95,7 @@ namespace GroupAddress.Core
         public string Name { get; set; }
         public int SubAddress { get; set; }
         public string Id { get; set; }
+        public MainGroup MainGroup { get; set; }
 
         public GA() {
             Id = Guid.NewGuid().ToString();
@@ -105,6 +106,7 @@ namespace GroupAddress.Core
             SubGroup = subGroup;
             SubAddress = subAddress;
             Name = name;
+            MainGroup = subGroup.MainGroup;
 
             SubGroup.GAs.Add(this);
         }
