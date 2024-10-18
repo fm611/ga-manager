@@ -324,37 +324,6 @@ namespace GroupAddress.UI
 
         }
 
-        private void GADataTable_ColumnHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            if (SelectedMainGroup == null) return;
-
-            var subGroupAddress = e.ColumnIndex;
-
-            var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == subGroupAddress);
-
-            if (subGroup == null)
-            {
-                var editSubGroupForm = new EditSubGroupForm("Neue Mittelgruppe");
-                editSubGroupForm.ShowDialog();
-
-                if (editSubGroupForm.DialogResult == DialogResult.OK)
-                {
-                    SubGroup.Create(subGroupAddress, editSubGroupForm.SubGroupName, SelectedMainGroup);
-                }
-            }
-            else
-            {
-                var editSubGroupForm = new EditSubGroupForm(subGroup.Name);
-                editSubGroupForm.ShowDialog();
-
-                if (editSubGroupForm.DialogResult == DialogResult.OK)
-                {
-                    subGroup.Name = editSubGroupForm.SubGroupName;
-                }
-            }
-            LoadDatabase();
-
-        }
 
         private void GADataTable_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {

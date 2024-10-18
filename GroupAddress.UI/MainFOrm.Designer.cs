@@ -176,14 +176,17 @@
             GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
             GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(266, 67);
+            GADataTable.MainGroup = null;
             GADataTable.Name = "GADataTable";
+            GADataTable.RowData = null;
+            GADataTable.ShowAllRows = true;
             GADataTable.ShowEditingIcon = false;
+            GADataTable.ShowEmptyRows = true;
             GADataTable.Size = new Size(1046, 488);
             GADataTable.TabIndex = 34;
             GADataTable.CellBeginEdit += GADataTable_CellBeginEdit;
             GADataTable.CellEndEdit += GADataTable_CellEndEdit;
             GADataTable.ColumnAdded += GADataTable_ColumnAdded;
-            GADataTable.ColumnHeaderMouseDoubleClick += GADataTable_ColumnHeaderMouseDoubleClick;
             GADataTable.Scroll += GADataTable_Scroll;
             GADataTable.KeyDown += GADataTable_KeyDown;
             GADataTable.KeyUp += GADataTable_KeyUp;
@@ -293,7 +296,7 @@
             label2.TabIndex = 1;
             label2.Text = "Gruppenadressen";
             // 
-            // Form1
+            // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -310,7 +313,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(MainGroupsListBox);
-            Name = "Form1";
+            Name = "MainForm";
             Text = "Form1";
             Load += Form1_Load;
             statusStrip1.ResumeLayout(false);

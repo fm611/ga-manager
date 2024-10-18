@@ -96,6 +96,7 @@ namespace GroupAddress.Core
         public int SubAddress { get; set; }
         public string Id { get; set; }
         public MainGroup MainGroup { get; set; }
+        public Item? Item { get; set; }
 
         public GA() {
             Id = Guid.NewGuid().ToString();
