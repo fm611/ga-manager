@@ -109,7 +109,7 @@ namespace GroupAddress.Core
             Name = name;
             MainGroup = subGroup.MainGroup;
 
-            SubGroup.GAs.Add(this);
+            SubGroup.AddGA(this);
         }
 
         public string Address => SubGroup.Address + "/" + SubAddress;

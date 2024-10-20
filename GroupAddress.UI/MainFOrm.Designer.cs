@@ -184,8 +184,6 @@
             GADataTable.ShowEmptyRows = true;
             GADataTable.Size = new Size(1046, 488);
             GADataTable.TabIndex = 34;
-            GADataTable.CellBeginEdit += GADataTable_CellBeginEdit;
-            GADataTable.CellEndEdit += GADataTable_CellEndEdit;
             GADataTable.ColumnAdded += GADataTable_ColumnAdded;
             GADataTable.Scroll += GADataTable_Scroll;
             GADataTable.KeyDown += GADataTable_KeyDown;

@@ -27,8 +27,9 @@ namespace GroupAddress.UI
             RowPostPaint += GADataGridView_RowPostPaint;
             ColumnHeaderMouseDoubleClick += GADataGridView_ColumnHeaderMouseDoubleClick;
             SelectionChanged += GADataGridView_SelectionChanged;
+            CellBeginEdit += GADataGridView_CellBeginEdit;
+            CellEndEdit += GADataGridView_CellEndEdit;
         }
-
 
 
         public void SetMainGroup(MainGroup mainGroup)
@@ -83,7 +84,7 @@ namespace GroupAddress.UI
 
         private void SaveSelection()
         {
-            _previousSelectedCells = SelectedCells.Cast<DataGridViewCell>().Select(x => new CellPosition(x.RowIndex,x.ColumnIndex)).ToList();
+            _previousSelectedCells = SelectedCells.Cast<DataGridViewCell>().Select(x => new CellPosition(x.RowIndex, x.ColumnIndex)).ToList();
         }
 
         private void ResetSelection()
@@ -101,6 +102,7 @@ namespace GroupAddress.UI
 
 
         //Events
+
         private void GADataGridView_SelectionChanged(object? sender, EventArgs e)
         {
             SelectedGAs = SelectedCells
@@ -145,6 +147,58 @@ namespace GroupAddress.UI
             };
             var headerBounds = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, RowHeadersWidth, e.RowBounds.Height);
             e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);
+        }
+
+        private void GADataGridView_CellBeginEdit(object? sender, DataGridViewCellCancelEventArgs e)
+        {
+            ClearSelection();
+            if (MainGroup == null) return;
+
+            var editCell = Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+            if (!string.IsNullOrEmpty(editCell.Value as string))
+            {
+                var ga = SelectedGAs.FirstOrDefault(x => x.SubAddress == e.RowIndex && x.SubGroup.SubAddress == e.ColumnIndex);
+
+                if (ga == null) return;
+                editCell.Value = ga.Name;
+            }
+        }
+
+        private void GADataGridView_CellEndEdit(object? sender, DataGridViewCellEventArgs e)
+        {
+            if (MainGroup == null) return;
+
+            var editCell = Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+            if(string.IsNullOrEmpty(editCell.Value as string)) return;
+
+            var subGroup = MainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == e.ColumnIndex);
+
+            if (subGroup == null)
+            {
+                var currName = subGroup?.Name ?? "Neue Mittelgruppe";
+
+                var editSubGroupForm = new EditSubGroupForm(currName);
+                editSubGroupForm.ShowDialog();
+
+                if (editSubGroupForm.DialogResult != DialogResult.OK) return;
+
+                subGroup = SubGroup.Create(e.ColumnIndex, editSubGroupForm.SubGroupName, MainGroup);
+            }
+
+            var ga = SelectedGAs.FirstOrDefault(x => x.SubAddress == e.RowIndex && x.SubGroup.SubAddress == e.ColumnIndex);
+
+            if (ga == null)
+                new GA(subGroup, e.RowIndex, (string)editCell.Value);
+            else
+                ga.Name = (string)editCell.Value;
+
+
+            this.BeginInvoke(new MethodInvoker(() =>
+            {
+                UpdateTable();
+            }));
         }
     }
 }

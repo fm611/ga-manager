@@ -1,4 +1,5 @@
-﻿using System.Data.SqlTypes;
+﻿using GroupAddress.Core.Migrations;
+using System.Data.SqlTypes;
 
 namespace GroupAddress.Core
 {
@@ -9,6 +10,7 @@ namespace GroupAddress.Core
         public int SubAddress { get; set; }
 
         public string Name { get; set; }
+        public List<GA> GAs { get; set; } = [];
 
         public Group() {
             Id = Guid.NewGuid().ToString();
@@ -28,6 +30,11 @@ namespace GroupAddress.Core
         {
             return Address + " - " + Name;
         }
+
+        public void AddGA(GA ga)
+        {
+            if (!GAs.Any(x => x.Id == ga.Id)) GAs.Add(ga);
+        }
     }
 
     public class MainGroup : Group
@@ -38,7 +45,6 @@ namespace GroupAddress.Core
 
         public List<Item> Items { get; set; } = [];
 
-        public List<GA> GAs { get; set; } = [];
 
         public int MaxGASubAddress => GAs.Select(x => x.SubAddress).DefaultIfEmpty(-1).Max();
 
@@ -48,7 +54,6 @@ namespace GroupAddress.Core
                 defaultBlockLength = value;
             }
         }
-
 
         public MainGroup() : base() 
         { 
@@ -63,12 +68,7 @@ namespace GroupAddress.Core
         {
             var newItem = template.CreateItem(this, gaPrefix);
 
-            //startIndex = startIndex <= MaxGASubAddress ? MaxGASubAddress + 1 : startIndex;
             newItem.ShiftGA(startIndex);
-
-            //var maxId = newItemPart.GAs.Select(x => x.SubAddress).Max();
-            //var newItemBlockLength = blockLength != 0 ? blockLength : maxId+1;
-            //NextItemId += newItemBlockLength;
 
             Items.Add(newItem);
             return newItem;
@@ -80,8 +80,7 @@ namespace GroupAddress.Core
             var ceiled = (int)Math.Ceiling(blockCount);
             var next = ceiled * defaultBlockLength;
 
-            //var nextBlockIndex = Convert.ToInt32(Math.Ceiling((double)(MaxGASubAddress + 1) / defaultBlockLength) * defaultBlockLength);
-            return next;
+             return next;
         }
 
 
@@ -119,6 +118,8 @@ namespace GroupAddress.Core
         //    return [.. outputGAs.OrderBy(x => x.SubGroup.MainGroup.SubAddress).ThenBy(x => x.SubGroup.SubAddress).ThenBy(x => x.SubAddress)];
 
         //}
+
+
 
         public SubGroup GetOrCreateSubGroup(int subAddress, string name="Neue MIttelgruppe")
         {
@@ -190,7 +191,13 @@ namespace GroupAddress.Core
             MainGroup = mainGroup;
             mainGroup.SubGroups.Add(this);
         }
-                
+
+        public new void AddGA(GA ga)
+        {
+            base.AddGA(ga);
+
+            MainGroup.AddGA(ga);
+        }
 
         public override string ToString()
         {

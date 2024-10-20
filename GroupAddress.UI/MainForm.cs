@@ -279,50 +279,6 @@ namespace GroupAddress.UI
             }
         }
 
-        private void GADataTable_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            if (SelectedMainGroup == null) return;
-
-            var currCell = ((DataGridView)sender).CurrentCell;
-
-            if (!string.IsNullOrEmpty(currCell.Value as string))
-            {
-                var subGroupAddress = e.ColumnIndex;
-
-                var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == subGroupAddress);
-
-                if (subGroup == null)
-                {
-                    var editSubGroupForm = new EditSubGroupForm("Neue Mittelgruppe");
-                    editSubGroupForm.ShowDialog();
-
-                    if (editSubGroupForm.DialogResult == DialogResult.OK)
-                    {
-                        subGroup = SubGroup.Create(subGroupAddress, editSubGroupForm.SubGroupName, SelectedMainGroup);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
-                var ga = subGroup
-                            .GAs
-                            .FirstOrDefault(x => x.SubAddress == currCell.RowIndex);
-
-                // new GA
-                if (ga == null)
-                    new GA(subGroup, currCell.RowIndex, (string)currCell.Value);
-                else
-                    ga.Name = (string)currCell.Value;
-            }
-
-            this.BeginInvoke(new MethodInvoker(() =>
-            {
-                LoadDatabase();
-            }));
-
-        }
 
 
         private void GADataTable_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
