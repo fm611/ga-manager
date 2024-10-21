@@ -35,12 +35,11 @@
             MainGroupsListBox = new ListBox();
             MainGroupsListBoxContextMenu = new ContextMenuStrip(components);
             AddMainGroupToolStripMenuItem = new ToolStripMenuItem();
-            bearbeitenToolStripMenuItem = new ToolStripMenuItem();
+            EditMainGroupToolStripMenuItem = new ToolStripMenuItem();
             löschenToolStripMenuItem = new ToolStripMenuItem();
             label1 = new Label();
-
             statusStrip1 = new StatusStrip();
-            StatusInfoLabel = new ToolStripStatusLabel();           
+            StatusInfoLabel = new ToolStripStatusLabel();
             GADataTable = new GADataGridView();
             label2 = new Label();
             toolStripButton1 = new ToolStripButton();
@@ -73,7 +72,7 @@
             // 
             // MainGroupsListBoxContextMenu
             // 
-            MainGroupsListBoxContextMenu.Items.AddRange(new ToolStripItem[] { AddMainGroupToolStripMenuItem, bearbeitenToolStripMenuItem, löschenToolStripMenuItem });
+            MainGroupsListBoxContextMenu.Items.AddRange(new ToolStripItem[] { AddMainGroupToolStripMenuItem, EditMainGroupToolStripMenuItem, löschenToolStripMenuItem });
             MainGroupsListBoxContextMenu.Name = "contextMenuStrip1";
             MainGroupsListBoxContextMenu.Size = new Size(181, 92);
             // 
@@ -84,11 +83,12 @@
             AddMainGroupToolStripMenuItem.Text = "Neu";
             AddMainGroupToolStripMenuItem.Click += AddMainGroupToolStripMenuItem_Click;
             // 
-            // bearbeitenToolStripMenuItem
+            // EditMainGroupToolStripMenuItem
             // 
-            bearbeitenToolStripMenuItem.Name = "bearbeitenToolStripMenuItem";
-            bearbeitenToolStripMenuItem.Size = new Size(180, 22);
-            bearbeitenToolStripMenuItem.Text = "Bearbeiten";
+            EditMainGroupToolStripMenuItem.Name = "EditMainGroupToolStripMenuItem";
+            EditMainGroupToolStripMenuItem.Size = new Size(180, 22);
+            EditMainGroupToolStripMenuItem.Text = "Bearbeiten";
+            EditMainGroupToolStripMenuItem.Click += EditMainGroupToolStripMenuItem_Click;
             // 
             // löschenToolStripMenuItem
             // 
@@ -104,9 +104,6 @@
             label1.Size = new Size(85, 15);
             label1.TabIndex = 1;
             label1.Text = "Hauptgruppen";
-
-
-
             // 
             // statusStrip1
             // 
@@ -122,7 +119,6 @@
             StatusInfoLabel.Name = "StatusInfoLabel";
             StatusInfoLabel.Size = new Size(118, 17);
             StatusInfoLabel.Text = "toolStripStatusLabel1";
-
             // 
             // GADataTable
             // 
@@ -158,8 +154,7 @@
             GADataTable.ShowEmptyRows = true;
             GADataTable.Size = new Size(1046, 488);
             GADataTable.TabIndex = 34;
-
-         // 
+            // 
             // label2
             // 
             label2.AutoSize = true;
@@ -259,7 +254,6 @@
             Controls.Add(toolStrip1);
             Controls.Add(GADataTable);
             Controls.Add(statusStrip1);
-
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(MainGroupsListBox);
@@ -300,7 +294,7 @@
         private ToolStrip toolStrip1;
         private ContextMenuStrip MainGroupsListBoxContextMenu;
         private ToolStripMenuItem AddMainGroupToolStripMenuItem;
-        private ToolStripMenuItem bearbeitenToolStripMenuItem;
+        private ToolStripMenuItem EditMainGroupToolStripMenuItem;
         private ToolStripMenuItem löschenToolStripMenuItem;
     }
 }

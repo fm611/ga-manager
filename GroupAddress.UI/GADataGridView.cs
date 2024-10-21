@@ -108,7 +108,6 @@ namespace GroupAddress.UI
 
         private void GADataGridView_SelectionChanged(object? sender, EventArgs e)
         {
-            Debug.WriteLine("Selction changed");
             SelectedGAs = SelectedCells
                 .Cast<DataGridViewCell>()
                 .SelectMany(c => RowData

@@ -28,6 +28,8 @@ namespace GroupAddress.UI
 
         public AppDbContext Db { get; set; }
 
+
+        public List<MainGroup> MainGroups { get; set; }
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
 
         public MainGroup? SelectedMainGroup { get; set; }
@@ -50,17 +52,32 @@ namespace GroupAddress.UI
 
             Comparison<Group> groupComparison = (a, b) => a.AddressName.CompareTo(b.AddressName);
 
+            //MainGroupWrapper = new ListBoxWrapper<MainGroup>(
+            //    MainGroupsListBox,
+            //    groupComparison,
+            //    nameof(MainGroup.ListBoxString),
+            //    "Id",
+            //    () => Db.MainGroups
+            //    .Include(x => x.SubGroups)
+            //    .ThenInclude(x => x.GAs)
+            //    .Include(x => x.Items)
+            //    .ToList()
+            //    .Where(x => Db.Entry(x).State != EntityState.Deleted));
+
+            MainGroups = Db.MainGroups
+                .Include(x => x.SubGroups)
+                .ThenInclude(x => x.GAs)
+                .Include(x => x.Items)
+                .ToList()
+                .Where(x => Db.Entry(x).State != EntityState.Deleted)
+                .ToList();
+
             MainGroupWrapper = new ListBoxWrapper<MainGroup>(
                 MainGroupsListBox,
                 groupComparison,
                 nameof(MainGroup.ListBoxString),
                 "Id",
-                () => Db.MainGroups
-                .Include(x => x.SubGroups)
-                .ThenInclude(x => x.GAs)
-                .Include(x => x.Items)
-                .ToList()
-                .Where(x => Db.Entry(x).State != EntityState.Deleted));
+                () => MainGroups);
 
             //AddMainGroupIdTextBox_TextChanged(null, null);
         }
@@ -74,7 +91,7 @@ namespace GroupAddress.UI
 
         private void Save()
         {
-            var toAdd = MainGroupWrapper.BindingList.Where(x => !Db.MainGroups.Contains(x)).ToList();
+            var toAdd = MainGroups.Where(x => !Db.MainGroups.Contains(x)).ToList();
             Db.MainGroups.AddRange(toAdd);
 
             Db.SaveChanges();
@@ -92,11 +109,25 @@ namespace GroupAddress.UI
 
         private void AddMainGroup()
         {
-            var addMainGroupForm = new AddEditMainGroupForm(Db.MainGroups.ToList());
-            addMainGroupForm.ShowDialog();
+            var addMainGroupForm = new AddEditMainGroupForm(MainGroups);
+            var result = addMainGroupForm.ShowDialog();
+
+            if (result != DialogResult.OK || addMainGroupForm.MainGroup == null) return;
+
+            MainGroups.Add(addMainGroupForm.MainGroup);
+            MainGroupWrapper.Load();
+        }
+
+        private void EditMainGroup(string id)
+        {
+            var addMainGroupForm = new AddEditMainGroupForm(MainGroups, id);
+            var result = addMainGroupForm.ShowDialog();
 
 
+            if (result != DialogResult.OK || addMainGroupForm.MainGroup == null) return;
 
+
+            MainGroupWrapper.Load();
         }
 
         //private void AddMainGroupButton_Click(object sender, EventArgs e)
@@ -126,11 +157,11 @@ namespace GroupAddress.UI
 
         //    //AddMainGroupIdTextBox.Focus();
         //}
-        
-        
-        
-        
-        
+
+
+
+
+
         private void MainGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
@@ -338,6 +369,12 @@ namespace GroupAddress.UI
         private void AddMainGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddMainGroup();
+        }
+
+        private void EditMainGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(SelectedMainGroup == null) return;
+            EditMainGroup(SelectedMainGroup.Id);
         }
     }
 }

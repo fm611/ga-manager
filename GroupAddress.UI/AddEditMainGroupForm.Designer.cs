@@ -62,6 +62,9 @@
             DefaultBlockLengthTextBox.Size = new Size(59, 23);
             DefaultBlockLengthTextBox.TabIndex = 3;
             DefaultBlockLengthTextBox.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            DefaultBlockLengthTextBox.KeyUp += DefaultBlockLengthTextBox_KeyUp;
+            DefaultBlockLengthTextBox.Leave += DefaultBlockLengthTextBox_Leave;
+            DefaultBlockLengthTextBox.MouseUp += DefaultBlockLengthTextBox_MouseUp;
             // 
             // NameTextBox
             // 
@@ -107,6 +110,7 @@
             SaveButton.TabIndex = 4;
             SaveButton.Text = "Speichern";
             SaveButton.UseVisualStyleBackColor = true;
+            SaveButton.Click += SaveButton_Click;
             // 
             // ErrorProvider
             // 

@@ -64,6 +64,27 @@ namespace GroupAddress.UI
 
 
 
+        private void SaveButton_Click(object sender, EventArgs e)
+        {
+            if (HasErrors())
+            {
+                DialogResult = DialogResult.None;
+            }
+            else
+            {
+                DialogResult = DialogResult.OK;
+
+                if(MainGroup == null)
+                    MainGroup = new MainGroup((int)AddressTextBox.Value, NameTextBox.Text, (int)DefaultBlockLengthTextBox.Value);
+                else
+                {
+                    MainGroup.SubAddress = (int)AddressTextBox.Value;
+                    MainGroup.Name = NameTextBox.Text;
+                    MainGroup.DefaultBlockLength = (int)DefaultBlockLengthTextBox.Value;
+                }
+            }
+        }
+
         private void NameTextBox_TextChanged(object sender, EventArgs e)
         {
             ValidateName();
@@ -77,7 +98,29 @@ namespace GroupAddress.UI
             ValidateAddress();
         }
 
+        private void DefaultBlockLengthTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            ValidateBlocklength();
+        }
+        private void DefaultBlockLengthTextBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            ValidateBlocklength();
+        }
 
+        private bool ValidateBlocklength()
+        {
+            var status = true;
+
+            if (DefaultBlockLengthTextBox.Value <= 0)
+            {
+                status = false;
+                ErrorProvider.SetError(DefaultBlockLengthTextBox, "Länge muss >0 sein");
+            }
+
+            if (status) ErrorProvider.SetError(DefaultBlockLengthTextBox, string.Empty);
+            UpdateUI();
+            return status;
+        }
 
 
         private bool ValidateAddress()
@@ -144,7 +187,16 @@ namespace GroupAddress.UI
 
         private void AddressTextBox_Leave(object sender, EventArgs e)
         {
+            //Bug fix for empty Text field
             AddressTextBox.Text = AddressTextBox.Value.ToString();
         }
+
+        private void DefaultBlockLengthTextBox_Leave(object sender, EventArgs e)
+        {
+            //Bug fix for empty Text field
+            DefaultBlockLengthTextBox.Text = DefaultBlockLengthTextBox.Value.ToString();
+
+        }
+
     }
 }

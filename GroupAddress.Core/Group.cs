@@ -71,7 +71,7 @@ namespace GroupAddress.Core
         public MainGroup() : base() 
         { 
         }
-        public MainGroup(int id, string name, int defaultBlockLength = 1) : base(id, name)
+        public MainGroup(int subAddress, string name, int defaultBlockLength = 1) : base(subAddress, name)
         {
             DefaultBlockLength = defaultBlockLength;
         }
