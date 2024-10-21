@@ -92,6 +92,7 @@ namespace GroupAddress.Core
     public class GA 
     {
         public SubGroup SubGroup { get; set; }
+        public string SubGroupId { get; set; }
         public string Name { get; set; }
         public int SubAddress { get; set; }
         public string Id { get; set; }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,8 @@ namespace GroupAddress.UI
             SelectionChanged += GADataGridView_SelectionChanged;
             CellBeginEdit += GADataGridView_CellBeginEdit;
             CellEndEdit += GADataGridView_CellEndEdit;
+            KeyDown += GADataGridView_KeyDown;
+            ColumnAdded += GADataGridView_ColumnAdded;
         }
 
 
@@ -105,6 +108,7 @@ namespace GroupAddress.UI
 
         private void GADataGridView_SelectionChanged(object? sender, EventArgs e)
         {
+            Debug.WriteLine("Selction changed");
             SelectedGAs = SelectedCells
                 .Cast<DataGridViewCell>()
                 .SelectMany(c => RowData
@@ -200,5 +204,53 @@ namespace GroupAddress.UI
                 UpdateTable();
             }));
         }
+
+        private void GADataGridView_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (MainGroup == null) return;
+
+            if (e.KeyValue == (char)Keys.Delete)
+            {
+                if (SelectedGAs.Count == 0) return;
+
+                var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (res == DialogResult.Yes)
+                {
+                    SelectedGAs.ForEach(MainGroup.RemoveGA);                        
+
+                    UpdateTable();
+                }
+            }
+
+            if (e.KeyData == (Keys.Control | Keys.C))
+            {
+                var ga = SelectedGAs.FirstOrDefault();
+
+                if (ga == null) return;
+                Clipboard.SetText(ga.Name);
+
+                e.Handled = true;
+            }
+
+            if (e.KeyData == (Keys.Control | Keys.V) && SelectedCells.Count == 1)
+            {
+                var pasteCell = SelectedCells.Cast<DataGridViewCell>().First();
+                if (pasteCell == null) return;
+
+                pasteCell.Value = Clipboard.GetText();
+
+                GADataGridView_CellEndEdit(this, new DataGridViewCellEventArgs(pasteCell.ColumnIndex, pasteCell.RowIndex));
+
+                e.Handled = true;
+            }
+
+        }
+
+        private void GADataGridView_ColumnAdded(object? sender, DataGridViewColumnEventArgs e)
+        {
+            Columns[e.Column.Index].SortMode = DataGridViewColumnSortMode.NotSortable;
+        }
     }
+
+
 }

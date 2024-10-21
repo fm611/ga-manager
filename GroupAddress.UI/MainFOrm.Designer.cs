@@ -29,21 +29,20 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             MainGroupsListBox = new ListBox();
+            MainGroupsListBoxContextMenu = new ContextMenuStrip(components);
+            AddMainGroupToolStripMenuItem = new ToolStripMenuItem();
+            bearbeitenToolStripMenuItem = new ToolStripMenuItem();
+            löschenToolStripMenuItem = new ToolStripMenuItem();
             label1 = new Label();
-            AddMainGroupButton = new Button();
-            AddMainGroupIdTextBox = new TextBox();
-            AddMainGroupNameTextBox = new TextBox();
-            DeleteMainGroupButton = new Button();
+
             statusStrip1 = new StatusStrip();
-            StatusInfoLabel = new ToolStripStatusLabel();
-            EditMainGroupButton = new Button();
+            StatusInfoLabel = new ToolStripStatusLabel();           
             GADataTable = new GADataGridView();
-            mainGroupBindingSource = new BindingSource(components);
-            toolStrip1 = new ToolStrip();
+            label2 = new Label();
             toolStripButton1 = new ToolStripButton();
             toolStripButton3 = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
@@ -53,17 +52,17 @@
             AddRowButton = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             DeleteCellsButton = new ToolStripButton();
-            AddMainGroupDefaultBlockLengthTextBox = new TextBox();
-            label2 = new Label();
+            toolStrip1 = new ToolStrip();
+            MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)mainGroupBindingSource).BeginInit();
             toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // MainGroupsListBox
             // 
             MainGroupsListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            MainGroupsListBox.ContextMenuStrip = MainGroupsListBoxContextMenu;
             MainGroupsListBox.FormattingEnabled = true;
             MainGroupsListBox.ItemHeight = 15;
             MainGroupsListBox.Location = new Point(12, 67);
@@ -71,6 +70,31 @@
             MainGroupsListBox.Size = new Size(248, 439);
             MainGroupsListBox.TabIndex = 0;
             MainGroupsListBox.SelectedIndexChanged += MainGroupsListBox_SelectedIndexChanged;
+            // 
+            // MainGroupsListBoxContextMenu
+            // 
+            MainGroupsListBoxContextMenu.Items.AddRange(new ToolStripItem[] { AddMainGroupToolStripMenuItem, bearbeitenToolStripMenuItem, löschenToolStripMenuItem });
+            MainGroupsListBoxContextMenu.Name = "contextMenuStrip1";
+            MainGroupsListBoxContextMenu.Size = new Size(181, 92);
+            // 
+            // AddMainGroupToolStripMenuItem
+            // 
+            AddMainGroupToolStripMenuItem.Name = "AddMainGroupToolStripMenuItem";
+            AddMainGroupToolStripMenuItem.Size = new Size(180, 22);
+            AddMainGroupToolStripMenuItem.Text = "Neu";
+            AddMainGroupToolStripMenuItem.Click += AddMainGroupToolStripMenuItem_Click;
+            // 
+            // bearbeitenToolStripMenuItem
+            // 
+            bearbeitenToolStripMenuItem.Name = "bearbeitenToolStripMenuItem";
+            bearbeitenToolStripMenuItem.Size = new Size(180, 22);
+            bearbeitenToolStripMenuItem.Text = "Bearbeiten";
+            // 
+            // löschenToolStripMenuItem
+            // 
+            löschenToolStripMenuItem.Name = "löschenToolStripMenuItem";
+            löschenToolStripMenuItem.Size = new Size(180, 22);
+            löschenToolStripMenuItem.Text = "Löschen";
             // 
             // label1
             // 
@@ -80,48 +104,9 @@
             label1.Size = new Size(85, 15);
             label1.TabIndex = 1;
             label1.Text = "Hauptgruppen";
-            // 
-            // AddMainGroupButton
-            // 
-            AddMainGroupButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            AddMainGroupButton.Location = new Point(185, 541);
-            AddMainGroupButton.Name = "AddMainGroupButton";
-            AddMainGroupButton.Size = new Size(75, 23);
-            AddMainGroupButton.TabIndex = 4;
-            AddMainGroupButton.Text = "Neu";
-            AddMainGroupButton.UseVisualStyleBackColor = true;
-            AddMainGroupButton.Click += AddMainGroupButton_Click;
-            // 
-            // AddMainGroupIdTextBox
-            // 
-            AddMainGroupIdTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            AddMainGroupIdTextBox.Location = new Point(11, 512);
-            AddMainGroupIdTextBox.Name = "AddMainGroupIdTextBox";
-            AddMainGroupIdTextBox.Size = new Size(37, 23);
-            AddMainGroupIdTextBox.TabIndex = 1;
-            AddMainGroupIdTextBox.TextChanged += AddMainGroupIdTextBox_TextChanged;
-            AddMainGroupIdTextBox.Enter += AddMainGroupIdTextBox_Enter;
-            // 
-            // AddMainGroupNameTextBox
-            // 
-            AddMainGroupNameTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            AddMainGroupNameTextBox.Location = new Point(54, 512);
-            AddMainGroupNameTextBox.Name = "AddMainGroupNameTextBox";
-            AddMainGroupNameTextBox.Size = new Size(160, 23);
-            AddMainGroupNameTextBox.TabIndex = 2;
-            AddMainGroupNameTextBox.Enter += AddMainGroupNameTextBox_Enter;
-            AddMainGroupNameTextBox.KeyUp += AddMainGroupNameTextBox_KeyUp;
-            // 
-            // DeleteMainGroupButton
-            // 
-            DeleteMainGroupButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            DeleteMainGroupButton.Location = new Point(11, 541);
-            DeleteMainGroupButton.Name = "DeleteMainGroupButton";
-            DeleteMainGroupButton.Size = new Size(75, 23);
-            DeleteMainGroupButton.TabIndex = 5;
-            DeleteMainGroupButton.Text = "Löschen";
-            DeleteMainGroupButton.UseVisualStyleBackColor = true;
-            DeleteMainGroupButton.Click += DeleteMainGroupButton_Click;
+
+
+
             // 
             // statusStrip1
             // 
@@ -137,18 +122,7 @@
             StatusInfoLabel.Name = "StatusInfoLabel";
             StatusInfoLabel.Size = new Size(118, 17);
             StatusInfoLabel.Text = "toolStripStatusLabel1";
-            // 
-            // EditMainGroupButton
-            // 
-            EditMainGroupButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            EditMainGroupButton.Enabled = false;
-            EditMainGroupButton.Location = new Point(107, 541);
-            EditMainGroupButton.Name = "EditMainGroupButton";
-            EditMainGroupButton.Size = new Size(75, 23);
-            EditMainGroupButton.TabIndex = 4;
-            EditMainGroupButton.Text = "Bearbeiten";
-            EditMainGroupButton.UseVisualStyleBackColor = true;
-            EditMainGroupButton.Click += EditMainGroupButton_Click;
+
             // 
             // GADataTable
             // 
@@ -156,24 +130,24 @@
             GADataTable.AllowUserToDeleteRows = false;
             GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.ControlLight;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.Padding = new Padding(0, 5, 0, 5);
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.ControlLight;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.Padding = new Padding(0, 5, 0, 5);
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            GADataTable.DefaultCellStyle = dataGridViewCellStyle4;
             GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(266, 67);
             GADataTable.MainGroup = null;
@@ -184,23 +158,16 @@
             GADataTable.ShowEmptyRows = true;
             GADataTable.Size = new Size(1046, 488);
             GADataTable.TabIndex = 34;
-            GADataTable.ColumnAdded += GADataTable_ColumnAdded;
-            GADataTable.Scroll += GADataTable_Scroll;
-            GADataTable.KeyDown += GADataTable_KeyDown;
-            GADataTable.KeyUp += GADataTable_KeyUp;
+
+         // 
+            // label2
             // 
-            // mainGroupBindingSource
-            // 
-            mainGroupBindingSource.DataSource = typeof(Core.MainGroup);
-            // 
-            // toolStrip1
-            // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton3, toolStripSeparator1, AddItemButton, toolStripSeparator2, AddRowNumTextBox, AddRowButton, toolStripSeparator3, DeleteCellsButton });
-            toolStrip1.Location = new Point(0, 0);
-            toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(1324, 25);
-            toolStrip1.TabIndex = 35;
-            toolStrip1.Text = "toolStrip1";
+            label2.AutoSize = true;
+            label2.Location = new Point(266, 40);
+            label2.Name = "label2";
+            label2.Size = new Size(99, 15);
+            label2.TabIndex = 1;
+            label2.Text = "Gruppenadressen";
             // 
             // toolStripButton1
             // 
@@ -275,24 +242,14 @@
             DeleteCellsButton.Text = "Zellen löschen";
             DeleteCellsButton.Click += DeleteCellsButton_Click;
             // 
-            // AddMainGroupDefaultBlockLengthTextBox
+            // toolStrip1
             // 
-            AddMainGroupDefaultBlockLengthTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            AddMainGroupDefaultBlockLengthTextBox.Location = new Point(220, 512);
-            AddMainGroupDefaultBlockLengthTextBox.Name = "AddMainGroupDefaultBlockLengthTextBox";
-            AddMainGroupDefaultBlockLengthTextBox.Size = new Size(39, 23);
-            AddMainGroupDefaultBlockLengthTextBox.TabIndex = 1;
-            AddMainGroupDefaultBlockLengthTextBox.TextChanged += AddMainGroupIdTextBox_TextChanged;
-            AddMainGroupDefaultBlockLengthTextBox.Enter += AddMainGroupIdTextBox_Enter;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(266, 40);
-            label2.Name = "label2";
-            label2.Size = new Size(99, 15);
-            label2.TabIndex = 1;
-            label2.Text = "Gruppenadressen";
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton3, toolStripSeparator1, AddItemButton, toolStripSeparator2, AddRowNumTextBox, AddRowButton, toolStripSeparator3, DeleteCellsButton });
+            toolStrip1.Location = new Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new Size(1324, 25);
+            toolStrip1.TabIndex = 35;
+            toolStrip1.Text = "toolStrip1";
             // 
             // MainForm
             // 
@@ -302,22 +259,17 @@
             Controls.Add(toolStrip1);
             Controls.Add(GADataTable);
             Controls.Add(statusStrip1);
-            Controls.Add(AddMainGroupNameTextBox);
-            Controls.Add(AddMainGroupDefaultBlockLengthTextBox);
-            Controls.Add(AddMainGroupIdTextBox);
-            Controls.Add(DeleteMainGroupButton);
-            Controls.Add(EditMainGroupButton);
-            Controls.Add(AddMainGroupButton);
+
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(MainGroupsListBox);
             Name = "MainForm";
             Text = "Form1";
             Load += Form1_Load;
+            MainGroupsListBoxContextMenu.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
-            ((System.ComponentModel.ISupportInitialize)mainGroupBindingSource).EndInit();
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
             ResumeLayout(false);
@@ -330,26 +282,25 @@
         private Label label1;
         private TextBox textBox1;
         private Label label4;
-        private Button AddMainGroupButton;
-        private TextBox AddMainGroupIdTextBox;
-        private TextBox AddMainGroupNameTextBox;
-        private Button DeleteMainGroupButton;
+
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel StatusInfoLabel;
-        private Button EditMainGroupButton;
+
         private GADataGridView GADataTable;
-        private BindingSource mainGroupBindingSource;
-        private ToolStrip toolStrip1;
+        private Label label2;
         private ToolStripButton toolStripButton1;
         private ToolStripButton toolStripButton3;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripButton AddItemButton;
-        private TextBox AddMainGroupDefaultBlockLengthTextBox;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripTextBox AddRowNumTextBox;
         private ToolStripButton AddRowButton;
         private ToolStripSeparator toolStripSeparator3;
         private ToolStripButton DeleteCellsButton;
-        private Label label2;
+        private ToolStrip toolStrip1;
+        private ContextMenuStrip MainGroupsListBoxContextMenu;
+        private ToolStripMenuItem AddMainGroupToolStripMenuItem;
+        private ToolStripMenuItem bearbeitenToolStripMenuItem;
+        private ToolStripMenuItem löschenToolStripMenuItem;
     }
 }

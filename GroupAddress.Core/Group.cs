@@ -35,6 +35,19 @@ namespace GroupAddress.Core
         {
             if (!GAs.Any(x => x.Id == ga.Id)) GAs.Add(ga);
         }
+
+        public void RemoveGA(string id)
+        {
+            var ga = GAs.FirstOrDefault(x => x.Id == id);
+            if (ga == null) return;
+            RemoveGA(ga);
+        }
+
+        public void RemoveGA(GA ga)
+        {
+            GAs.Remove(ga);
+        }
+
     }
 
     public class MainGroup : Group
@@ -64,6 +77,8 @@ namespace GroupAddress.Core
         }
 
 
+
+
         public Item AddItem(ItemTemplate template, string gaPrefix, int startIndex=0)
         {
             var newItem = template.CreateItem(this, gaPrefix);
@@ -83,6 +98,14 @@ namespace GroupAddress.Core
              return next;
         }
 
+        public new void RemoveGA(GA ga)
+        {
+            base.RemoveGA(ga);
+
+            SubGroups
+                .FirstOrDefault(x => x.Id == ga.SubGroupId)?
+                .RemoveGA(ga);
+        }
 
         //public List<GA> GetAllGAs() 
         //{
@@ -118,7 +141,6 @@ namespace GroupAddress.Core
         //    return [.. outputGAs.OrderBy(x => x.SubGroup.MainGroup.SubAddress).ThenBy(x => x.SubGroup.SubAddress).ThenBy(x => x.SubAddress)];
 
         //}
-
 
 
         public SubGroup GetOrCreateSubGroup(int subAddress, string name="Neue MIttelgruppe")
@@ -166,14 +188,12 @@ namespace GroupAddress.Core
 
         public string ListBoxString => AddressName + " ("+DefaultBlockLength + " / " + (MaxGASubAddress == -1 ? "-" : MaxGASubAddress) + ")";
 
+        public static bool IsValidSubAddress(int addr)
+        {
+            return addr >= 0 && addr < 32;
+        }
         
     }
-
-
-
-
-
-
 
 
     public class SubGroup : Group
@@ -213,5 +233,6 @@ namespace GroupAddress.Core
         {
             return new SubGroup(subAddress, name, mainGroup);
         }
+
     }
 }
