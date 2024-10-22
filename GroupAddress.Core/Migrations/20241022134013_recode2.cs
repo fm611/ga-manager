@@ -5,17 +5,17 @@
 namespace GroupAddress.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class ga5 : Migration
+    public partial class recode2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_GAs_SubGroups_SubGroupId",
+                name: "FK_GAs_MainGroups_MainGroupId",
                 table: "GAs");
 
             migrationBuilder.AlterColumn<string>(
-                name: "SubGroupId",
+                name: "MainGroupId",
                 table: "GAs",
                 type: "TEXT",
                 nullable: false,
@@ -25,10 +25,10 @@ namespace GroupAddress.Core.Migrations
                 oldNullable: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_GAs_SubGroups_SubGroupId",
+                name: "FK_GAs_MainGroups_MainGroupId",
                 table: "GAs",
-                column: "SubGroupId",
-                principalTable: "SubGroups",
+                column: "MainGroupId",
+                principalTable: "MainGroups",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }
@@ -37,11 +37,11 @@ namespace GroupAddress.Core.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_GAs_SubGroups_SubGroupId",
+                name: "FK_GAs_MainGroups_MainGroupId",
                 table: "GAs");
 
             migrationBuilder.AlterColumn<string>(
-                name: "SubGroupId",
+                name: "MainGroupId",
                 table: "GAs",
                 type: "TEXT",
                 nullable: true,
@@ -49,10 +49,10 @@ namespace GroupAddress.Core.Migrations
                 oldType: "TEXT");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_GAs_SubGroups_SubGroupId",
+                name: "FK_GAs_MainGroups_MainGroupId",
                 table: "GAs",
-                column: "SubGroupId",
-                principalTable: "SubGroups",
+                column: "MainGroupId",
+                principalTable: "MainGroups",
                 principalColumn: "Id");
         }
     }

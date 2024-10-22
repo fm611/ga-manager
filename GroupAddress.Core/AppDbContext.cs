@@ -18,9 +18,9 @@ namespace GroupAddress.Core
         public DbSet<SubGroup> SubGroups { get; set; }
         public DbSet<GA> GAs { get; set; }
         public DbSet<Item> Items { get; set; }
-        public DbSet<ItemTemplate> ItemTemplates { get; set; }
-        public DbSet<GATemplate> GATemplates { get; set; }
-        public DbSet<GATemplatePart> GATemplateParts { get; set; }
+        //public DbSet<ItemTemplate> ItemTemplates { get; set; }
+        //public DbSet<GATemplate> GATemplates { get; set; }
+        //public DbSet<GATemplatePart> GATemplateParts { get; set; }
 
 
         public string DbPath { get; }
@@ -55,11 +55,22 @@ namespace GroupAddress.Core
         {
             string guidBase = "DA6C8DDB-BC59-4805-84C9-E81A3DF7CB";
 
+            var subGroupNames = new string[] {
+                "Zentral",
+                "Zentral Status",
+                "Schalten",
+                "Schalten Status",
+                "SET Wert",
+                "GET Wert",
+                "SET Misc",
+                "GET Misc"
+                };
+
             var templates = new List<MainGroup>() {
-                new MainGroup(1, "Licht allgemein", 10),
-                new MainGroup(2, "Licht dimmbar", 10),
-                new MainGroup(3, "Licht TW", 10),
-                new MainGroup(4, "Licht RGBW #1", 50)
+                new MainGroup(1, "Licht allgemein", subGroupNames,10),
+                new MainGroup(2, "Licht dimmbar", subGroupNames,10),
+                new MainGroup(3, "Licht TW", subGroupNames,10),
+                new MainGroup(4, "Licht RGBW #1", subGroupNames,50)
             };
 
             for (int i = 0; i < templates.Count; i++)
@@ -77,39 +88,39 @@ namespace GroupAddress.Core
 
         public void InitItemTemplates()
         {
-            string guidBase = "DA6C8DDB-BC59-4805-84C9-E81A3DF7CB";
+            //string guidBase = "DA6C8DDB-BC59-4805-84C9-E81A3DF7CB";
 
-            var templates = new List<ItemTemplate>() {
-                DefaultItemTemplates.Light,
-                DefaultItemTemplates.LightDimm,
-                DefaultItemTemplates.LightTW,
-                DefaultItemTemplates.LightRGBW
-            };
+            //var templates = new List<ItemTemplate>() {
+            //    DefaultItemTemplates.Light,
+            //    DefaultItemTemplates.LightDimm,
+            //    DefaultItemTemplates.LightTW,
+            //    DefaultItemTemplates.LightRGBW
+            //};
 
-            for (int i = 0; i < templates.Count; i++)
-            {
-                var guid = guidBase + i.ToString("D2");
-                if (ItemTemplates.Any(t => t.Id == guid)) continue;
+            //for (int i = 0; i < templates.Count; i++)
+            //{
+            //    var guid = guidBase + i.ToString("D2");
+            //    if (ItemTemplates.Any(t => t.Id == guid)) continue;
                 
-                var template = templates[i];
-                template.Id = guid;
-                ItemTemplates.Add(template);
+            //    var template = templates[i];
+            //    template.Id = guid;
+            //    ItemTemplates.Add(template);
 
-            }
-            SaveChanges();
+            //}
+            //SaveChanges();
         }
 
 
         public void InitItem()
         {
-            if(Items.Any()) return;
+            //if(Items.Any()) return;
 
-            var mGroup1 = MainGroups.FirstOrDefault();
-            if(mGroup1 ==  null) return;
+            //var mGroup1 = MainGroups.FirstOrDefault();
+            //if(mGroup1 ==  null) return;
 
-            mGroup1.AddItem(DefaultItemTemplates.Light, "EG_HWR_Licht_Decke");
+            //mGroup1.AddItem(DefaultItemTemplates.Light, "EG_HWR_Licht_Decke");
 
-            SaveChanges();
+            //SaveChanges();
 
         }
 

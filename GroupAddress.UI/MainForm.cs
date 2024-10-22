@@ -30,6 +30,8 @@ namespace GroupAddress.UI
 
 
         public List<MainGroup> MainGroups { get; set; }
+
+
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
 
         public MainGroup? SelectedMainGroup { get; set; }
@@ -42,49 +44,52 @@ namespace GroupAddress.UI
 
 
 
+
+
         public MainForm()
         {
             InitializeComponent();
 
-            Db = new AppDbContext();
-            Db.Database.Migrate();
-            Db.InitData();
 
-            Comparison<Group> groupComparison = (a, b) => a.AddressName.CompareTo(b.AddressName);
+            //Comparison<Group> groupComparison = (a, b) => a.AddressName.CompareTo(b.AddressName);
+
+            //MainGroups = [];
 
             //MainGroupWrapper = new ListBoxWrapper<MainGroup>(
             //    MainGroupsListBox,
             //    groupComparison,
             //    nameof(MainGroup.ListBoxString),
             //    "Id",
-            //    () => Db.MainGroups
+            //    () => MainGroups);
+
+            InitDatabase();
+        }
+
+        private void InitDatabase()
+        {
+            Db = new AppDbContext();
+            Db.Database.Migrate();
+            Db.InitData();
+
+
+            //MainGroups = Db.MainGroups
             //    .Include(x => x.SubGroups)
             //    .ThenInclude(x => x.GAs)
             //    .Include(x => x.Items)
-            //    .ToList()
-            //    .Where(x => Db.Entry(x).State != EntityState.Deleted));
+            //    .ToList();
 
-            MainGroups = Db.MainGroups
-                .Include(x => x.SubGroups)
-                .ThenInclude(x => x.GAs)
-                .Include(x => x.Items)
-                .ToList()
-                .Where(x => Db.Entry(x).State != EntityState.Deleted)
-                .ToList();
+            //ItemTemplates = Db.ItemTemplates
+            //    .Include(x => x.GATemplates)
+            //    .ThenInclude(x => x.GAParts)
+            //    .ToList();
+                
 
-            MainGroupWrapper = new ListBoxWrapper<MainGroup>(
-                MainGroupsListBox,
-                groupComparison,
-                nameof(MainGroup.ListBoxString),
-                "Id",
-                () => MainGroups);
-
-            //AddMainGroupIdTextBox_TextChanged(null, null);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            LoadDatabase();
+            InitDatabase();
+            UpdataUI();
         }
 
 
@@ -97,10 +102,9 @@ namespace GroupAddress.UI
             Db.SaveChanges();
         }
 
-        private void LoadDatabase()
+        private void UpdataUI()
         {
-            MainGroupWrapper.Load();
-
+            MainGroupWrapper.Update();
             GADataTable.FirstDisplayedScrollingRowIndex = CurrentGARowScrollIndex;
         }
 
@@ -115,7 +119,7 @@ namespace GroupAddress.UI
             if (result != DialogResult.OK || addMainGroupForm.MainGroup == null) return;
 
             MainGroups.Add(addMainGroupForm.MainGroup);
-            MainGroupWrapper.Load();
+            MainGroupWrapper.Update();
         }
 
         private void EditMainGroup(string id)
@@ -127,39 +131,8 @@ namespace GroupAddress.UI
             if (result != DialogResult.OK || addMainGroupForm.MainGroup == null) return;
 
 
-            MainGroupWrapper.Load();
+            MainGroupWrapper.Update();
         }
-
-        //private void AddMainGroupButton_Click(object sender, EventArgs e)
-        //{
-        //    var (state, addresse) = ValidateSubAddress(GroupType.MainGroup);
-        //    if (state != IdValidState.ValidNew)
-        //    {
-        //        StatusInfoLabel.Text = "Id ungültig";
-        //        return;
-        //    }
-
-        //    if (!int.TryParse(AddMainGroupDefaultBlockLengthTextBox.Text, out var defaultBlockLength))
-        //    {
-        //        StatusInfoLabel.Text = "Blocklänge ungültig";
-        //        return;
-        //    }
-
-
-        //    var newMainGroup = new MainGroup(addresse, AddMainGroupNameTextBox.Text, defaultBlockLength);
-        //    MainGroupWrapper.BindingList.Add(newMainGroup);
-
-        //    MainGroupsListBox.SelectedValue = newMainGroup.Id;
-
-        //    MainGroupWrapper.SortAndReset();
-
-        //    //AddMainGroupIdTextBox_TextChanged(null, null);
-
-        //    //AddMainGroupIdTextBox.Focus();
-        //}
-
-
-
 
 
         private void MainGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -174,39 +147,6 @@ namespace GroupAddress.UI
             //FillGADataTable();
         }
 
-
-        //private void EditMainGroupButton_Click(object sender, EventArgs e)
-        //{
-        //    var (state, addresse) = ValidateSubAddress(GroupType.MainGroup);
-        //    if (state != IdValidState.ValidExisting)
-        //    {
-        //        StatusInfoLabel.Text = "Id ungültig";
-        //        return;
-        //    }
-
-        //    if (!int.TryParse(AddMainGroupDefaultBlockLengthTextBox.Text, out var defaultBlockLength))
-        //    {
-        //        StatusInfoLabel.Text = "Blocklänge ungültig";
-        //        return;
-        //    }
-
-        //    var mGroup = MainGroupWrapper.BindingList.FirstOrDefault(g => g.Id == (string?)MainGroupsListBox.SelectedValue);
-
-        //    if (mGroup == null)
-        //    {
-        //        StatusInfoLabel.Text = "No MainGroup found.";
-        //        return;
-        //    }
-
-        //    mGroup.SubAddress = addresse;
-        //    mGroup.Name = AddMainGroupNameTextBox.Text;
-        //    mGroup.DefaultBlockLength = defaultBlockLength;
-
-
-        //    MainGroupWrapper.SortAndReset();
-        //    MainGroupsListBox.SelectedValue = mGroup.Id;
-
-        //}
         private void AddMainGroupNameTextBox_Enter(object sender, EventArgs e)
         {
             BeginInvoke(new Action(() => (sender as TextBox).SelectAll()));
@@ -217,7 +157,6 @@ namespace GroupAddress.UI
         }
 
         #endregion
-
 
 
         private void SaveButton_Click(object sender, EventArgs e)
@@ -231,14 +170,14 @@ namespace GroupAddress.UI
             Db.Database.Migrate();
             Db.InitData();
 
-            LoadDatabase();
+            UpdataUI();
         }
 
 
         private void AddItemButton_Click(object sender, EventArgs e)
         {
             if (AddItemForm == null)
-                AddItemForm = new AddItemForm(Db);
+                AddItemForm = new AddItemForm(MainGroups);
 
             AddItemForm.LoadData();
 
@@ -248,15 +187,13 @@ namespace GroupAddress.UI
 
             if (AddItemForm.DialogResult == DialogResult.OK)
             {
-                LoadDatabase();
+                UpdataUI();
 
                 MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
                 //GADataTable.FirstDisplayedScrollingRowIndex = AddItemForm.LastInsertedItem.MinGaAddress;
 
             }
         }
-
-
 
 
         private void AddRowButton_Click(object sender, EventArgs e)
@@ -288,7 +225,7 @@ namespace GroupAddress.UI
                 }
             }
 
-            LoadDatabase();
+            UpdataUI();
 
             GADataTable.ClearSelection();
 
@@ -305,50 +242,50 @@ namespace GroupAddress.UI
 
         private void DeleteCellsButton_Click(object sender, EventArgs e)
         {
-            if (SelectedMainGroup == null) return;
+            //if (SelectedMainGroup == null) return;
 
-            var selectedCells = GADataTable
-                .SelectedCells
-                .Cast<DataGridViewCell>()
-                .Select(x => new { SubGroupAddress = x.ColumnIndex, GAAddress = x.RowIndex }).ToList();
+            //var selectedCells = GADataTable
+            //    .SelectedCells
+            //    .Cast<DataGridViewCell>()
+            //    .Select(x => new { SubGroupAddress = x.ColumnIndex, GAAddress = x.RowIndex }).ToList();
 
-            var gasDelete = SelectedMainGroup
-                .GAs
-                .Where(x => selectedCells
-                    .Contains(new { SubGroupAddress = x.SubGroup.SubAddress, GAAddress = x.SubAddress }))
-                .GroupBy(x => x.SubGroup).ToList();
-            if (gasDelete.Count > 0)
-            {
-                var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (res == DialogResult.Yes)
-                {
-                    gasDelete.ForEach(x =>
-                        x.ToList().ForEach(ga =>
-                            SelectedMainGroup
-                                .SubGroups
-                                .First(sub => sub.Id == x.Key.Id).GAs.Remove(ga)));
-                }
-            }
+            //var gasDelete = SelectedMainGroup
+            //    .GAs
+            //    .Where(x => selectedCells
+            //        .Contains(new { SubGroupAddress = x.SubGroup.SubAddress, GAAddress = x.SubAddress }))
+            //    .GroupBy(x => x.SubGroup).ToList();
+            //if (gasDelete.Count > 0)
+            //{
+            //    var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            //    if (res == DialogResult.Yes)
+            //    {
+            //        gasDelete.ForEach(x =>
+            //            x.ToList().ForEach(ga =>
+            //                SelectedMainGroup
+            //                    .SubGroups
+            //                    .First(sub => sub.Id == x.Key.Id).GAs.Remove(ga)));
+            //    }
+            //}
 
-            foreach (var cell in selectedCells)
-            {
-                var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == cell.SubGroupAddress);
-                if (subGroup == null) continue;
+            //foreach (var cell in selectedCells)
+            //{
+            //    var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == cell.SubGroupAddress);
+            //    if (subGroup == null) continue;
 
-                var gasMoveUp = subGroup.GAs.Where(x => x.SubAddress > cell.GAAddress);
+            //    var gasMoveUp = subGroup.GAs.Where(x => x.SubAddress > cell.GAAddress);
 
-                gasMoveUp.ToList().ForEach(x => x.SubAddress--);
-            }
+            //    gasMoveUp.ToList().ForEach(x => x.SubAddress--);
+            //}
 
-            LoadDatabase();
+            //UpdataUI();
 
 
-            GADataTable.ClearSelection();
+            //GADataTable.ClearSelection();
 
-            foreach (var cell in selectedCells)
-            {
-                GADataTable.Rows[cell.GAAddress].Cells[cell.SubGroupAddress].Selected = true;
-            }
+            //foreach (var cell in selectedCells)
+            //{
+            //    GADataTable.Rows[cell.GAAddress].Cells[cell.SubGroupAddress].Selected = true;
+            //}
 
         }
 
@@ -359,11 +296,10 @@ namespace GroupAddress.UI
 
             if (MessageBox.Show("Haupgruppe löschen?", "Hauptgruppe löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                Db.MainGroups.Remove(SelectedMainGroup);
-                //Db.SaveChanges();
+                MainGroups.Remove(SelectedMainGroup);
             }
 
-            LoadDatabase();
+            UpdataUI();
         }
 
         private void AddMainGroupToolStripMenuItem_Click(object sender, EventArgs e)

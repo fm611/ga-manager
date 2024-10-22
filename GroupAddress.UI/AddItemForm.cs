@@ -16,11 +16,13 @@ namespace GroupAddress.UI
     public partial class AddItemForm : Form
     {
 
-        public AppDbContext Db { get; set; }
-        public ListBoxWrapper<ItemTemplate> ItemTemplatesWrapper { get; set; }
+        //public AppDbContext Db { get; set; }
+
+        public List<MainGroup> MainGroups { get; set; }
+        //public ListBoxWrapper<ItemTemplate> ItemTemplatesWrapper { get; set; }
         public ListBoxWrapper<MainGroup> MainGroupsWrapper { get; set; }
 
-        public ItemTemplate? SelectedItemTemplate { get; set; }
+        //public ItemTemplate? SelectedItemTemplate { get; set; }
         public string? SelectedItemTemplateId { get; set; }
         public MainGroup? SelectedMainGroup { get; set; }
         public string? SelectedMainGroupId { get; set; }
@@ -31,11 +33,11 @@ namespace GroupAddress.UI
         public Item LastInsertedItem { get; set; }
 
 
-        public AddItemForm(AppDbContext db)
+        public AddItemForm(IEnumerable<MainGroup> mainGroups)
         {
             InitializeComponent();
 
-            Db = db;
+            MainGroups = mainGroups.ToList();
 
             LoadData();
         }
@@ -53,31 +55,31 @@ namespace GroupAddress.UI
 
         public void LoadData()
         {
-            ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(
-                ItemTemplatesListBox, 
-                (a, b) => a.Name.CompareTo(b.Name), 
-                nameof(ItemTemplate.Name),
-                nameof(ItemTemplate.Id),
-                () => Db.ItemTemplates);
-            ItemTemplatesWrapper.Load();
+            //ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(
+            //    ItemTemplatesListBox, 
+            //    (a, b) => a.Name.CompareTo(b.Name), 
+            //    nameof(ItemTemplate.Name),
+            //    nameof(ItemTemplate.Id),
+            //    () => Db.ItemTemplates);
+            //ItemTemplatesWrapper.Update();
 
-            if (ItemTemplatesListBox.Items.Count > 0 && ItemTemplatesListBox.SelectedItem == null)
-                ItemTemplatesListBox.SelectedIndex = 0;
-
-
-            MainGroupsWrapper = new ListBoxWrapper<MainGroup>(
-                MainGroupsListBox, 
-                (a, b) => a.AddressName.CompareTo(b.AddressName), 
-                nameof(MainGroup.AddressName),
-                nameof(MainGroup.Id),
-                () => Db.MainGroups);
-            MainGroupsWrapper.Load();
-
-            if (MainGroupsListBox.Items.Count > 0 && MainGroupsListBox.SelectedItem == null)
-                MainGroupsListBox.SelectedIndex = 0;
+            //if (ItemTemplatesListBox.Items.Count > 0 && ItemTemplatesListBox.SelectedItem == null)
+            //    ItemTemplatesListBox.SelectedIndex = 0;
 
 
-            GADataTable.AutoResizeColumns();
+            //MainGroupsWrapper = new ListBoxWrapper<MainGroup>(
+            //    MainGroupsListBox, 
+            //    (a, b) => a.AddressName.CompareTo(b.AddressName), 
+            //    nameof(MainGroup.AddressName),
+            //    nameof(MainGroup.Id),
+            //    () => Db.MainGroups);
+            //MainGroupsWrapper.Update();
+
+            //if (MainGroupsListBox.Items.Count > 0 && MainGroupsListBox.SelectedItem == null)
+            //    MainGroupsListBox.SelectedIndex = 0;
+
+
+            //GADataTable.AutoResizeColumns();
         }
 
         public void SelectLastInsert()
@@ -97,114 +99,116 @@ namespace GroupAddress.UI
 
         private void ItemTemplatesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedItemTemplate = (ItemTemplate?)ItemTemplatesListBox.SelectedItem;
-            SelectedItemTemplateId = (string?)ItemTemplatesListBox.SelectedValue;
+            //SelectedItemTemplate = (ItemTemplate?)ItemTemplatesListBox.SelectedItem;
+            //SelectedItemTemplateId = (string?)ItemTemplatesListBox.SelectedValue;
 
 
-            var table = new DataTable();
+            //var table = new DataTable();
 
-            if (SelectedItemTemplate != null)
-            {
-                var subGroups = Db.GATemplates
-                    .Where(x => x.ItemTemplateId == (string?)ItemTemplatesListBox.SelectedValue)
-                    .SelectMany(x => x.GAParts).Select(x => x.SubGroupTemplate)
-                    .GroupBy(x => x.SubAddress)
-                    .Select(x => new { SubAddress = x.Key, Name = x.First().Name });
-
-
-                var gatemps = Db.GATemplates
-                    .Where(x => x.ItemTemplateId == (string?)ItemTemplatesListBox.SelectedValue)
-                    .Include(x => x.GAParts)
-                    .ThenInclude(x => x.SubGroupTemplate)
-                    .ToList()
-                    .SelectMany(x => x.GAParts.Select(y => new
-                    {
-                        SubGroupAddress = y.SubGroupTemplate.SubAddress,
-                        GAAddress = x.SubAddress,
-                        Name = "x/" + y.SubGroupTemplate.SubAddress + "/" + x.SubAddress + " - " + string.Join("_", new[] { x.BaseString, y.AddonString }.Where(s => !string.IsNullOrEmpty(s)))
-                    })).ToList();
-
-                var cols = Enumerable
-                    .Range(0, 8)
-                    .Select(x =>
-                        new DataColumn(x + " - " + subGroups.FirstOrDefault(y => y.SubAddress == x)?.Name))
-                    .ToArray();
-
-                table.Columns.Add(new DataColumn("#"));
-                table.Columns.AddRange(cols);
+            //if (SelectedItemTemplate != null)
+            //{
+            //    var subGroups = Db.GATemplates
+            //        .Where(x => x.ItemTemplateId == (string?)ItemTemplatesListBox.SelectedValue)
+            //        .SelectMany(x => x.GAParts).Select(x => x.SubGroupTemplate)
+            //        .GroupBy(x => x.SubAddress)
+            //        .Select(x => new { SubAddress = x.Key, Name = x.First().Name });
 
 
+            //    var gatemps = Db.GATemplates
+            //        .Where(x => x.ItemTemplateId == (string?)ItemTemplatesListBox.SelectedValue)
+            //        .Include(x => x.GAParts)
+            //        .ThenInclude(x => x.SubGroupTemplate)
+            //        .ToList()
+            //        .SelectMany(x => x.GAParts.Select(y => new
+            //        {
+            //            SubGroupAddress = y.SubGroupTemplate.SubAddress,
+            //            GAAddress = x.SubAddress,
+            //            Name = "x/" + y.SubGroupTemplate.SubAddress + "/" + x.SubAddress + " - " + string.Join("_", new[] { x.BaseString, y.AddonString }.Where(s => !string.IsNullOrEmpty(s)))
+            //        })).ToList();
+
+            //    var cols = Enumerable
+            //        .Range(0, 8)
+            //        .Select(x =>
+            //            new DataColumn(x + " - " + subGroups.FirstOrDefault(y => y.SubAddress == x)?.Name))
+            //        .ToArray();
+
+            //    table.Columns.Add(new DataColumn("#"));
+            //    table.Columns.AddRange(cols);
 
 
-                for (int i = 0; i <= gatemps.Max(x => x.GAAddress); i++)
-                {
-                    var newRow = table.NewRow();
-                    newRow[0] = i;
 
-                    for (int j = 0; j < 8; j++)
-                    {
-                        newRow[j + 1] = gatemps
-                            .Where(x => x.GAAddress == i)
-                            .Where(x => x.SubGroupAddress == j)
-                            .Select(x => x.Name).FirstOrDefault();
 
-                    }
-                    table.Rows.Add(newRow);
-                }
-            }
+            //    for (int i = 0; i <= gatemps.Max(x => x.GAAddress); i++)
+            //    {
+            //        var newRow = table.NewRow();
+            //        newRow[0] = i;
 
-            GADataTable.DataSource = table;
+            //        for (int j = 0; j < 8; j++)
+            //        {
+            //            newRow[j + 1] = gatemps
+            //                .Where(x => x.GAAddress == i)
+            //                .Where(x => x.SubGroupAddress == j)
+            //                .Select(x => x.Name).FirstOrDefault();
 
-            if (GADataTable.Columns.Count > 0)
-            {
-                GADataTable.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                GADataTable.Columns[0].DefaultCellStyle.BackColor = Color.LightGray;
-            }
-            GADataTable.AutoResizeColumns();
+            //        }
+            //        table.Rows.Add(newRow);
+            //    }
+            //}
+
+            //GADataTable.DataSource = table;
+
+            //if (GADataTable.Columns.Count > 0)
+            //{
+            //    GADataTable.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            //    GADataTable.Columns[0].DefaultCellStyle.BackColor = Color.LightGray;
+            //}
+            //GADataTable.AutoResizeColumns();
 
         }
 
         private void AddItemButton_Click(object sender, EventArgs e)
         {
-            if (SelectedMainGroup == null || SelectedItemTemplate == null)
-            {
-                DialogResult = DialogResult.Abort;
-                return;
-            }
+            //if (SelectedMainGroup == null || SelectedItemTemplate == null)
+            //{
+            //    DialogResult = DialogResult.Abort;
+            //    return;
+            //}
 
-            LastInsertedItem = SelectedMainGroup.AddItem(SelectedItemTemplate, NewItemPreStringTextBox.Text, GetInsertIndex());
+            //LastInsertedItem = SelectedMainGroup.AddItem(SelectedItemTemplate, NewItemPreStringTextBox.Text, GetInsertIndex());
 
-            _lastInsertMainGroupId = SelectedMainGroup.Id;
-            _lastInsertTemplateId = SelectedItemTemplate.Id;
+            //_lastInsertMainGroupId = SelectedMainGroup.Id;
+            //_lastInsertTemplateId = SelectedItemTemplate.Id;
 
-            DialogResult = DialogResult.OK;
+            //DialogResult = DialogResult.OK;
         }
 
         private int GetInsertIndex()
         {
-            if (SelectedMainGroup == null) return -1;
+            //if (SelectedMainGroup == null) return -1;
 
-            var insertAtParseResult = int.TryParse(InsertAtTextBox.Text, out var insertAtIndex);
-            var nextFreeIndex = SelectedMainGroup.MaxGASubAddress + 1;
+            //var insertAtParseResult = int.TryParse(InsertAtTextBox.Text, out var insertAtIndex);
+            //var nextFreeIndex = SelectedMainGroup.MaxGASubAddress + 1;
 
-            if (InsertAtNextBlockRadioButton.Checked) return SelectedMainGroup.GetNextStartingBlockIndex();
-            if (InsertAtRadioButton.Checked) return insertAtParseResult ? insertAtIndex : nextFreeIndex;
-            if (InsertNextFreeRadioButton.Checked) return nextFreeIndex;
+            //if (InsertAtNextBlockRadioButton.Checked) return SelectedMainGroup.GetNextStartingBlockIndex();
+            //if (InsertAtRadioButton.Checked) return insertAtParseResult ? insertAtIndex : nextFreeIndex;
+            //if (InsertNextFreeRadioButton.Checked) return nextFreeIndex;
 
-            return nextFreeIndex;
+            //return nextFreeIndex;
+
+            return 0;
         }
 
         private void MainGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
-            SelectedMainGroupId = (string?)MainGroupsListBox.SelectedValue;
+            //SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
+            //SelectedMainGroupId = (string?)MainGroupsListBox.SelectedValue;
 
-            if (SelectedMainGroup != null)
-            {
-                NextBlockStartingIndexTextBox.Text = SelectedMainGroup.GetNextStartingBlockIndex().ToString();
-                InsertAtTextBox.Text = SelectedMainGroup.GetNextStartingBlockIndex().ToString();
-                InsertAtNextFreeTextBox.Text = (SelectedMainGroup.MaxGASubAddress + 1).ToString();
-            }
+            //if (SelectedMainGroup != null)
+            //{
+            //    NextBlockStartingIndexTextBox.Text = SelectedMainGroup.GetNextStartingBlockIndex().ToString();
+            //    InsertAtTextBox.Text = SelectedMainGroup.GetNextStartingBlockIndex().ToString();
+            //    InsertAtNextFreeTextBox.Text = (SelectedMainGroup.MaxGASubAddress + 1).ToString();
+            //}
         }
 
         private void InsertAtRadioButton_CheckedChanged(object sender, EventArgs e)

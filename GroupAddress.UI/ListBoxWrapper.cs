@@ -40,7 +40,7 @@ namespace GroupAddress.UI
             BindingList.ResetBindings();
         }
 
-        public void Load()
+        public void Update()
         {
             var currSelectedIndex = ListBox.SelectedIndex >= 0 ? ListBox.SelectedIndex : 0;
 

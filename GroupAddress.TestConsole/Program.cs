@@ -1,5 +1,6 @@
 ﻿using GroupAddress.Core;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace GroupAddress.TestConsole
@@ -10,6 +11,16 @@ namespace GroupAddress.TestConsole
 
         static void Main(string[] args)
         {
+
+
+
+            var db = new AppDbContext();
+            db.Database.Migrate();
+            db.InitData();
+
+
+            Console.WriteLine("Done");
+
 
 
 

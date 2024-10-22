@@ -8,119 +8,63 @@ using System.Threading.Tasks;
 namespace GroupAddress.Core
 {
 
-    // Mehrere Hauptgruppen
-
-    //public class ItemTemplateOLD
-    //{
-    //    public string Name { get; set; }
-    //    public string Id { get; set; }
-
-    //    public List<ItemPartTemplate> PartTemplates { get; set; } = [];
-
-    //    public ItemTemplateOLD()
-    //    {
-    //        Id = Guid.NewGuid().ToString();
-    //        Name = "";
-    //    }
-
-    //    public ItemTemplateOLD(string name) : this()
-    //    {
-    //        Name = name;
-    //    }
-
-    //    public ItemTemplateOLD(string name, IEnumerable<ItemPartTemplate> partTemplates) : this(name)
-    //    {
-    //        PartTemplates = partTemplates.ToList();
-    //        foreach (ItemPartTemplate partTemplate in PartTemplates)
-    //        {
-    //            partTemplate.ItemTemplate = this;
-    //        }
-    //    }
-
-
-    //    //public ItemOLD CreateItem(List<MainGroup> mGroups, string itemName)
-    //    //{
-    //    //    var item = new ItemOLD(itemName);
-
-    //    //    if (mGroups.Count != PartTemplates.Count) throw new Exception("Invalid number of MainGroups");
-
-    //    //    var tempParts =new List<Item>();
-
-
-    //    //    for (int i = 0; i < PartTemplates.Count; i++)
-    //    //    {
-    //    //        var partTemp = PartTemplates[i];
-    //    //        var mGroup = mGroups[i];
-                                
-
-    //    //        var itemPart = mGroup.AddItemPart(partTemp, itemName);
-    //    //        itemPart.Item = item;
-
-    //    //        tempParts.Add(itemPart);
-
-    //    //    }
-    //    //    item.Parts = tempParts.OrderBy(x => x.MainGroup.SubAddress).ToList();
-
-    //    //    return item;
-    //    //}
-    //}
 
     // Bspw. RGBW Vorlage
     // je Hauptgruppe
-    public class ItemTemplate
-    {
-        public string Name { get; set; } = "";
-        public string Id { get; set; }
+    //public class ItemTemplate
+    //{
+    //    public string Name { get; set; } = "";
+    //    public string Id { get; set; }
 
-        public List<GATemplate> GATemplates { get; set; } = [];
+    //    public List<GATemplate> GATemplates { get; set; } = [];
 
-        public ItemTemplate()
-        {
-            Id = Guid.NewGuid().ToString();
-        }
-        public ItemTemplate(string name) : this()
-        {
-            Name = name;
-        }
-        public ItemTemplate(string name, IEnumerable<GATemplate> gatemplates) : this(name)
-        {
-            gatemplates.ToList().ForEach(x => AddGaTemplate(x));
-        }
-
-
-        public void AddGaTemplate(GATemplate gat)
-        {
-            var maxIds = GATemplates
-                .SelectMany(temp => temp.GAParts.Select(gap => new { SubAddress = temp.SubAddress, SubGroup = gap.SubGroupTemplate.SubAddress }))
-                .GroupBy(x => x.SubGroup)
-                .Select(x => new { SubGroup = x.Key, MaxId = x.Max(y => y.SubAddress) });
-
-            var maxId = maxIds
-                .Where(x => gat.GAParts.Select(y => y.SubGroupTemplate.SubAddress).Contains(x.SubGroup))
-                .Select(x => x.MaxId)
-                .DefaultIfEmpty(-1)
-                .Max();
-
-            gat.SubAddress = maxId+1;    
-            GATemplates.Add(gat);
-        }
+    //    public ItemTemplate()
+    //    {
+    //        Id = Guid.NewGuid().ToString();
+    //    }
+    //    public ItemTemplate(string name) : this()
+    //    {
+    //        Name = name;
+    //    }
+    //    public ItemTemplate(string name, IEnumerable<GATemplate> gatemplates) : this(name)
+    //    {
+    //        gatemplates.ToList().ForEach(x => AddGaTemplate(x));
+    //    }
 
 
+    //    public void AddGaTemplate(GATemplate gat)
+    //    {
+    //        var maxIds = GATemplates
+    //            .SelectMany(temp => temp.GAParts.Select(gap => new { SubAddress = temp.SubAddress, SubGroup = gap.SubGroupTemplate.SubAddress }))
+    //            .GroupBy(x => x.SubGroup)
+    //            .Select(x => new { SubGroup = x.Key, MaxId = x.Max(y => y.SubAddress) });
 
-        public Item CreateItem(MainGroup mGroup, string gaPrefix)
-        {
-            var item = new Item(Name,mGroup);
+    //        var maxId = maxIds
+    //            .Where(x => gat.GAParts.Select(y => y.SubGroupTemplate.SubAddress).Contains(x.SubGroup))
+    //            .Select(x => x.MaxId)
+    //            .DefaultIfEmpty(-1)
+    //            .Max();
 
-            var tempGAs = GATemplates.SelectMany(x => x.CreateGA(mGroup, gaPrefix));
+    //        gat.SubAddress = maxId+1;    
+    //        GATemplates.Add(gat);
+    //    }
 
-            item.GAs = [.. GATemplates
-                .SelectMany(x => x.CreateGA(mGroup, gaPrefix))
-                .OrderBy(x => x.SubGroup.MainGroup.SubAddress)
-                .ThenBy(x => x.SubGroup.SubAddress)
-                .ThenBy(x => x.SubAddress)];
-            return item;
-        }
 
-    }
+
+    //    public Item CreateItem(MainGroup mGroup, string gaPrefix)
+    //    {
+    //        var item = new Item(Name,mGroup);
+
+    //        var tempGAs = GATemplates.SelectMany(x => x.CreateGA(mGroup, gaPrefix));
+
+    //        item.GAs = [.. GATemplates
+    //            .SelectMany(x => x.CreateGA(mGroup, gaPrefix))
+    //            .OrderBy(x => x.SubGroup.MainGroup.SubAddress)
+    //            .ThenBy(x => x.SubGroup.SubAddress)
+    //            .ThenBy(x => x.SubAddress)];
+    //        return item;
+    //    }
+
+    //}
 
 }

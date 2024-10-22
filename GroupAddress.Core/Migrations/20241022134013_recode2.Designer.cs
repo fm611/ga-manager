@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GroupAddress.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241015093137_group2")]
-    partial class group2
+    [Migration("20241022134013_recode2")]
+    partial class recode2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,7 @@ namespace GroupAddress.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MainGroupId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -38,6 +39,7 @@ namespace GroupAddress.Core.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SubGroupId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -49,54 +51,6 @@ namespace GroupAddress.Core.Migrations
                     b.HasIndex("SubGroupId");
 
                     b.ToTable("GAs");
-                });
-
-            modelBuilder.Entity("GroupAddress.Core.GATemplate", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("BaseString")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ItemTemplateId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SubAddress")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ItemTemplateId");
-
-                    b.ToTable("GATemplates");
-                });
-
-            modelBuilder.Entity("GroupAddress.Core.GATemplatePart", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AddonString")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("GATemplateId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SubGroupTemplateId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GATemplateId");
-
-                    b.HasIndex("SubGroupTemplateId");
-
-                    b.ToTable("GATemplateParts");
                 });
 
             modelBuilder.Entity("GroupAddress.Core.Item", b =>
@@ -118,32 +72,12 @@ namespace GroupAddress.Core.Migrations
                     b.ToTable("Items");
                 });
 
-            modelBuilder.Entity("GroupAddress.Core.ItemTemplate", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ItemTemplates");
-                });
-
             modelBuilder.Entity("GroupAddress.Core.MainGroup", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("DefaultBlockLength")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FillGASpaces")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("FillGAToEnd")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -181,62 +115,29 @@ namespace GroupAddress.Core.Migrations
                     b.ToTable("SubGroups");
                 });
 
-            modelBuilder.Entity("GroupAddress.Core.SubGroupTemplate", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SubAddress")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SubGroupTemplate");
-                });
-
             modelBuilder.Entity("GroupAddress.Core.GA", b =>
                 {
-                    b.HasOne("GroupAddress.Core.Item", null)
+                    b.HasOne("GroupAddress.Core.Item", "Item")
                         .WithMany("GAs")
                         .HasForeignKey("ItemId");
 
-                    b.HasOne("GroupAddress.Core.MainGroup", null)
-                        .WithMany("GAs")
-                        .HasForeignKey("MainGroupId");
+                    b.HasOne("GroupAddress.Core.MainGroup", "MainGroup")
+                        .WithMany()
+                        .HasForeignKey("MainGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GroupAddress.Core.SubGroup", "SubGroup")
                         .WithMany("GAs")
-                        .HasForeignKey("SubGroupId");
+                        .HasForeignKey("SubGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("MainGroup");
 
                     b.Navigation("SubGroup");
-                });
-
-            modelBuilder.Entity("GroupAddress.Core.GATemplate", b =>
-                {
-                    b.HasOne("GroupAddress.Core.ItemTemplate", null)
-                        .WithMany("GATemplates")
-                        .HasForeignKey("ItemTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GroupAddress.Core.GATemplatePart", b =>
-                {
-                    b.HasOne("GroupAddress.Core.GATemplate", null)
-                        .WithMany("GAParts")
-                        .HasForeignKey("GATemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GroupAddress.Core.SubGroupTemplate", "SubGroupTemplate")
-                        .WithMany()
-                        .HasForeignKey("SubGroupTemplateId");
-
-                    b.Navigation("SubGroupTemplate");
                 });
 
             modelBuilder.Entity("GroupAddress.Core.Item", b =>
@@ -259,25 +160,13 @@ namespace GroupAddress.Core.Migrations
                     b.Navigation("MainGroup");
                 });
 
-            modelBuilder.Entity("GroupAddress.Core.GATemplate", b =>
-                {
-                    b.Navigation("GAParts");
-                });
-
             modelBuilder.Entity("GroupAddress.Core.Item", b =>
                 {
                     b.Navigation("GAs");
                 });
 
-            modelBuilder.Entity("GroupAddress.Core.ItemTemplate", b =>
-                {
-                    b.Navigation("GATemplates");
-                });
-
             modelBuilder.Entity("GroupAddress.Core.MainGroup", b =>
                 {
-                    b.Navigation("GAs");
-
                     b.Navigation("Items");
 
                     b.Navigation("SubGroups");
