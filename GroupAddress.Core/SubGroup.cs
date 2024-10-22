@@ -12,8 +12,8 @@ namespace GroupAddress.Core
     {
         public MainGroup MainGroup { get; set; }
 
-        private readonly List<GA> _gas = [];
-        public ReadOnlyCollection<GA> GAs => _gas.AsReadOnly();
+        private List<GA> _gas = [];
+        public IReadOnlyCollection<GA> GAs => _gas.AsReadOnly();
 
         //public override string Address => MainGroup.SubAddress + "/" + SubAddress;
 

@@ -14,12 +14,27 @@ namespace GroupAddress.TestConsole
 
 
 
+
+
             var db = new AppDbContext();
             db.Database.Migrate();
             db.InitData();
 
 
+            var mg = db.MainGroups
+                .Include(x => x.SubGroups)
+                .First(x => x.SubAddress == 1);
+
+            var sg = mg.SubGroups.FirstOrDefault(x => x.SubAddress == 0);
+
+            sg.Name = "Zentral 000";
+
+            db.SaveChanges();
+
+
+
             Console.WriteLine("Done");
+
 
 
 

@@ -9,20 +9,15 @@ namespace GroupAddress.Core
 
     public class MainGroup : AddressElement
     {
-        private SubGroup[] _subGroups { get; set; } = Enumerable
-                .Range(0, 8)
-                .Select(x => new SubGroup(x, "N/A"))
-                .ToArray();
-
-        public ReadOnlyCollection<SubGroup> SubGroups => _subGroups.AsReadOnly();
+        private SubGroup[] _subGroups { get; set; } = [];
+        public IReadOnlyCollection<SubGroup> SubGroups => _subGroups.AsReadOnly();
 
 
-        private readonly List<Item> _items = [];
-        public ReadOnlyCollection<Item> Items => _items.AsReadOnly();
+        private List<Item> _items = [];
+        public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
 
-        [NotMapped]
-        public ReadOnlyCollection<GA> GAs => _subGroups.SelectMany(x => GAs).ToList().AsReadOnly();
-        [NotMapped]
+        public IReadOnlyCollection<GA> GAs => _subGroups.SelectMany(x => x.GAs).ToList().AsReadOnly();
+
         public int MaxGASubAddress => GAs.Select(x => x.SubAddress).DefaultIfEmpty(-1).Max();
 
 
@@ -34,15 +29,12 @@ namespace GroupAddress.Core
         {
             DefaultBlockLength = defaultBlockLength > 0 ? defaultBlockLength : 1;
 
-            if (subGroupNames.Length == _subGroups.Length)
-            {
-                for (var i = 0; i < subGroupNames.Length; i++)
-                {
-                    _subGroups[i].Name = subGroupNames[i];
-                }
-            }
-
+            _subGroups = Enumerable
+                .Range(0, 8)
+                .Select(x => new SubGroup(x, subGroupNames.ElementAtOrDefault(x) ?? "N/A"))
+                .ToArray();
         }
+
 
 
 
