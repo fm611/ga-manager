@@ -176,63 +176,63 @@ namespace GroupAddress.UI
 
         private void AddItemButton_Click(object sender, EventArgs e)
         {
-            if (AddItemForm == null)
-                AddItemForm = new AddItemForm(MainGroups);
+            //if (AddItemForm == null)
+            //    AddItemForm = new AddItemForm(MainGroups);
 
-            AddItemForm.LoadData();
+            //AddItemForm.LoadData();
 
-            AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);
+            //AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);
 
-            AddItemForm.ShowDialog();
+            //AddItemForm.ShowDialog();
 
-            if (AddItemForm.DialogResult == DialogResult.OK)
-            {
-                UpdataUI();
+            //if (AddItemForm.DialogResult == DialogResult.OK)
+            //{
+            //    UpdataUI();
 
-                MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
-                //GADataTable.FirstDisplayedScrollingRowIndex = AddItemForm.LastInsertedItem.MinGaAddress;
+            //    MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
+            //    //GADataTable.FirstDisplayedScrollingRowIndex = AddItemForm.LastInsertedItem.MinGaAddress;
 
-            }
+            //}
         }
 
 
         private void AddRowButton_Click(object sender, EventArgs e)
         {
-            if (SelectedMainGroup == null) return;
-            if (!int.TryParse(AddRowNumTextBox.Text, out var numRows)) return;
+            //if (SelectedMainGroup == null) return;
+            //if (!int.TryParse(AddRowNumTextBox.Text, out var numRows)) return;
 
-            var selectedCells = GADataTable
-                .SelectedCells
-                .Cast<DataGridViewCell>()
-                .Select(x => new { Row = x.RowIndex, Column = x.ColumnIndex })
-                .ToList();
+            //var selectedCells = GADataTable
+            //    .SelectedCells
+            //    .Cast<DataGridViewCell>()
+            //    .Select(x => new { Row = x.RowIndex, Column = x.ColumnIndex })
+            //    .ToList();
 
 
-            var colMinRow = selectedCells
-                .GroupBy(x => x.Column)
-                .Select(x => new { SubGroupAddress = x.Key, MinRow = x.Min(y => y.Row) }).ToList();
+            //var colMinRow = selectedCells
+            //    .GroupBy(x => x.Column)
+            //    .Select(x => new { SubGroupAddress = x.Key, MinRow = x.Min(y => y.Row) }).ToList();
 
-            foreach (var col in colMinRow)
-            {
-                var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == col.SubGroupAddress);
-                if (subGroup == null) continue;
+            //foreach (var col in colMinRow)
+            //{
+            //    var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == col.SubGroupAddress);
+            //    if (subGroup == null) continue;
 
-                var gas = subGroup.GAs.Where(x => x.SubAddress >= col.MinRow);
+            //    var gas = subGroup.GAs.Where(x => x.SubAddress >= col.MinRow);
 
-                foreach (var g in gas)
-                {
-                    g.SubAddress += numRows;
-                }
-            }
+            //    foreach (var g in gas)
+            //    {
+            //        g.SubAddress += numRows;
+            //    }
+            //}
 
-            UpdataUI();
+            //UpdataUI();
 
-            GADataTable.ClearSelection();
+            //GADataTable.ClearSelection();
 
-            foreach (var cell in colMinRow)
-            {
-                GADataTable.Rows[cell.MinRow].Cells[cell.SubGroupAddress].Selected = true;
-            }
+            //foreach (var cell in colMinRow)
+            //{
+            //    GADataTable.Rows[cell.MinRow].Cells[cell.SubGroupAddress].Selected = true;
+            //}
         }
 
         private void AddRowNumTextBox_KeyPress(object sender, KeyPressEventArgs e)

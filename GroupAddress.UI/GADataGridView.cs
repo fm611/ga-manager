@@ -100,14 +100,14 @@ namespace GroupAddress.UI
         {
             base.OnSelectionChanged(e);
 
-            SelectedGAs = SelectedCells
-                .Cast<DataGridViewCell>()
-                .SelectMany(c => RowData
-                    .ElementAt(c.RowIndex)
-                    .Value
-                    .Where(x => x.SubGroup.SubAddress == c.ColumnIndex)
-                )
-                .ToList();
+            //SelectedGAs = SelectedCells
+            //    .Cast<DataGridViewCell>()
+            //    .SelectMany(c => RowData
+            //        .ElementAt(c.RowIndex)
+            //        .Value
+            //        .Where(x => x.SubGroup.SubAddress == c.ColumnIndex)
+            //    )
+            //    .ToList();
         }
 
         protected override void OnColumnHeaderMouseDoubleClick(DataGridViewCellMouseEventArgs e)
@@ -153,18 +153,18 @@ namespace GroupAddress.UI
         {
             base.OnCellBeginEdit(e);
 
-            ClearSelection();
-            if (MainGroup == null) return;
+            //ClearSelection();
+            //if (MainGroup == null) return;
 
-            var editCell = Rows[e.RowIndex].Cells[e.ColumnIndex];
+            //var editCell = Rows[e.RowIndex].Cells[e.ColumnIndex];
 
-            if (!string.IsNullOrEmpty(editCell.Value as string))
-            {
-                var ga = SelectedGAs.FirstOrDefault(x => x.SubAddress == e.RowIndex && x.SubGroup.SubAddress == e.ColumnIndex);
+            //if (!string.IsNullOrEmpty(editCell.Value as string))
+            //{
+            //    var ga = SelectedGAs.FirstOrDefault(x => x.SubAddress == e.RowIndex && x.SubGroup.SubAddress == e.ColumnIndex);
 
-                if (ga == null) return;
-                editCell.Value = ga.Name;
-            }
+            //    if (ga == null) return;
+            //    editCell.Value = ga.Name;
+            //}
         }
 
         protected override void OnCellEndEdit(DataGridViewCellEventArgs e)

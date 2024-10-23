@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GroupAddress.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GroupAddress.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241023085512_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
@@ -20,9 +23,6 @@ namespace GroupAddress.Core.Migrations
             modelBuilder.Entity("GroupAddress.Core.GA", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ItemId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MainGroupId")
@@ -47,8 +47,6 @@ namespace GroupAddress.Core.Migrations
                         });
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ItemId");
 
                     b.HasIndex("MainGroupId");
 
@@ -96,10 +94,6 @@ namespace GroupAddress.Core.Migrations
 
             modelBuilder.Entity("GroupAddress.Core.GA", b =>
                 {
-                    b.HasOne("GroupAddress.Core.Item", null)
-                        .WithMany("GAs")
-                        .HasForeignKey("ItemId");
-
                     b.HasOne("GroupAddress.Core.MainGroup", null)
                         .WithMany("GAs")
                         .HasForeignKey("MainGroupId");
@@ -110,11 +104,6 @@ namespace GroupAddress.Core.Migrations
                     b.HasOne("GroupAddress.Core.MainGroup", null)
                         .WithMany("Items")
                         .HasForeignKey("MainGroupId");
-                });
-
-            modelBuilder.Entity("GroupAddress.Core.Item", b =>
-                {
-                    b.Navigation("GAs");
                 });
 
             modelBuilder.Entity("GroupAddress.Core.MainGroup", b =>

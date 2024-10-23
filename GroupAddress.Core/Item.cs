@@ -8,34 +8,9 @@ using System.Threading.Tasks;
 namespace GroupAddress.Core
 {
 
-    public class Item
+    public class Item : TopLevelCollection
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-
-
-        public List<GA> GAs { get; set; } = [];
-
-        public MainGroup MainGroup { get; set; }
-
-        public Item() => Id = Guid.NewGuid().ToString();
-
-        public int MinGaAddress => GAs.Min(x => x.SubAddress);
-        public int MaxGaAddress => GAs.Max(x => x.SubAddress);
-
-        public Item(string name,MainGroup mGroup) : this()
-        {
-            Name = name;
-            MainGroup = mGroup;
-        }
-
-        public void ShiftGA(int offset)
-        {
-            foreach(var ga in GAs)
-            {
-                ga.SubAddress += offset;
-            }
-        }
+        public Item(string name) : base(name) { }
     }
 
 

@@ -15,9 +15,9 @@ namespace GroupAddress.Core
         //public DbSet<Blog> Blogs { get; set; }
         //public DbSet<Post> Posts { get; set; }
         public DbSet<MainGroup> MainGroups { get; set; }
-        public DbSet<SubGroup> SubGroups { get; set; }
+        //public DbSet<SubGroup> SubGroups { get; set; }
         public DbSet<GA> GAs { get; set; }
-        public DbSet<Item> Items { get; set; }
+        //public DbSet<Item> Items { get; set; }
         //public DbSet<ItemTemplate> ItemTemplates { get; set; }
         //public DbSet<GATemplate> GATemplates { get; set; }
         //public DbSet<GATemplatePart> GATemplateParts { get; set; }
@@ -33,13 +33,20 @@ namespace GroupAddress.Core
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-
         }
 
         // The following configures EF to create a Sqlite database file in the
         // special "local" folder for your platform.
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite($"Data Source={DbPath}");
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<GA>(x => {
+                x.ComplexProperty(y => y.Addresse, y => { y.IsRequired(); });
+            });
+
+        }
 
         public void InitData()
         {
@@ -124,9 +131,6 @@ namespace GroupAddress.Core
 
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
 
-        }
     }
 }

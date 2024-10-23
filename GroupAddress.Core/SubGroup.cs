@@ -17,15 +17,12 @@ namespace GroupAddress.Core
 
         //public override string Address => MainGroup.SubAddress + "/" + SubAddress;
 
-        public SubGroup() : base() { }
+        private SubGroup() :base() { }
+    
 
-        //public SubGroup(int subAddress, string name, MainGroup mainGroup) : base(subAddress, name)
-        //{
-        //    MainGroup = mainGroup;
-        //    mainGroup.SubGroups.Add(this);
-        //}
-        public SubGroup(int subAddress, string name) : base(subAddress, name)
+        public SubGroup(MainGroup mainGroup, int subAddress, string name) : base(subAddress, name)
         {
+            MainGroup = mainGroup;
         }
 
 

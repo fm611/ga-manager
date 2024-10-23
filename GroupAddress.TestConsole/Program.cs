@@ -12,22 +12,27 @@ namespace GroupAddress.TestConsole
         static void Main(string[] args)
         {
 
-
-
-
-
             var db = new AppDbContext();
             db.Database.Migrate();
             db.InitData();
 
 
+
             var mg = db.MainGroups
-                .Include(x => x.SubGroups)
+                .Include(x => x.GAs)
+                .Include(x => x.Items)
                 .First(x => x.SubAddress == 1);
 
-            var sg = mg.SubGroups.FirstOrDefault(x => x.SubAddress == 0);
+            var template = DefaultItemTemplates.Light;
 
-            sg.Name = "Zentral 000";
+            mg.AddItem(template, "EG_HWR_Licht_Decke");
+
+            mg.AddItem(template, "EG_KU_Licht_Esstisch",10);
+
+
+            //var sg = mg.SubGroups.FirstOrDefault(x => x.SubAddress == 0);
+
+            //sg.Name = "Zentral 000";
 
             db.SaveChanges();
 

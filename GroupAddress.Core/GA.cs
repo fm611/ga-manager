@@ -8,29 +8,52 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace GroupAddress.Core
 {
 
-    public class GA 
+    public class GA
     {
-        public SubGroup SubGroup { get; set; }
-        public string SubGroupId { get; set; }
-        public string Name { get; set; }
-        public int SubAddress { get; set; }
         public string Id { get; set; }
-        public MainGroup MainGroup { get; set; }
-        public Item? Item { get; set; }
+        public string Name { get; set; } = "";
+        public Addresse Addresse { get; set; } = new Addresse();
 
-        public GA() {
+        private GA()
+        {
             Id = Guid.NewGuid().ToString();
         }
 
-        public GA(SubGroup subGroup, int subAddress, string name) :this()
+        public GA(int middleGroupAddress, int subAddress, string name) : this()
         {
-            SubGroup = subGroup;
-            SubAddress = subAddress;
             Name = name;
-            MainGroup = subGroup.MainGroup;
-
-            SubGroup.AddGA(this);
+            Addresse = new(middleGroupAddress, subAddress);
         }
+
+        public GA CloneWithPrefix(string preString)
+        {
+            var newGA = new GA();
+            newGA.Name = string.Join("_", [preString, Name]);
+            newGA.Addresse = Addresse.Clone();
+            return newGA;
+        }
+
+        public override string ToString()
+        {
+            return Addresse + " - " + Name;
+        }
+
+
+
+
+        //public string SubGroupId { get; set; }
+        //public Item? Item { get; set; }
+
+        //public GA() :base(){
+        //}
+
+
+        //public GA(SubGroup subGroup, int subAddress, string name) : base(subAddress, name) 
+        //{
+        //    SubGroup = subGroup;
+        //}
+
+
 
         //public string Address => SubGroup.Address + "/" + SubAddress;
 

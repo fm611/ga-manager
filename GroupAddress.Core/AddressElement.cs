@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 
 namespace GroupAddress.Core
 {
-    public class AddressElement
+    public abstract class AddressElement
     {
         public string Id { get; set; }
-        public int SubAddress { get; set; }
-        public string Name { get; set; }
+        public int SubAddress { get; set; } = -1;
+        public string Name { get; set; } = "";
 
-        public AddressElement() {
+        protected AddressElement() {
             Id = Guid.NewGuid().ToString();
-            SubAddress = 0;
-            Name = "";
         }
 
         public AddressElement(int subAddress, string name) : this()

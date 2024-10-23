@@ -8,6 +8,17 @@ using System.Threading.Tasks;
 namespace GroupAddress.Core
 {
 
+    public class ItemTemplate : TopLevelCollection
+    {
+
+        public ItemTemplate(string name, IEnumerable<GA> gas) : base(name, gas)
+        {
+        }
+
+
+    }
+
+
 
     // Bspw. RGBW Vorlage
     // je Hauptgruppe

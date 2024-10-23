@@ -7,6 +7,17 @@ using System.Threading.Tasks;
 namespace GroupAddress.Core
 {
 
+
+    //public class GATemplate : AddressElement
+    //{
+    //    public int SubGroupAddress {  get; set; }
+
+    //    public GATemplate(int subGroupAddress, int subAddress, string name) : base(name)
+    //    {
+    //    }
+
+    //}
+
     //public class GATemplatePart
     //{
     //    public SubGroupTemplate SubGroupTemplate { get; set; }
@@ -18,7 +29,6 @@ namespace GroupAddress.Core
 
     //    public GATemplatePart()
     //    {
-
     //        Id = Guid.NewGuid().ToString();
     //    }
 

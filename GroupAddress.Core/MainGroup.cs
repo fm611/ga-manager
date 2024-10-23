@@ -7,46 +7,62 @@ namespace GroupAddress.Core
 {
 
 
-    public class MainGroup : AddressElement
+    public class MainGroup : TopLevelCollection
     {
-        private SubGroup[] _subGroups { get; set; } = [];
-        public IReadOnlyCollection<SubGroup> SubGroups => _subGroups.AsReadOnly();
+
 
 
         private List<Item> _items = [];
         public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
 
-        public IReadOnlyCollection<GA> GAs => _subGroups.SelectMany(x => x.GAs).ToList().AsReadOnly();
 
-        public int MaxGASubAddress => GAs.Select(x => x.SubAddress).DefaultIfEmpty(-1).Max();
+
+        //public int MaxGASubAddress => GAs.Select(x => x.SubAddress).DefaultIfEmpty(-1).Max();
+
+        public int SubAddress { get; private set; }
 
 
         public int DefaultBlockLength { get; set; } = 1;
 
-        public MainGroup() : base() { }
+        private MainGroup() : base() { }
 
-        public MainGroup(int subAddress, string name,string[] subGroupNames, int defaultBlockLength = 1) : base(subAddress, name)
+        public MainGroup(int subAddress, string name,string[] subGroupNames, int defaultBlockLength = 1) : base(name)
         {
             DefaultBlockLength = defaultBlockLength > 0 ? defaultBlockLength : 1;
+            SubAddress = subAddress;
 
-            _subGroups = Enumerable
-                .Range(0, 8)
-                .Select(x => new SubGroup(x, subGroupNames.ElementAtOrDefault(x) ?? "N/A"))
-                .ToArray();
+            for (int i = 0; i < 8; i++)
+                SetSubGroupname(i, subGroupNames[i]);
         }
 
+        public void SetSubAddress(int subAddress)
+        {
+            throw new NotImplementedException();
+        }
 
+        public new void AddGA(GA ga)
+        {
+            ga.Addresse.MainGroup = SubAddress;
+            base.AddGA(ga);
+        }
+        public new void AddGARange(IEnumerable<GA> gas)
+        {
+            foreach(var g in gas)
+            {
+                AddGA(g);
+            }
+        }
 
-
-        //public Item AddItem(ItemTemplate template, string gaPrefix, int startIndex = 0)
-        //{
-        //    var newItem = template.CreateItem(this, gaPrefix);
-
-        //    newItem.ShiftGA(startIndex);
-
-        //    Items.Add(newItem);
-        //    return newItem;
-        //}
+        public Item AddItem(ItemTemplate template, string gaPrefix, int startIndex = 0)
+        {
+            var newItem = new Item(gaPrefix);
+            var gas = template.GAs.Select(x => x.CloneWithPrefix(gaPrefix)).ToList();
+            newItem.AddGARange(gas);
+            newItem.ShiftGA(startIndex);
+            AddGARange(gas);
+            _items.Add(newItem);
+            return newItem;
+        }
 
         //public int GetNextStartingBlockIndex()
         //{
