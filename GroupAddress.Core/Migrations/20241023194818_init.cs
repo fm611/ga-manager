@@ -11,6 +11,19 @@ namespace GroupAddress.Core.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "ItemTemplates",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    SubGroupNames = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemTemplates", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MainGroups",
                 columns: table => new
                 {
@@ -26,7 +39,7 @@ namespace GroupAddress.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Item",
+                name: "Items",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
@@ -36,9 +49,9 @@ namespace GroupAddress.Core.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Item", x => x.Id);
+                    table.PrimaryKey("PK_Items", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Item_MainGroups_MainGroupId",
+                        name: "FK_Items_MainGroups_MainGroupId",
                         column: x => x.MainGroupId,
                         principalTable: "MainGroups",
                         principalColumn: "Id");
@@ -51,6 +64,7 @@ namespace GroupAddress.Core.Migrations
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     ItemId = table.Column<string>(type: "TEXT", nullable: true),
+                    ItemTemplateId = table.Column<string>(type: "TEXT", nullable: true),
                     MainGroupId = table.Column<string>(type: "TEXT", nullable: true),
                     Addresse_GA = table.Column<int>(type: "INTEGER", nullable: false),
                     Addresse_MainGroup = table.Column<int>(type: "INTEGER", nullable: false),
@@ -60,9 +74,14 @@ namespace GroupAddress.Core.Migrations
                 {
                     table.PrimaryKey("PK_GAs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GAs_Item_ItemId",
+                        name: "FK_GAs_ItemTemplates_ItemTemplateId",
+                        column: x => x.ItemTemplateId,
+                        principalTable: "ItemTemplates",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GAs_Items_ItemId",
                         column: x => x.ItemId,
-                        principalTable: "Item",
+                        principalTable: "Items",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_GAs_MainGroups_MainGroupId",
@@ -77,13 +96,18 @@ namespace GroupAddress.Core.Migrations
                 column: "ItemId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_GAs_ItemTemplateId",
+                table: "GAs",
+                column: "ItemTemplateId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GAs_MainGroupId",
                 table: "GAs",
                 column: "MainGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Item_MainGroupId",
-                table: "Item",
+                name: "IX_Items_MainGroupId",
+                table: "Items",
                 column: "MainGroupId");
         }
 
@@ -94,7 +118,10 @@ namespace GroupAddress.Core.Migrations
                 name: "GAs");
 
             migrationBuilder.DropTable(
-                name: "Item");
+                name: "ItemTemplates");
+
+            migrationBuilder.DropTable(
+                name: "Items");
 
             migrationBuilder.DropTable(
                 name: "MainGroups");

@@ -11,7 +11,6 @@ namespace GroupAddress.Core
     {
 
 
-
         private List<Item> _items = [];
         public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
 

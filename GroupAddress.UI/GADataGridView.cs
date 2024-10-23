@@ -81,7 +81,6 @@ namespace GroupAddress.UI
 
         private void ResetSelection()
         {
-
             ClearSelection();
             foreach (var cPos in _previousSelectedCells)
             {
@@ -100,37 +99,32 @@ namespace GroupAddress.UI
         {
             base.OnSelectionChanged(e);
 
-            //SelectedGAs = SelectedCells
-            //    .Cast<DataGridViewCell>()
-            //    .SelectMany(c => RowData
-            //        .ElementAt(c.RowIndex)
-            //        .Value
-            //        .Where(x => x.SubGroup.SubAddress == c.ColumnIndex)
-            //    )
-            //    .ToList();
+            SelectedGAs = SelectedCells
+                .Cast<DataGridViewCell>()
+                .SelectMany(c => RowData
+                    .ElementAt(c.RowIndex)
+                    .Value
+                    .Where(x => x.Addresse.MiddleGroup == c.ColumnIndex)
+                )
+                .ToList();
         }
 
         protected override void OnColumnHeaderMouseDoubleClick(DataGridViewCellMouseEventArgs e)
         {
-            //base.OnColumnHeaderMouseDoubleClick(e);
+            base.OnColumnHeaderMouseDoubleClick(e);
 
-            //if (MainGroup == null) return;
+            if (MainGroup == null) return;
 
-            //var subGroupAddress = e.ColumnIndex;
-            //var subGroup = MainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == subGroupAddress);
+            var currName = MainGroup.SubGroupNames[e.ColumnIndex] ?? "Neue Mittelgruppe";
 
-            //var currName = subGroup?.Name ?? "Neue Mittelgruppe";
+            var editSubGroupForm = new EditSubGroupForm(currName);
+            editSubGroupForm.ShowDialog();
 
-            //var editSubGroupForm = new EditSubGroupForm(currName);
-            //editSubGroupForm.ShowDialog();
+            if (editSubGroupForm.DialogResult != DialogResult.OK) return;
 
-            //if (editSubGroupForm.DialogResult != DialogResult.OK) return;
+            MainGroup.SetSubGroupname(e.ColumnIndex, editSubGroupForm.SubGroupName);
 
-            //subGroup ??= SubGroup.Create(subGroupAddress, editSubGroupForm.SubGroupName, MainGroup);
-
-            //subGroup.Name = editSubGroupForm.SubGroupName;
-
-            //UpdateTable();
+            UpdateTable();
         }
 
         protected override void OnRowPostPaint(DataGridViewRowPostPaintEventArgs e)
@@ -153,18 +147,18 @@ namespace GroupAddress.UI
         {
             base.OnCellBeginEdit(e);
 
-            //ClearSelection();
-            //if (MainGroup == null) return;
+            ClearSelection();
+            if (MainGroup == null) return;
 
-            //var editCell = Rows[e.RowIndex].Cells[e.ColumnIndex];
+            var editCell = Rows[e.RowIndex].Cells[e.ColumnIndex];
 
-            //if (!string.IsNullOrEmpty(editCell.Value as string))
-            //{
-            //    var ga = SelectedGAs.FirstOrDefault(x => x.SubAddress == e.RowIndex && x.SubGroup.SubAddress == e.ColumnIndex);
+            if (!string.IsNullOrEmpty(editCell.Value as string))
+            {
+                var ga = SelectedGAs.FirstOrDefault(x => x.Addresse.GA == e.RowIndex && x.Addresse.MiddleGroup == e.ColumnIndex);
 
-            //    if (ga == null) return;
-            //    editCell.Value = ga.Name;
-            //}
+                if (ga == null) return;
+                editCell.Value = ga.Name;
+            }
         }
 
         protected override void OnCellEndEdit(DataGridViewCellEventArgs e)

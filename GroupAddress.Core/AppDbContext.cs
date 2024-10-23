@@ -27,7 +27,7 @@ namespace GroupAddress.Core
         public AppDbContext()
         {
             string folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
-            DbPath = System.IO.Path.Join(folder, "data.db");
+            DbPath = Path.Join(folder, "data.db");
         }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
