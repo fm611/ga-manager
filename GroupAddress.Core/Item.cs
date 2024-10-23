@@ -11,6 +11,8 @@ namespace GroupAddress.Core
     public class Item : TopLevelCollection
     {
         public Item(string name) : base(name) { }
+
+
     }
 
 

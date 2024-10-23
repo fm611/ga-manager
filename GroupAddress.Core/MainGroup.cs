@@ -15,9 +15,7 @@ namespace GroupAddress.Core
         private List<Item> _items = [];
         public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
 
-
-
-        //public int MaxGASubAddress => GAs.Select(x => x.SubAddress).DefaultIfEmpty(-1).Max();
+        public int MaxGASubAddress => GAs.Select(x => x.Addresse.GA).DefaultIfEmpty(-1).Max();
 
         public int SubAddress { get; private set; }
 
@@ -53,34 +51,45 @@ namespace GroupAddress.Core
             }
         }
 
-        public Item AddItem(ItemTemplate template, string gaPrefix, int startIndex = 0)
+        public Item? AddItem(ItemTemplate template, string gaPrefix, int startIndex = 0)
         {
             var newItem = new Item(gaPrefix);
             var gas = template.GAs.Select(x => x.CloneWithPrefix(gaPrefix)).ToList();
             newItem.AddGARange(gas);
             newItem.ShiftGA(startIndex);
+
+            if (GAs.Any(x => GAs.Select(y => y.Addresse.MiddleGroup).Contains(x.Addresse.MiddleGroup) &&
+                            GAs.Select(y => y.Addresse.GA).Contains(x.Addresse.GA)))
+                return null;
+
             AddGARange(gas);
             _items.Add(newItem);
             return newItem;
         }
 
-        //public int GetNextStartingBlockIndex()
-        //{
-        //    var blockCount = (double)(MaxGASubAddress + 1) / defaultBlockLength;
-        //    var ceiled = (int)Math.Ceiling(blockCount);
-        //    var next = ceiled * defaultBlockLength;
+        public int GetNextStartingBlockIndex()
+        {
+            var blockCount = (double)(MaxGASubAddress + 1) / DefaultBlockLength;
+            var ceiled = (int)Math.Ceiling(blockCount);
+            var next = ceiled * DefaultBlockLength;
 
-        //    return next;
-        //}
+            return next;
+        }
 
-        //public new void RemoveGA(GA ga)
-        //{
-        //    base.RemoveGA(ga);
+        public new void RemoveGA(GA ga)
+        {
+            var item = _items.Where(x => x.GAs.Contains(ga)).FirstOrDefault();
+            if (item != null)
+                item.RemoveGA(ga);
 
-        //    SubGroups
-        //        .FirstOrDefault(x => x.Id == ga.SubGroupId)?
-        //        .RemoveGA(ga);
-        //}
+            base.RemoveGA(ga);
+        }
+
+        //public override string Address => SubAddress.ToString();
+
+        public string AddressName => SubAddress + " - " + Name;
+        public string ListBoxString => AddressName + " (" + DefaultBlockLength + " / " + (MaxGASubAddress == -1 ? "-" : MaxGASubAddress) + ")";
+
 
         //public List<GA> GetAllGAs() 
         //{
@@ -118,28 +127,6 @@ namespace GroupAddress.Core
         //}
 
 
-        //public SubGroup GetOrCreateSubGroup(int subAddress, string name = "Neue MIttelgruppe")
-        //{
-        //    var res = GetSubGroup(subAddress);
-        //    return res ?? SubGroup.Create(subAddress, name, this);
-        //}
-
-        //public SubGroup GetOrCreateSubGroup(SubGroupTemplate subGroupTemplate)
-        //{
-        //    var res = GetSubGroup(subGroupTemplate);
-
-        //    return res ?? SubGroup.Create(subGroupTemplate, this);
-        //}
-        //public SubGroup? GetSubGroup(SubGroupTemplate subGroupTemplate)
-        //{
-        //    return GetSubGroup(subGroupTemplate.SubAddress);
-        //}
-
-        //public SubGroup? GetSubGroup(int subGroupAddress)
-        //{
-        //    return SubGroups.Where(x => x.SubAddress == subGroupAddress).FirstOrDefault();
-        //}
-
         //public string GetCSVString()
         //{
         //    var gas = GetAllGAs();
@@ -159,9 +146,6 @@ namespace GroupAddress.Core
         //    return outputStr;            
         //}
 
-        //public override string Address => SubAddress.ToString();
-
-        //public string ListBoxString => AddressName + " (" + DefaultBlockLength + " / " + (MaxGASubAddress == -1 ? "-" : MaxGASubAddress) + ")";
 
         //public static bool IsValidSubAddress(int addr)
         //{

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GroupAddress.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241023094304_init2")]
-    partial class init2
+    [Migration("20241023130026_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,6 +70,10 @@ namespace GroupAddress.Core.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("SubGroupNames")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MainGroupId");
@@ -91,6 +95,10 @@ namespace GroupAddress.Core.Migrations
 
                     b.Property<int>("SubAddress")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("SubGroupNames")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

@@ -51,16 +51,16 @@ namespace GroupAddress.UI
             InitializeComponent();
 
 
-            //Comparison<Group> groupComparison = (a, b) => a.AddressName.CompareTo(b.AddressName);
+            Comparison<MainGroup> mainGroupComparison = (a, b) => a.SubAddress.CompareTo(b.SubAddress);
 
-            //MainGroups = [];
+            MainGroups = [];
 
-            //MainGroupWrapper = new ListBoxWrapper<MainGroup>(
-            //    MainGroupsListBox,
-            //    groupComparison,
-            //    nameof(MainGroup.ListBoxString),
-            //    "Id",
-            //    () => MainGroups);
+            MainGroupWrapper = new ListBoxWrapper<MainGroup>(
+                MainGroupsListBox,
+                mainGroupComparison,
+                nameof(MainGroup.ListBoxString),
+                "Id",
+                () => MainGroups);
 
             InitDatabase();
         }
@@ -72,17 +72,15 @@ namespace GroupAddress.UI
             Db.InitData();
 
 
-            //MainGroups = Db.MainGroups
-            //    .Include(x => x.SubGroups)
-            //    .ThenInclude(x => x.GAs)
-            //    .Include(x => x.Items)
-            //    .ToList();
+            MainGroups = Db.MainGroups
+                .Include(x => x.GAs)
+                .Include(x => x.Items)
+                .ToList();
 
             //ItemTemplates = Db.ItemTemplates
             //    .Include(x => x.GATemplates)
             //    .ThenInclude(x => x.GAParts)
             //    .ToList();
-                
 
         }
 
@@ -105,7 +103,7 @@ namespace GroupAddress.UI
         private void UpdataUI()
         {
             MainGroupWrapper.Update();
-            GADataTable.FirstDisplayedScrollingRowIndex = CurrentGARowScrollIndex;
+            //GADataTable.FirstDisplayedScrollingRowIndex = CurrentGARowScrollIndex;
         }
 
 
@@ -142,9 +140,9 @@ namespace GroupAddress.UI
             SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
             SelectedMainGroupId = (string?)MainGroupsListBox.SelectedValue;
 
+
             GADataTable.SetMainGroup(SelectedMainGroup);
 
-            //FillGADataTable();
         }
 
         private void AddMainGroupNameTextBox_Enter(object sender, EventArgs e)

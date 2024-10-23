@@ -27,7 +27,7 @@ namespace GroupAddress.TestConsole
 
             mg.AddItem(template, "EG_HWR_Licht_Decke");
 
-            mg.AddItem(template, "EG_KU_Licht_Esstisch",10);
+            mg.AddItem(template, "EG_KU_Licht_Esstisch");
 
 
             //var sg = mg.SubGroups.FirstOrDefault(x => x.SubAddress == 0);
@@ -37,6 +37,11 @@ namespace GroupAddress.TestConsole
             db.SaveChanges();
 
 
+            var ga = mg.GAs.ElementAt(4);
+
+            mg.RemoveGA(ga);
+
+            db.SaveChanges();
 
             Console.WriteLine("Done");
 

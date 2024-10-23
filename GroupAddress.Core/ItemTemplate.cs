@@ -11,6 +11,8 @@ namespace GroupAddress.Core
     public class ItemTemplate : TopLevelCollection
     {
 
+        private ItemTemplate() : base() { }
+
         public ItemTemplate(string name, IEnumerable<GA> gas) : base(name, gas)
         {
         }

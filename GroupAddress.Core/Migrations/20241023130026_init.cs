@@ -17,6 +17,7 @@ namespace GroupAddress.Core.Migrations
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     SubAddress = table.Column<int>(type: "INTEGER", nullable: false),
                     DefaultBlockLength = table.Column<int>(type: "INTEGER", nullable: false),
+                    SubGroupNames = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -25,33 +26,13 @@ namespace GroupAddress.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GAs",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    MainGroupId = table.Column<string>(type: "TEXT", nullable: true),
-                    Addresse_GA = table.Column<int>(type: "INTEGER", nullable: false),
-                    Addresse_MainGroup = table.Column<int>(type: "INTEGER", nullable: false),
-                    Addresse_MiddleGroup = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GAs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GAs_MainGroups_MainGroupId",
-                        column: x => x.MainGroupId,
-                        principalTable: "MainGroups",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Item",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    MainGroupId = table.Column<string>(type: "TEXT", nullable: true)
+                    MainGroupId = table.Column<string>(type: "TEXT", nullable: true),
+                    SubGroupNames = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,6 +43,38 @@ namespace GroupAddress.Core.Migrations
                         principalTable: "MainGroups",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateTable(
+                name: "GAs",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    ItemId = table.Column<string>(type: "TEXT", nullable: true),
+                    MainGroupId = table.Column<string>(type: "TEXT", nullable: true),
+                    Addresse_GA = table.Column<int>(type: "INTEGER", nullable: false),
+                    Addresse_MainGroup = table.Column<int>(type: "INTEGER", nullable: false),
+                    Addresse_MiddleGroup = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GAs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GAs_Item_ItemId",
+                        column: x => x.ItemId,
+                        principalTable: "Item",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GAs_MainGroups_MainGroupId",
+                        column: x => x.MainGroupId,
+                        principalTable: "MainGroups",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GAs_ItemId",
+                table: "GAs",
+                column: "ItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GAs_MainGroupId",

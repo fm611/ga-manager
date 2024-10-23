@@ -8,19 +8,17 @@ namespace GroupAddress.Core
 {
     public abstract class TopLevelCollection
     {
-        private List<GA> _gas = [];
-        public IReadOnlyCollection<GA> GAs => _gas.AsReadOnly();
+        private List<GA> _gAs = [];
+        public IReadOnlyCollection<GA> GAs => _gAs.AsReadOnly();
 
-
-        private List<string> _subGroupNames = [];
-        public IReadOnlyCollection<string> SubGroupNames => _subGroupNames.AsReadOnly();
+        public string[] SubGroupNames { get; private set; } = new string[8];
 
 
         public string Id { get; set; }
         public string Name { get; set; } = "";
         public TopLevelCollection() {
             Id = Guid.NewGuid().ToString();
-            _subGroupNames = Enumerable.Range(0, 8).Select(x => "").ToList();
+            SubGroupNames = Enumerable.Range(0, 8).Select(x => "").ToArray();
         }
 
         public TopLevelCollection(string name) : this()
@@ -30,19 +28,19 @@ namespace GroupAddress.Core
         public TopLevelCollection(string name, IEnumerable<GA> gas) : this()
         {
             Name = name;
-            gas.ToList().ForEach(x => _gas.Add(x));
+            gas.ToList().ForEach(x => _gAs.Add(x));
         }
 
 
 
         public void SetSubGroupname(int addresse,  string subgroupname)
         {
-            _subGroupNames[addresse] = subgroupname;
+            SubGroupNames[addresse] = subgroupname;
         }
 
         public void AddGA(GA ga) {
-            if(!_gas.Any(x => x.Addresse == ga.Addresse))
-                _gas.Add(ga);
+            if(!_gAs.Any(x => x.Addresse == ga.Addresse))
+                _gAs.Add(ga);
         }
 
         public void AddGARange(IEnumerable<GA> gas) {
@@ -52,9 +50,14 @@ namespace GroupAddress.Core
             }
         }
 
+        public void RemoveGA(GA ga)
+        {
+            _gAs.Remove(ga);
+        }
+
         public void ShiftGA(int s)
         {
-            foreach (var item in _gas)
+            foreach (var item in _gAs)
             {
                 item.Addresse.GA += s;
             }

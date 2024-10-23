@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,21 +7,19 @@ using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 
 namespace GroupAddress.Core
 {
     public class AppDbContext : DbContext
     {
-        //public DbSet<Blog> Blogs { get; set; }
-        //public DbSet<Post> Posts { get; set; }
         public DbSet<MainGroup> MainGroups { get; set; }
-        //public DbSet<SubGroup> SubGroups { get; set; }
         public DbSet<GA> GAs { get; set; }
-        //public DbSet<Item> Items { get; set; }
-        //public DbSet<ItemTemplate> ItemTemplates { get; set; }
-        //public DbSet<GATemplate> GATemplates { get; set; }
-        //public DbSet<GATemplatePart> GATemplateParts { get; set; }
+        public DbSet<Item> Items { get; set; }
+        public DbSet<ItemTemplate> ItemTemplates { get; set; }
 
 
         public string DbPath { get; }
@@ -45,7 +44,6 @@ namespace GroupAddress.Core
             modelBuilder.Entity<GA>(x => {
                 x.ComplexProperty(y => y.Addresse, y => { y.IsRequired(); });
             });
-
         }
 
         public void InitData()
@@ -94,40 +92,41 @@ namespace GroupAddress.Core
         }
 
         public void InitItemTemplates()
-        {
-            //string guidBase = "DA6C8DDB-BC59-4805-84C9-E81A3DF7CB";
+    {
+            string guidBase = "DA6C8DDB-BC59-4805-84C9-E81A3DF7CB";
 
-            //var templates = new List<ItemTemplate>() {
-            //    DefaultItemTemplates.Light,
-            //    DefaultItemTemplates.LightDimm,
-            //    DefaultItemTemplates.LightTW,
-            //    DefaultItemTemplates.LightRGBW
-            //};
+            var templates = new List<ItemTemplate>() {
+                DefaultItemTemplates.Light,
+                DefaultItemTemplates.LightDimm,
+                DefaultItemTemplates.LightTW,
+                DefaultItemTemplates.LightRGBW
+            };
 
-            //for (int i = 0; i < templates.Count; i++)
-            //{
-            //    var guid = guidBase + i.ToString("D2");
-            //    if (ItemTemplates.Any(t => t.Id == guid)) continue;
-                
-            //    var template = templates[i];
-            //    template.Id = guid;
-            //    ItemTemplates.Add(template);
+            for (int i = 0; i < templates.Count; i++)
+            {
+                var guid = guidBase + i.ToString("D2");
+                if (ItemTemplates.Any(t => t.Id == guid)) continue;
 
-            //}
-            //SaveChanges();
+                var template = templates[i];
+                template.Id = guid;
+                ItemTemplates.Add(template);
+
+            }
+            SaveChanges();
         }
 
 
         public void InitItem()
         {
-            //if(Items.Any()) return;
 
-            //var mGroup1 = MainGroups.FirstOrDefault();
-            //if(mGroup1 ==  null) return;
+            if(Items.Any()) return;
 
-            //mGroup1.AddItem(DefaultItemTemplates.Light, "EG_HWR_Licht_Decke");
+            var mGroup1 = MainGroups.FirstOrDefault(x => x.SubAddress==1);
+            if(mGroup1 ==  null) return;
 
-            //SaveChanges();
+            mGroup1.AddItem(DefaultItemTemplates.Light, "EG_HWR_Licht_Decke");
+
+            SaveChanges();
 
         }
 

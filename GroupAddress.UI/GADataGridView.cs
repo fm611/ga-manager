@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,12 +17,12 @@ namespace GroupAddress.UI
         public bool ShowEmptyRows { get; set; } = true;
         public bool ShowAllRows { get; set; } = true;
 
-        private List<CellPosition> _previousSelectedCells;
+        private List<CellPosition> _previousSelectedCells = [];
 
-        public List<GA> SelectedGAs { get; private set; }
+        public List<GA> SelectedGAs { get; private set; } = [];
 
 
-        public Dictionary<int, List<GA>> RowData { get; set; }
+        public Dictionary<int, List<GA>> RowData { get; set; } = [];
 
 
         public void SetMainGroup(MainGroup mainGroup)
@@ -39,39 +40,38 @@ namespace GroupAddress.UI
 
         private void FillTable()
         {
-            //if (MainGroup == null) return;
+            if (MainGroup == null) return;
 
-            //var table = new DataTable();
-            //var cols = Enumerable
-            //    .Range(0, 8)
-            //    .Select(x => new DataColumn(x + " - " + MainGroup.SubGroups.FirstOrDefault(y => y.SubAddress == x)?.Name))
-            //    .ToArray();
+            var table = new DataTable();
+            var cols = MainGroup.SubGroupNames
+                .Select((x,i) => new DataColumn(i + " - " + x))
+                .ToArray();
 
-            //table.Columns.AddRange(cols);
+            table.Columns.AddRange(cols);
 
-            //RowData = new Dictionary<int, List<GA>>();
-            //var maxRow = ShowAllRows ? 256 : MainGroup.GAs.Max(x => x.SubAddress) + 1;
+            RowData = new Dictionary<int, List<GA>>();
+            var maxRow = ShowAllRows ? 256 : MainGroup.MaxGASubAddress + 1;
 
-            //for (int i = 0; i < maxRow; i++)
-            //{
-            //    var rowGAs = MainGroup
-            //            .GAs
-            //            .Where(x => x.SubAddress == i);
+            for (int i = 0; i < maxRow; i++)
+            {
+                var rowGAs = MainGroup
+                        .GAs
+                        .Where(x => x.Addresse.GA == i);
 
-            //    if (rowGAs.Count() == 0 && !ShowEmptyRows) continue;
+                if (rowGAs.Count() == 0 && !ShowEmptyRows) continue;
 
-            //    var newRow = table.NewRow();
-            //    for (int j = 0; j < 8; j++)
-            //    {
-            //        newRow[j] = rowGAs
-            //            .FirstOrDefault(x => x.SubGroup.SubAddress == j)?
-            //            .AddressName;
-            //    }
-            //    table.Rows.Add(newRow);
-            //    RowData.Add(i, rowGAs.ToList());
-            //}
-            //DataSource = table;
-            //AutoResizeColumns();
+                var newRow = table.NewRow();
+                for (int j = 0; j < MainGroup.SubGroupNames.Length; j++)
+                {
+                    newRow[j] = rowGAs
+                        .FirstOrDefault(x => x.Addresse.MiddleGroup == j)?
+                        .AddressName;
+                }
+                table.Rows.Add(newRow);
+                RowData.Add(i, rowGAs.ToList());
+            }
+            DataSource = table;
+            AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells,true);
         }
 
         private void SaveSelection()

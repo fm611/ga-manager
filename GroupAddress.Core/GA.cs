@@ -8,7 +8,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace GroupAddress.Core
 {
 
-    public class GA
+    public class GA: IComparable<GA>
     {
         public string Id { get; set; }
         public string Name { get; set; } = "";
@@ -38,31 +38,15 @@ namespace GroupAddress.Core
             return Addresse + " - " + Name;
         }
 
+        public int CompareTo(GA? other)
+        {
+            if(other == null) return 1;
+            if(other == this) return 0;
 
+            return Addresse.ToString().CompareTo(other.Addresse);
+        }
 
-
-        //public string SubGroupId { get; set; }
-        //public Item? Item { get; set; }
-
-        //public GA() :base(){
-        //}
-
-
-        //public GA(SubGroup subGroup, int subAddress, string name) : base(subAddress, name) 
-        //{
-        //    SubGroup = subGroup;
-        //}
-
-
-
-        //public string Address => SubGroup.Address + "/" + SubAddress;
-
-        //public string AddressName => Address + " - " + Name;
-
-        //public override string ToString()
-        //{
-        //    return Address + " - " + Name;
-        //}
+        public string AddressName => Addresse + " - " + Name;
 
     }
 
