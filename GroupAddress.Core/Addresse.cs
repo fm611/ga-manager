@@ -34,12 +34,19 @@ namespace GroupAddress.Core
 
         public override string ToString()
         {
-            return MainGroup+"/"+MiddleGroup+"/"+GA;
+            return (MainGroup < 0 ? "x" : MainGroup) + "/" + MiddleGroup + "/" + GA;
         }
 
         public override bool Equals(object? obj)
         {
             return Equals(obj as Addresse);
+        }
+
+        public bool EqualsWithoutMainGroup(Addresse? other)
+        {
+            return other is not null &&
+                   MiddleGroup == other.MiddleGroup &&
+                   GA == other.GA;
         }
 
         public bool Equals(Addresse? other)

@@ -28,9 +28,9 @@ namespace GroupAddress.UI
 
         public AppDbContext Db { get; set; }
 
-
         public List<MainGroup> MainGroups { get; set; }
 
+        public List<ItemTemplate> ItemTemplates { get; set; }
 
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
 
@@ -77,10 +77,10 @@ namespace GroupAddress.UI
                 .Include(x => x.Items)
                 .ToList();
 
-            //ItemTemplates = Db.ItemTemplates
-            //    .Include(x => x.GATemplates)
-            //    .ThenInclude(x => x.GAParts)
-            //    .ToList();
+            ItemTemplates = Db.ItemTemplates
+                .Include(x => x.GAs)
+                .ToList();
+
 
         }
 
@@ -89,7 +89,6 @@ namespace GroupAddress.UI
             InitDatabase();
             UpdataUI();
         }
-
 
 
         private void Save()
@@ -103,6 +102,7 @@ namespace GroupAddress.UI
         private void UpdataUI()
         {
             MainGroupWrapper.Update();
+            GADataTable.UpdateTable();
             //GADataTable.FirstDisplayedScrollingRowIndex = CurrentGARowScrollIndex;
         }
 
@@ -119,39 +119,34 @@ namespace GroupAddress.UI
             MainGroups.Add(addMainGroupForm.MainGroup);
             MainGroupWrapper.Update();
         }
-
         private void EditMainGroup(string id)
         {
             var addMainGroupForm = new AddEditMainGroupForm(MainGroups, id);
             var result = addMainGroupForm.ShowDialog();
 
-
             if (result != DialogResult.OK || addMainGroupForm.MainGroup == null) return;
 
-
             MainGroupWrapper.Update();
+        }
+        private void DeleteMainGroup(string id)
+        {
+            if (SelectedMainGroup == null) return;
+
+            if (MessageBox.Show("Haupgruppe löschen?", "Hauptgruppe löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                MainGroups.Remove(SelectedMainGroup);
+            }
+
+            UpdataUI();
         }
 
 
         private void MainGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-
             SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
             SelectedMainGroupId = (string?)MainGroupsListBox.SelectedValue;
 
-
-            GADataTable.SetMainGroup(SelectedMainGroup);
-
-        }
-
-        private void AddMainGroupNameTextBox_Enter(object sender, EventArgs e)
-        {
-            BeginInvoke(new Action(() => (sender as TextBox).SelectAll()));
-        }
-        private void AddMainGroupIdTextBox_Enter(object sender, EventArgs e)
-        {
-            BeginInvoke(new Action(() => (sender as TextBox).SelectAll()));
+            GADataTable.SetTopLevelCollection(SelectedMainGroup);
         }
 
         #endregion
@@ -174,23 +169,22 @@ namespace GroupAddress.UI
 
         private void AddItemButton_Click(object sender, EventArgs e)
         {
-            //if (AddItemForm == null)
-            //    AddItemForm = new AddItemForm(MainGroups);
+            if (AddItemForm == null)
+                AddItemForm = new AddItemForm(MainGroups, ItemTemplates);
 
-            //AddItemForm.LoadData();
+            AddItemForm.LoadData();
+            AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);
 
-            //AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);
+            AddItemForm.ShowDialog();
 
-            //AddItemForm.ShowDialog();
+            if (AddItemForm.DialogResult == DialogResult.OK)
+            {
+                UpdataUI();
 
-            //if (AddItemForm.DialogResult == DialogResult.OK)
-            //{
-            //    UpdataUI();
-
-            //    MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
-            //    //GADataTable.FirstDisplayedScrollingRowIndex = AddItemForm.LastInsertedItem.MinGaAddress;
-
-            //}
+                MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
+                GADataTable.FirstDisplayedScrollingRowIndex = AddItemForm.LastInsertedItem?.MinGASubAddress ?? 0;
+                
+            }
         }
 
 
@@ -287,19 +281,6 @@ namespace GroupAddress.UI
 
         }
 
-
-        private void DeleteMainGroupButton_Click(object sender, EventArgs e)
-        {
-            if (SelectedMainGroup == null) return;
-
-            if (MessageBox.Show("Haupgruppe löschen?", "Hauptgruppe löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-            {
-                MainGroups.Remove(SelectedMainGroup);
-            }
-
-            UpdataUI();
-        }
-
         private void AddMainGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddMainGroup();
@@ -307,8 +288,28 @@ namespace GroupAddress.UI
 
         private void EditMainGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(SelectedMainGroup == null) return;
+            if (SelectedMainGroup == null) return;
             EditMainGroup(SelectedMainGroup.Id);
+        }
+
+        private void DeleteMainGroupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (SelectedMainGroup == null) return;
+            DeleteMainGroup(SelectedMainGroup.Id);
+        }
+
+        private void MainGroupsListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyValue == (char)Keys.Delete)
+            {
+                if (SelectedMainGroup == null) return;
+                DeleteMainGroup(SelectedMainGroup.Id);
+            }
+            if (e.KeyData == (Keys.Control | Keys.N))
+            {
+                if (SelectedMainGroup == null) return;
+                AddMainGroup();
+            }
         }
     }
 }

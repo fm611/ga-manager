@@ -13,7 +13,7 @@ namespace GroupAddress.UI
     public class GADataGridView : DataGridView
     {
 
-        public MainGroup? MainGroup { get; set; }
+        public TopLevelCollection? TopLevelCollection { get; set; }
         public bool ShowEmptyRows { get; set; } = true;
         public bool ShowAllRows { get; set; } = true;
 
@@ -22,12 +22,14 @@ namespace GroupAddress.UI
         public List<GA> SelectedGAs { get; private set; } = [];
 
 
+        //Key => GA Subaddress
+        //ElementAt Index => RowIndex
         public Dictionary<int, List<GA>> RowData { get; set; } = [];
 
 
-        public void SetMainGroup(MainGroup mainGroup)
+        public void SetTopLevelCollection(TopLevelCollection coll)
         {
-            MainGroup = mainGroup;
+            TopLevelCollection = coll;
             FillTable();
         }
 
@@ -40,28 +42,28 @@ namespace GroupAddress.UI
 
         private void FillTable()
         {
-            if (MainGroup == null) return;
+            if (TopLevelCollection == null) return;
 
             var table = new DataTable();
-            var cols = MainGroup.SubGroupNames
+            var cols = TopLevelCollection.SubGroupNames
                 .Select((x,i) => new DataColumn(i + " - " + x))
                 .ToArray();
 
             table.Columns.AddRange(cols);
 
             RowData = new Dictionary<int, List<GA>>();
-            var maxRow = ShowAllRows ? 256 : MainGroup.MaxGASubAddress + 1;
+            var maxRow = ShowAllRows ? 256 : TopLevelCollection.MaxGASubAddress + 1;
 
             for (int i = 0; i < maxRow; i++)
             {
-                var rowGAs = MainGroup
+                var rowGAs = TopLevelCollection
                         .GAs
                         .Where(x => x.Addresse.GA == i);
 
                 if (rowGAs.Count() == 0 && !ShowEmptyRows) continue;
 
                 var newRow = table.NewRow();
-                for (int j = 0; j < MainGroup.SubGroupNames.Length; j++)
+                for (int j = 0; j < TopLevelCollection.SubGroupNames.Length; j++)
                 {
                     newRow[j] = rowGAs
                         .FirstOrDefault(x => x.Addresse.MiddleGroup == j)?
@@ -71,7 +73,7 @@ namespace GroupAddress.UI
                 RowData.Add(i, rowGAs.ToList());
             }
             DataSource = table;
-            AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells,true);
+            AutoResizeColumns();
         }
 
         private void SaveSelection()
@@ -91,38 +93,46 @@ namespace GroupAddress.UI
             }
         }
 
+        private Addresse GetAddresse(CellPosition pos)
+        {
+            return new Addresse(TopLevelCollection?.SubAddress??-1, pos.Column, RowData.ElementAt(pos.Row).Key); 
+        }
+
+        private DataGridViewCell GetCell(CellPosition pos)
+        {
+            return Rows[pos.Row].Cells[pos.Column];
+        }
 
         //Events
-
 
         protected override void OnSelectionChanged(EventArgs e)
         {
             base.OnSelectionChanged(e);
 
-            SelectedGAs = SelectedCells
-                .Cast<DataGridViewCell>()
-                .SelectMany(c => RowData
-                    .ElementAt(c.RowIndex)
-                    .Value
-                    .Where(x => x.Addresse.MiddleGroup == c.ColumnIndex)
-                )
-                .ToList();
+            if (TopLevelCollection == null) 
+                SelectedGAs = [];
+            else
+                SelectedGAs = SelectedCells
+                    .Cast<DataGridViewCell>()
+                    .Select(x => GetAddresse(new CellPosition(x)))
+                    .SelectMany(x => TopLevelCollection.GAs.Where(y => y.Addresse == x))
+                    .ToList();
         }
 
         protected override void OnColumnHeaderMouseDoubleClick(DataGridViewCellMouseEventArgs e)
         {
             base.OnColumnHeaderMouseDoubleClick(e);
 
-            if (MainGroup == null) return;
+            if (TopLevelCollection == null) return;
 
-            var currName = MainGroup.SubGroupNames[e.ColumnIndex] ?? "Neue Mittelgruppe";
+            var currName = TopLevelCollection.SubGroupNames[e.ColumnIndex] ?? "Neue Mittelgruppe";
 
             var editSubGroupForm = new EditSubGroupForm(currName);
             editSubGroupForm.ShowDialog();
 
             if (editSubGroupForm.DialogResult != DialogResult.OK) return;
 
-            MainGroup.SetSubGroupname(e.ColumnIndex, editSubGroupForm.SubGroupName);
+            TopLevelCollection.SetSubGroupname(e.ColumnIndex, editSubGroupForm.SubGroupName);
 
             UpdateTable();
         }
@@ -148,13 +158,15 @@ namespace GroupAddress.UI
             base.OnCellBeginEdit(e);
 
             ClearSelection();
-            if (MainGroup == null) return;
+            if (TopLevelCollection == null) return;
 
-            var editCell = Rows[e.RowIndex].Cells[e.ColumnIndex];
+            var pos = new CellPosition(e);
+            var editCell = GetCell(pos);
+            var addr = GetAddresse(pos);
 
             if (!string.IsNullOrEmpty(editCell.Value as string))
             {
-                var ga = SelectedGAs.FirstOrDefault(x => x.Addresse.GA == e.RowIndex && x.Addresse.MiddleGroup == e.ColumnIndex);
+                var ga = SelectedGAs.FirstOrDefault(x => x.Addresse==addr);
 
                 if (ga == null) return;
                 editCell.Value = ga.Name;
@@ -163,82 +175,67 @@ namespace GroupAddress.UI
 
         protected override void OnCellEndEdit(DataGridViewCellEventArgs e)
         {
-            //base.OnCellEndEdit(e);
+            base.OnCellEndEdit(e);
 
-            //if (MainGroup == null) return;
-
-            //var editCell = Rows[e.RowIndex].Cells[e.ColumnIndex];
-
-            //if(string.IsNullOrEmpty(editCell.Value as string)) return;
-
-            //var subGroup = MainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == e.ColumnIndex);
-
-            //if (subGroup == null)
-            //{
-            //    var currName = subGroup?.Name ?? "Neue Mittelgruppe";
-
-            //    var editSubGroupForm = new EditSubGroupForm(currName);
-            //    editSubGroupForm.ShowDialog();
-
-            //    if (editSubGroupForm.DialogResult != DialogResult.OK) return;
-
-            //    subGroup = SubGroup.Create(e.ColumnIndex, editSubGroupForm.SubGroupName, MainGroup);
-            //}
-
-            //var ga = SelectedGAs.FirstOrDefault(x => x.SubAddress == e.RowIndex && x.SubGroup.SubAddress == e.ColumnIndex);
-
-            //if (ga == null)
-            //    new GA(subGroup, e.RowIndex, (string)editCell.Value);
-            //else
-            //    ga.Name = (string)editCell.Value;
+            if (TopLevelCollection == null) return;
 
 
-            //this.BeginInvoke(new MethodInvoker(() =>
-            //{
-            //    UpdateTable();
-            //}));
+            var pos = new CellPosition(e);
+            var editCell = GetCell(pos);
+            var addr = GetAddresse(pos);
+
+            if (string.IsNullOrEmpty(editCell.Value as string)) return;
+
+            var ga = SelectedGAs.FirstOrDefault(x => x.Addresse == addr);
+
+            if (ga == null)
+                ga = new GA(addr, (string)editCell.Value);
+            
+            ga.Name = (string)editCell.Value;
+
+            BeginInvoke(new MethodInvoker(UpdateTable));
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
 
-            //if (MainGroup == null) return;
+            if (TopLevelCollection == null) return;
 
-            //if (e.KeyValue == (char)Keys.Delete)
-            //{
-            //    if (SelectedGAs.Count == 0) return;
+            if (e.KeyValue == (char)Keys.Delete)
+            {
+                if (SelectedGAs.Count == 0) return;
 
-            //    var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            //    if (res == DialogResult.Yes)
-            //    {
-            //        SelectedGAs.ForEach(MainGroup.RemoveGA);                        
+                var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (res == DialogResult.Yes)
+                {
+                    SelectedGAs.ForEach(TopLevelCollection.RemoveGA);
+                    UpdateTable();
+                }
+            }
 
-            //        UpdateTable();
-            //    }
-            //}
+            if (e.KeyData == (Keys.Control | Keys.C))
+            {
+                var ga = SelectedGAs.FirstOrDefault();
 
-            //if (e.KeyData == (Keys.Control | Keys.C))
-            //{
-            //    var ga = SelectedGAs.FirstOrDefault();
+                if (ga == null) return;
 
-            //    if (ga == null) return;
-            //    Clipboard.SetText(ga.Name);
+                Clipboard.SetText(ga.Name);
 
-            //    e.Handled = true;
-            //}
+                e.Handled = true;
+            }
 
-            //if (e.KeyData == (Keys.Control | Keys.V) && SelectedCells.Count == 1)
-            //{
-            //    var pasteCell = SelectedCells.Cast<DataGridViewCell>().First();
-            //    if (pasteCell == null) return;
+            if (e.KeyData == (Keys.Control | Keys.V) && SelectedCells.Count == 1)
+            {
+                var pasteCell = SelectedCells.Cast<DataGridViewCell>().First();
+                if (pasteCell == null) return;
 
-            //    pasteCell.Value = Clipboard.GetText();
+                pasteCell.Value = Clipboard.GetText();
 
-            //    OnCellEndEdit(new DataGridViewCellEventArgs(pasteCell.ColumnIndex, pasteCell.RowIndex));
+                OnCellEndEdit(new DataGridViewCellEventArgs(pasteCell.ColumnIndex, pasteCell.RowIndex));
 
-            //    e.Handled = true;
-            //}
+                e.Handled = true;
+            }
 
         }
 

@@ -36,7 +36,7 @@
             MainGroupsListBoxContextMenu = new ContextMenuStrip(components);
             AddMainGroupToolStripMenuItem = new ToolStripMenuItem();
             EditMainGroupToolStripMenuItem = new ToolStripMenuItem();
-            löschenToolStripMenuItem = new ToolStripMenuItem();
+            DeleteMainGroupToolStripMenuItem = new ToolStripMenuItem();
             label1 = new Label();
             statusStrip1 = new StatusStrip();
             StatusInfoLabel = new ToolStripStatusLabel();
@@ -69,32 +69,36 @@
             MainGroupsListBox.Size = new Size(248, 439);
             MainGroupsListBox.TabIndex = 0;
             MainGroupsListBox.SelectedIndexChanged += MainGroupsListBox_SelectedIndexChanged;
+            MainGroupsListBox.KeyDown += MainGroupsListBox_KeyDown;
             // 
             // MainGroupsListBoxContextMenu
             // 
-            MainGroupsListBoxContextMenu.Items.AddRange(new ToolStripItem[] { AddMainGroupToolStripMenuItem, EditMainGroupToolStripMenuItem, löschenToolStripMenuItem });
+            MainGroupsListBoxContextMenu.Items.AddRange(new ToolStripItem[] { AddMainGroupToolStripMenuItem, EditMainGroupToolStripMenuItem, DeleteMainGroupToolStripMenuItem });
             MainGroupsListBoxContextMenu.Name = "contextMenuStrip1";
-            MainGroupsListBoxContextMenu.Size = new Size(131, 70);
+            MainGroupsListBoxContextMenu.Size = new Size(147, 70);
             // 
             // AddMainGroupToolStripMenuItem
             // 
             AddMainGroupToolStripMenuItem.Name = "AddMainGroupToolStripMenuItem";
-            AddMainGroupToolStripMenuItem.Size = new Size(130, 22);
+            AddMainGroupToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
+            AddMainGroupToolStripMenuItem.Size = new Size(146, 22);
             AddMainGroupToolStripMenuItem.Text = "Neu";
             AddMainGroupToolStripMenuItem.Click += AddMainGroupToolStripMenuItem_Click;
             // 
             // EditMainGroupToolStripMenuItem
             // 
             EditMainGroupToolStripMenuItem.Name = "EditMainGroupToolStripMenuItem";
-            EditMainGroupToolStripMenuItem.Size = new Size(130, 22);
+            EditMainGroupToolStripMenuItem.Size = new Size(146, 22);
             EditMainGroupToolStripMenuItem.Text = "Bearbeiten";
             EditMainGroupToolStripMenuItem.Click += EditMainGroupToolStripMenuItem_Click;
             // 
-            // löschenToolStripMenuItem
+            // DeleteMainGroupToolStripMenuItem
             // 
-            löschenToolStripMenuItem.Name = "löschenToolStripMenuItem";
-            löschenToolStripMenuItem.Size = new Size(130, 22);
-            löschenToolStripMenuItem.Text = "Löschen";
+            DeleteMainGroupToolStripMenuItem.Name = "DeleteMainGroupToolStripMenuItem";
+            DeleteMainGroupToolStripMenuItem.ShortcutKeys = Keys.Delete;
+            DeleteMainGroupToolStripMenuItem.Size = new Size(146, 22);
+            DeleteMainGroupToolStripMenuItem.Text = "Löschen";
+            DeleteMainGroupToolStripMenuItem.Click += DeleteMainGroupToolStripMenuItem_Click;
             // 
             // label1
             // 
@@ -131,8 +135,8 @@
             dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
             dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
             dataGridViewCellStyle1.Padding = new Padding(0, 5, 0, 5);
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -146,7 +150,6 @@
             GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
             GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(266, 67);
-            GADataTable.MainGroup = null;
             GADataTable.Name = "GADataTable";
             GADataTable.RowData = null;
             GADataTable.ShowAllRows = true;
@@ -154,6 +157,7 @@
             GADataTable.ShowEmptyRows = true;
             GADataTable.Size = new Size(1046, 488);
             GADataTable.TabIndex = 34;
+            GADataTable.TopLevelCollection = null;
             // 
             // label2
             // 
@@ -295,6 +299,6 @@
         private ContextMenuStrip MainGroupsListBoxContextMenu;
         private ToolStripMenuItem AddMainGroupToolStripMenuItem;
         private ToolStripMenuItem EditMainGroupToolStripMenuItem;
-        private ToolStripMenuItem löschenToolStripMenuItem;
+        private ToolStripMenuItem DeleteMainGroupToolStripMenuItem;
     }
 }

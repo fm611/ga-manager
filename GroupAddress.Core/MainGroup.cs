@@ -9,21 +9,28 @@ namespace GroupAddress.Core
 
     public class MainGroup : TopLevelCollection
     {
+        public static string[] DefaultSubGroupNames = {
+                "Zentral",
+                "Zentral Status",
+                "Schalten",
+                "Schalten Status",
+                "SET Wert",
+                "GET Wert",
+                "SET Misc",
+                "GET Misc"
+                };
 
-
-        private List<Item> _items = [];
+    private List<Item> _items = [];
         public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
 
-        public int MaxGASubAddress => GAs.Select(x => x.Addresse.GA).DefaultIfEmpty(-1).Max();
-
-        public int SubAddress { get; private set; }
+       
 
 
         public int DefaultBlockLength { get; set; } = 1;
 
         private MainGroup() : base() { }
 
-        public MainGroup(int subAddress, string name,string[] subGroupNames, int defaultBlockLength = 1) : base(name)
+        public MainGroup(int subAddress, string name, string[] subGroupNames, int defaultBlockLength = 1) : base(name)
         {
             DefaultBlockLength = defaultBlockLength > 0 ? defaultBlockLength : 1;
             SubAddress = subAddress;
@@ -32,10 +39,6 @@ namespace GroupAddress.Core
                 SetSubGroupname(i, subGroupNames[i]);
         }
 
-        public void SetSubAddress(int subAddress)
-        {
-            throw new NotImplementedException();
-        }
 
         public new void AddGA(GA ga)
         {
@@ -57,8 +60,7 @@ namespace GroupAddress.Core
             newItem.AddGARange(gas);
             newItem.ShiftGA(startIndex);
 
-            if (GAs.Any(x => GAs.Select(y => y.Addresse.MiddleGroup).Contains(x.Addresse.MiddleGroup) &&
-                            GAs.Select(y => y.Addresse.GA).Contains(x.Addresse.GA)))
+            if (newItem.GAs.Any(x => GAs.Any(y => y.Addresse.EqualsWithoutMainGroup(x.Addresse))))
                 return null;
 
             AddGARange(gas);
@@ -75,16 +77,14 @@ namespace GroupAddress.Core
             return next;
         }
 
-        public new void RemoveGA(GA ga)
+        public override void RemoveGA(GA ga)
         {
             var item = _items.Where(x => x.GAs.Contains(ga)).FirstOrDefault();
-            if (item != null)
-                item.RemoveGA(ga);
+            
+            item?.RemoveGA(ga);
 
             base.RemoveGA(ga);
         }
-
-        //public override string Address => SubAddress.ToString();
 
         public string AddressName => SubAddress + " - " + Name;
         public string ListBoxString => AddressName + " (" + DefaultBlockLength + " / " + (MaxGASubAddress == -1 ? "-" : MaxGASubAddress) + ")";
@@ -146,10 +146,10 @@ namespace GroupAddress.Core
         //}
 
 
-        //public static bool IsValidSubAddress(int addr)
-        //{
-        //    return addr >= 0 && addr < 32;
-        //}
+        public static bool IsValidSubAddress(int addr)
+        {
+            return addr >= 0 && addr < 32;
+        }
 
     }
 

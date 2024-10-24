@@ -31,7 +31,9 @@ namespace GroupAddress.UI
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            GADataTable = new DataGridView();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddItemForm));
+            GADataTable = new GADataGridView();
             NewItemPreStringTextBox = new TextBox();
             AddItemButton = new Button();
             ItemTemplatesListBox = new ListBox();
@@ -56,24 +58,34 @@ namespace GroupAddress.UI
             GADataTable.AllowUserToDeleteRows = false;
             GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.BackColor = SystemColors.ControlLight;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.Padding = new Padding(0, 5, 0, 5);
             dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
-            GADataTable.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
+            GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(254, 36);
             GADataTable.Name = "GADataTable";
-            GADataTable.ReadOnly = true;
-            GADataTable.RowHeadersVisible = false;
-            GADataTable.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            GADataTable.RowData = null;
+            GADataTable.ShowAllRows = true;
             GADataTable.ShowEditingIcon = false;
-            GADataTable.Size = new Size(911, 699);
-            GADataTable.TabIndex = 39;
-            GADataTable.ColumnAdded += GADataTable_ColumnAdded;
+            GADataTable.ShowEmptyRows = true;
+            GADataTable.Size = new Size(1046, 488);
+            GADataTable.TabIndex = 34;
+            GADataTable.TopLevelCollection = null;
             // 
             // NewItemPreStringTextBox
             // 
@@ -254,7 +266,7 @@ namespace GroupAddress.UI
 
         #endregion
 
-        private DataGridView GADataTable;
+        private GADataGridView GADataTable;
         private TextBox NewItemPreStringTextBox;
         private Button AddItemButton;
         private ListBox ItemTemplatesListBox;

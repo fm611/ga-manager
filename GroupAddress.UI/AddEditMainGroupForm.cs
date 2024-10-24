@@ -29,20 +29,18 @@ namespace GroupAddress.UI
         {
             InitializeComponent();
 
+            MainGroups = mainGroups;
 
-            //MainGroups = mainGroups;
+            var nextId = MainGroups.Max(x => x.SubAddress) + 1;
+            if (!MainGroup.IsValidSubAddress(nextId))
+            {
+                nextId = Enumerable.Range(0, 32).Where(x => !MainGroups.Any(y => y.SubAddress == x)).Min();
+            }
+            AddressTextBox.Value = nextId;
+            NameTextBox.Text = "Neue Hauptgruppe";
+            DefaultBlockLengthTextBox.Value = 1;
 
-            //var nextId = MainGroups.Max(x => x.SubAddress) + 1;
-            //if (!MainGroup.IsValidSubAddress(nextId))
-            //{
-            //    nextId = Enumerable.Range(0, 32).Where(x => !MainGroups.Any(y => y.SubAddress == x)).Min();
-            //}
-            //AddressTextBox.Value = nextId;
-            //NameTextBox.Text = "Neue Hauptgruppe";
-            //DefaultBlockLengthTextBox.Value = 1;
-
-            //Text = "Hauptgruppe hinzufügen";
-
+            Text = "Hauptgruppe hinzufügen";
         }
 
         public AddEditMainGroupForm(List<MainGroup> mainGroups, string id) : this(mainGroups)
@@ -66,23 +64,23 @@ namespace GroupAddress.UI
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            //if (HasErrors())
-            //{
-            //    DialogResult = DialogResult.None;
-            //}
-            //else
-            //{
-            //    DialogResult = DialogResult.OK;
+            if (HasErrors())
+            {
+                DialogResult = DialogResult.None;
+            }
+            else
+            {
+                DialogResult = DialogResult.OK;
 
-            //    if(MainGroup == null)
-            //        MainGroup = new MainGroup((int)AddressTextBox.Value, NameTextBox.Text, (int)DefaultBlockLengthTextBox.Value);
-            //    else
-            //    {
-            //        MainGroup.SubAddress = (int)AddressTextBox.Value;
-            //        MainGroup.Name = NameTextBox.Text;
-            //        MainGroup.DefaultBlockLength = (int)DefaultBlockLengthTextBox.Value;
-            //    }
-            //}
+                if (MainGroup == null)
+                    MainGroup = new MainGroup((int)AddressTextBox.Value, NameTextBox.Text, MainGroup.DefaultSubGroupNames, (int)DefaultBlockLengthTextBox.Value);
+                else
+                {
+                    MainGroup.SetSubAddress((int)AddressTextBox.Value);
+                    MainGroup.Name = NameTextBox.Text;
+                    MainGroup.DefaultBlockLength = (int)DefaultBlockLengthTextBox.Value;
+                }
+            }
         }
 
         private void NameTextBox_TextChanged(object sender, EventArgs e)
@@ -127,33 +125,33 @@ namespace GroupAddress.UI
         {
             var status = true;
 
-            //// neue Hauptgruppe
-            //if (MainGroup == null)
-            //{
-            //    if (MainGroups.Any(x => x.SubAddress == AddressTextBox.Value))
-            //    {
-            //        status = false;
-            //        ErrorProvider.SetError(AddressTextBox, "Adresse bereits belegt.");
-            //    }
-            //}
-            //else
-            //{
-            //    if (MainGroups.Any(x => x.Id != MainGroup.Id && x.SubAddress == AddressTextBox.Value))
-            //    {
-            //        status = false;
-            //        ErrorProvider.SetError(AddressTextBox, "Adresse bereits belegt.");
-            //    }
-            //}
+            // neue Hauptgruppe
+            if (MainGroup == null)
+            {
+                if (MainGroups.Any(x => x.SubAddress == AddressTextBox.Value))
+                {
+                    status = false;
+                    ErrorProvider.SetError(AddressTextBox, "Adresse bereits belegt.");
+                }
+            }
+            else
+            {
+                if (MainGroups.Any(x => x.Id != MainGroup.Id && x.SubAddress == AddressTextBox.Value))
+                {
+                    status = false;
+                    ErrorProvider.SetError(AddressTextBox, "Adresse bereits belegt.");
+                }
+            }
 
 
-            //if (!MainGroup.IsValidSubAddress((int)AddressTextBox.Value))
-            //{
-            //    status = false;
-            //    ErrorProvider.SetError(AddressTextBox, "Adresse ungültig (0-31)");
-            //}
+            if (!MainGroup.IsValidSubAddress((int)AddressTextBox.Value))
+            {
+                status = false;
+                ErrorProvider.SetError(AddressTextBox, "Adresse ungültig (0-31)");
+            }
 
-            //if (status) ErrorProvider.SetError(AddressTextBox, string.Empty);
-            //UpdateUI();
+            if (status) ErrorProvider.SetError(AddressTextBox, string.Empty);
+            UpdateUI();
             return status;
         }
 

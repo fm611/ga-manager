@@ -24,6 +24,12 @@ namespace GroupAddress.Core
             Name = name;
             Addresse = new(middleGroupAddress, subAddress);
         }
+        public GA(Addresse addresse, string name) : this()
+        {
+            Name = name;
+            Addresse = addresse;
+        }
+
 
         public GA CloneWithPrefix(string preString)
         {

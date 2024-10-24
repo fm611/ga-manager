@@ -13,10 +13,16 @@ namespace GroupAddress.Core
 
         public string[] SubGroupNames { get; private set; } = new string[8];
 
-
         public string Id { get; set; }
         public string Name { get; set; } = "";
-        public TopLevelCollection() {
+
+        public int MinGASubAddress => GAs.Select(x => x.Addresse.GA).DefaultIfEmpty(-1).Min();
+        public int MaxGASubAddress => GAs.Select(x => x.Addresse.GA).DefaultIfEmpty(-1).Max();
+
+        public int SubAddress { get; protected set; } = -1;
+
+        public TopLevelCollection()
+        {
             Id = Guid.NewGuid().ToString();
             SubGroupNames = Enumerable.Range(0, 8).Select(x => "").ToArray();
         }
@@ -31,30 +37,36 @@ namespace GroupAddress.Core
             gas.ToList().ForEach(x => _gAs.Add(x));
         }
 
-
-
-        public void SetSubGroupname(int addresse,  string subgroupname)
+        public void SetSubGroupname(int addresse, string subgroupname)
         {
             SubGroupNames[addresse] = subgroupname;
         }
-
-        public void AddGA(GA ga) {
-            if(!_gAs.Any(x => x.Addresse == ga.Addresse))
-                _gAs.Add(ga);
+        public void SetSubAddress(int subAddress)
+        {
+            SubAddress = subAddress;
+            foreach (var ga in _gAs)
+            {
+                ga.Addresse.MainGroup = subAddress;
+            }
         }
 
-        public void AddGARange(IEnumerable<GA> gas) {
+
+        public void AddGA(GA ga)
+        {
+            if (!_gAs.Any(x => x.Addresse == ga.Addresse))
+                _gAs.Add(ga);
+        }
+        public void AddGARange(IEnumerable<GA> gas)
+        {
             foreach (var item in gas)
             {
                 AddGA(item);
             }
         }
-
-        public void RemoveGA(GA ga)
+        public virtual void RemoveGA(GA ga)
         {
             _gAs.Remove(ga);
         }
-
         public void ShiftGA(int s)
         {
             foreach (var item in _gAs)
@@ -62,6 +74,8 @@ namespace GroupAddress.Core
                 item.Addresse.GA += s;
             }
         }
+
+
 
 
 
