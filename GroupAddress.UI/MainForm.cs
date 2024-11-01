@@ -37,7 +37,7 @@ namespace GroupAddress.UI
         public MainGroup? SelectedMainGroup { get; set; }
         public string? SelectedMainGroupId { get; set; }
 
-        public AddItemForm AddItemForm { get; set; }
+        public ItemTemplateManagerForm AddItemForm { get; set; }
 
         public int CurrentGARowScrollIndex { get; set; }
 
@@ -170,7 +170,7 @@ namespace GroupAddress.UI
         private void AddItemButton_Click(object sender, EventArgs e)
         {
             if (AddItemForm == null)
-                AddItemForm = new AddItemForm(MainGroups, ItemTemplates);
+                AddItemForm = new ItemTemplateManagerForm(MainGroups, ItemTemplates);
 
             AddItemForm.LoadData();
             AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);

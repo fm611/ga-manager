@@ -13,14 +13,7 @@ namespace GroupAddress.UI
 {
     public partial class AddEditMainGroupForm : Form
     {
-        private bool _valid;
-        public bool Valid
-        {
-            get => _valid; set
-            {
 
-            }
-        }
 
         public List<MainGroup> MainGroups { get; set; }
         public MainGroup? MainGroup { get; set; }

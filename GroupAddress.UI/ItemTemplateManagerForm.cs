@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace GroupAddress.UI
 {
-    public partial class AddItemForm : Form
+    public partial class ItemTemplateManagerForm : Form
     {
 
         public List<MainGroup> MainGroups { get; set; }
@@ -32,7 +32,7 @@ namespace GroupAddress.UI
         public Item? LastInsertedItem { get; set; }
 
 
-        public AddItemForm(List<MainGroup> mainGroups, List<ItemTemplate> itemTemplates)
+        public ItemTemplateManagerForm(List<MainGroup> mainGroups, List<ItemTemplate> itemTemplates)
         {
             InitializeComponent();
 
@@ -90,6 +90,8 @@ namespace GroupAddress.UI
 
 
 
+
+
         public void SelectMainGroup(string? id)
         {
             MainGroupsListBox.SelectedValue = id;
@@ -105,6 +107,32 @@ namespace GroupAddress.UI
 
         }
 
+        #region Add Edit Delete Save Template
+
+        public void AddItemTemplateButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        #endregion
+
+
+        #region MainGroup
+
+        private int GetInsertIndex()
+        {
+            if (SelectedMainGroup == null) return -1;
+
+            var insertAtParseResult = int.TryParse(InsertAtTextBox.Text, out var insertAtIndex);
+            var nextFreeIndex = SelectedMainGroup.MaxGASubAddress + 1;
+
+            if (InsertAtNextBlockRadioButton.Checked) return SelectedMainGroup.GetNextStartingBlockIndex();
+            if (InsertAtRadioButton.Checked) return insertAtParseResult ? insertAtIndex : nextFreeIndex;
+            if (InsertNextFreeRadioButton.Checked) return nextFreeIndex;
+
+            return nextFreeIndex;
+
+        }
         private void AddItemButton_Click(object sender, EventArgs e)
         {
             if (SelectedMainGroup == null || SelectedItemTemplate == null)
@@ -121,22 +149,6 @@ namespace GroupAddress.UI
 
             DialogResult = DialogResult.OK;
         }
-
-        private int GetInsertIndex()
-        {
-            if (SelectedMainGroup == null) return -1;
-
-            var insertAtParseResult = int.TryParse(InsertAtTextBox.Text, out var insertAtIndex);
-            var nextFreeIndex = SelectedMainGroup.MaxGASubAddress + 1;
-
-            if (InsertAtNextBlockRadioButton.Checked) return SelectedMainGroup.GetNextStartingBlockIndex();
-            if (InsertAtRadioButton.Checked) return insertAtParseResult ? insertAtIndex : nextFreeIndex;
-            if (InsertNextFreeRadioButton.Checked) return nextFreeIndex;
-
-            return nextFreeIndex;
-
-        }
-
         private void MainGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
@@ -149,7 +161,6 @@ namespace GroupAddress.UI
                 InsertAtNextFreeTextBox.Text = (SelectedMainGroup.MaxGASubAddress + 1).ToString();
             }
         }
-
         private void InsertAtRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             InsertAtTextBox.ReadOnly = !InsertAtRadioButton.Checked;
@@ -159,18 +170,15 @@ namespace GroupAddress.UI
                 InsertAtTextBox.Focus();
             }
         }
-
         private void InsertAtTextBox_Enter(object sender, EventArgs e)
         {
             BeginInvoke(new Action(() => (sender as TextBox).SelectAll()));
         }
-
         private void NewItemPreStringTextBox_Enter(object sender, EventArgs e)
         {
             BeginInvoke(new Action(() => (sender as TextBox).SelectAll()));
 
         }
-
         private void NewItemPreStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyValue == (char)Keys.Return)
@@ -179,5 +187,6 @@ namespace GroupAddress.UI
             }
         }
 
+        #endregion
     }
 }
