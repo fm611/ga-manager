@@ -31,6 +31,8 @@ namespace GroupAddress.UI
 
         public Item? LastInsertedItem { get; set; }
 
+        private bool _editMode = false;
+
 
         public ItemTemplateManagerForm(List<MainGroup> mainGroups, List<ItemTemplate> itemTemplates)
         {
@@ -52,6 +54,12 @@ namespace GroupAddress.UI
         private void AddItemForm_Load(object sender, EventArgs e)
         {
         }
+
+        private void ItemTemplateManagerForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SetEditMode(false);
+        }
+
 
         public void LoadData()
         {
@@ -105,14 +113,61 @@ namespace GroupAddress.UI
 
             GADataTable.SetTopLevelCollection(SelectedItemTemplate);
 
+            if (SelectedItemTemplate != null)
+            {
+                ItemTemplateNameTextBox.Text = SelectedItemTemplate.Name;
+
+            }
+
         }
 
         #region Add Edit Delete Save Template
 
         public void AddItemTemplateButton_Click(object sender, EventArgs e)
         {
+            var newTemplate = new ItemTemplate("Neues Template", []);
+            ItemTemplates.Add(newTemplate);
+            ItemTemplatesWrapper.Update();
+
+            ItemTemplatesListBox.SelectedItem = newTemplate;
+            SetEditMode(true);
+            ItemTemplateNameTextBox.Focus();
+        }
+        public void EditItemTemplateButton_Click(object sender, EventArgs e)
+        {
+            if (SelectedItemTemplate == null) return;
+
+            SetEditMode(true);
 
         }
+
+
+        private void SaveItemTemplateButton_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(ItemTemplateNameTextBox.Text))
+                SelectedItemTemplate.Name = ItemTemplateNameTextBox.Text;
+
+            SetEditMode(false);
+            ItemTemplatesWrapper.Update();
+        }
+
+
+        private void SetEditMode(bool editMode)
+        {
+            _editMode = editMode;
+            ItemTemplateNameTextBox.ReadOnly = !editMode;
+
+            AddEditDeleteItemTemplatePanel.Visible = !editMode;
+            SaveButtonPanel.Visible = editMode;
+            SaveButtonPanel.Enabled = editMode;
+
+            ItemTemplatesListBox.Enabled = !editMode;
+
+            GADataTable.ReadOnly = !editMode;
+
+            AddItemPanel.Enabled = !editMode;
+        }
+
 
         #endregion
 
@@ -188,5 +243,7 @@ namespace GroupAddress.UI
         }
 
         #endregion
+
+
     }
 }

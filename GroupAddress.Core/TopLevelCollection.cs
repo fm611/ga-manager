@@ -53,8 +53,10 @@ namespace GroupAddress.Core
 
         public void AddGA(GA ga)
         {
-            if (!_gAs.Any(x => x.Addresse == ga.Addresse))
-                _gAs.Add(ga);
+            if (_gAs.Any(x => x.Addresse == ga.Addresse)) return;
+
+            ga.Addresse.MainGroup = SubAddress;
+            _gAs.Add(ga);
         }
         public void AddGARange(IEnumerable<GA> gas)
         {

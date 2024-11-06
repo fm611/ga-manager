@@ -31,8 +31,8 @@ namespace GroupAddress.UI
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             GADataTable = new GADataGridView();
             NewItemPreStringTextBox = new TextBox();
             AddItemButton = new Button();
@@ -59,12 +59,14 @@ namespace GroupAddress.UI
             EditItemTemplateToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
             DeleteItemTemplateToolStripMenuItem = new ToolStripMenuItem();
-            textBox1 = new TextBox();
+            ItemTemplateNameTextBox = new TextBox();
             label6 = new Label();
+            AddItemPanel = new Panel();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
             AddEditDeleteItemTemplatePanel.SuspendLayout();
             SaveButtonPanel.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
+            AddItemPanel.SuspendLayout();
             SuspendLayout();
             // 
             // GADataTable
@@ -73,27 +75,28 @@ namespace GroupAddress.UI
             GADataTable.AllowUserToDeleteRows = false;
             GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.ControlLight;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.Padding = new Padding(0, 5, 0, 5);
-            dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.ControlLight;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.Padding = new Padding(0, 5, 0, 5);
+            dataGridViewCellStyle3.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            GADataTable.DefaultCellStyle = dataGridViewCellStyle4;
             GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(258, 36);
             GADataTable.Name = "GADataTable";
+            GADataTable.ReadOnly = true;
             GADataTable.RowData = null;
             GADataTable.ShowAllRows = true;
             GADataTable.ShowEditingIcon = false;
@@ -104,7 +107,7 @@ namespace GroupAddress.UI
             // 
             // NewItemPreStringTextBox
             // 
-            NewItemPreStringTextBox.Location = new Point(12, 345);
+            NewItemPreStringTextBox.Location = new Point(3, 23);
             NewItemPreStringTextBox.Name = "NewItemPreStringTextBox";
             NewItemPreStringTextBox.Size = new Size(236, 23);
             NewItemPreStringTextBox.TabIndex = 37;
@@ -114,7 +117,7 @@ namespace GroupAddress.UI
             // AddItemButton
             // 
             AddItemButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            AddItemButton.Location = new Point(12, 676);
+            AddItemButton.Location = new Point(3, 367);
             AddItemButton.Name = "AddItemButton";
             AddItemButton.Size = new Size(89, 23);
             AddItemButton.TabIndex = 38;
@@ -146,16 +149,16 @@ namespace GroupAddress.UI
             MainGroupsListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             MainGroupsListBox.FormattingEnabled = true;
             MainGroupsListBox.ItemHeight = 15;
-            MainGroupsListBox.Location = new Point(12, 396);
+            MainGroupsListBox.Location = new Point(3, 74);
             MainGroupsListBox.Name = "MainGroupsListBox";
-            MainGroupsListBox.Size = new Size(236, 154);
+            MainGroupsListBox.Size = new Size(236, 169);
             MainGroupsListBox.TabIndex = 36;
             MainGroupsListBox.SelectedIndexChanged += MainGroupsListBox_SelectedIndexChanged;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(12, 327);
+            label2.Location = new Point(3, 5);
             label2.Name = "label2";
             label2.Size = new Size(125, 15);
             label2.TabIndex = 40;
@@ -164,7 +167,7 @@ namespace GroupAddress.UI
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(12, 371);
+            label4.Location = new Point(3, 49);
             label4.Name = "label4";
             label4.Size = new Size(78, 15);
             label4.TabIndex = 40;
@@ -174,7 +177,7 @@ namespace GroupAddress.UI
             // 
             InsertAtRadioButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             InsertAtRadioButton.AutoSize = true;
-            InsertAtRadioButton.Location = new Point(16, 619);
+            InsertAtRadioButton.Location = new Point(7, 310);
             InsertAtRadioButton.Name = "InsertAtRadioButton";
             InsertAtRadioButton.Size = new Size(89, 19);
             InsertAtRadioButton.TabIndex = 41;
@@ -187,7 +190,7 @@ namespace GroupAddress.UI
             // 
             InsertNextFreeRadioButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             InsertNextFreeRadioButton.AutoSize = true;
-            InsertNextFreeRadioButton.Location = new Point(16, 644);
+            InsertNextFreeRadioButton.Location = new Point(7, 335);
             InsertNextFreeRadioButton.Name = "InsertNextFreeRadioButton";
             InsertNextFreeRadioButton.Size = new Size(99, 19);
             InsertNextFreeRadioButton.TabIndex = 41;
@@ -199,7 +202,7 @@ namespace GroupAddress.UI
             // 
             label5.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label5.AutoSize = true;
-            label5.Location = new Point(9, 568);
+            label5.Location = new Point(0, 259);
             label5.Name = "label5";
             label5.Size = new Size(93, 15);
             label5.TabIndex = 40;
@@ -208,7 +211,7 @@ namespace GroupAddress.UI
             // InsertAtTextBox
             // 
             InsertAtTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            InsertAtTextBox.Location = new Point(127, 618);
+            InsertAtTextBox.Location = new Point(118, 309);
             InsertAtTextBox.Name = "InsertAtTextBox";
             InsertAtTextBox.ReadOnly = true;
             InsertAtTextBox.Size = new Size(69, 23);
@@ -220,7 +223,7 @@ namespace GroupAddress.UI
             InsertAtNextBlockRadioButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             InsertAtNextBlockRadioButton.AutoSize = true;
             InsertAtNextBlockRadioButton.Checked = true;
-            InsertAtNextBlockRadioButton.Location = new Point(16, 594);
+            InsertAtNextBlockRadioButton.Location = new Point(7, 285);
             InsertAtNextBlockRadioButton.Name = "InsertAtNextBlockRadioButton";
             InsertAtNextBlockRadioButton.Size = new Size(107, 19);
             InsertAtNextBlockRadioButton.TabIndex = 41;
@@ -232,7 +235,7 @@ namespace GroupAddress.UI
             // NextBlockStartingIndexTextBox
             // 
             NextBlockStartingIndexTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            NextBlockStartingIndexTextBox.Location = new Point(127, 593);
+            NextBlockStartingIndexTextBox.Location = new Point(118, 284);
             NextBlockStartingIndexTextBox.Name = "NextBlockStartingIndexTextBox";
             NextBlockStartingIndexTextBox.ReadOnly = true;
             NextBlockStartingIndexTextBox.Size = new Size(69, 23);
@@ -241,7 +244,7 @@ namespace GroupAddress.UI
             // InsertAtNextFreeTextBox
             // 
             InsertAtNextFreeTextBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            InsertAtNextFreeTextBox.Location = new Point(127, 643);
+            InsertAtNextFreeTextBox.Location = new Point(118, 334);
             InsertAtNextFreeTextBox.Name = "InsertAtNextFreeTextBox";
             InsertAtNextFreeTextBox.ReadOnly = true;
             InsertAtNextFreeTextBox.Size = new Size(69, 23);
@@ -274,6 +277,7 @@ namespace GroupAddress.UI
             EditItemTemplateButton.TabIndex = 43;
             EditItemTemplateButton.Text = "Bearbeiten";
             EditItemTemplateButton.UseVisualStyleBackColor = true;
+            EditItemTemplateButton.Click += EditItemTemplateButton_Click;
             // 
             // AddEditDeleteItemTemplatePanel
             // 
@@ -305,8 +309,9 @@ namespace GroupAddress.UI
             SaveItemTemplateButton.Name = "SaveItemTemplateButton";
             SaveItemTemplateButton.Size = new Size(75, 23);
             SaveItemTemplateButton.TabIndex = 43;
-            SaveItemTemplateButton.Text = "Speichern";
+            SaveItemTemplateButton.Text = "Fertig";
             SaveItemTemplateButton.UseVisualStyleBackColor = true;
+            SaveItemTemplateButton.Click += SaveItemTemplateButton_Click;
             // 
             // contextMenuStrip1
             // 
@@ -337,59 +342,71 @@ namespace GroupAddress.UI
             DeleteItemTemplateToolStripMenuItem.Size = new Size(130, 22);
             DeleteItemTemplateToolStripMenuItem.Text = "Löschen";
             // 
-            // textBox1
+            // ItemTemplateNameTextBox
             // 
-            textBox1.Location = new Point(12, 52);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(236, 23);
-            textBox1.TabIndex = 37;
-            textBox1.Enter += NewItemPreStringTextBox_Enter;
-            textBox1.KeyUp += NewItemPreStringTextBox_KeyUp;
+            ItemTemplateNameTextBox.Location = new Point(12, 52);
+            ItemTemplateNameTextBox.Name = "ItemTemplateNameTextBox";
+            ItemTemplateNameTextBox.ReadOnly = true;
+            ItemTemplateNameTextBox.Size = new Size(236, 23);
+            ItemTemplateNameTextBox.TabIndex = 37;
+            ItemTemplateNameTextBox.Enter += NewItemPreStringTextBox_Enter;
+            ItemTemplateNameTextBox.KeyUp += NewItemPreStringTextBox_KeyUp;
             // 
             // label6
             // 
             label6.AutoSize = true;
             label6.Location = new Point(12, 34);
             label6.Name = "label6";
-            label6.Size = new Size(125, 15);
+            label6.Size = new Size(82, 15);
             label6.TabIndex = 40;
-            label6.Text = "Item Name (PreString)";
+            label6.Text = "Item Template";
+            // 
+            // AddItemPanel
+            // 
+            AddItemPanel.Controls.Add(MainGroupsListBox);
+            AddItemPanel.Controls.Add(AddItemButton);
+            AddItemPanel.Controls.Add(NewItemPreStringTextBox);
+            AddItemPanel.Controls.Add(label2);
+            AddItemPanel.Controls.Add(NextBlockStartingIndexTextBox);
+            AddItemPanel.Controls.Add(label5);
+            AddItemPanel.Controls.Add(InsertAtNextFreeTextBox);
+            AddItemPanel.Controls.Add(label4);
+            AddItemPanel.Controls.Add(InsertAtTextBox);
+            AddItemPanel.Controls.Add(InsertAtRadioButton);
+            AddItemPanel.Controls.Add(InsertNextFreeRadioButton);
+            AddItemPanel.Controls.Add(InsertAtNextBlockRadioButton);
+            AddItemPanel.Location = new Point(6, 306);
+            AddItemPanel.Name = "AddItemPanel";
+            AddItemPanel.Size = new Size(243, 393);
+            AddItemPanel.TabIndex = 47;
             // 
             // ItemTemplateManagerForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1484, 711);
+            Controls.Add(AddItemPanel);
             Controls.Add(SaveButtonPanel);
             Controls.Add(AddEditDeleteItemTemplatePanel);
-            Controls.Add(NextBlockStartingIndexTextBox);
-            Controls.Add(InsertAtNextFreeTextBox);
-            Controls.Add(InsertAtTextBox);
-            Controls.Add(InsertNextFreeRadioButton);
-            Controls.Add(InsertAtNextBlockRadioButton);
-            Controls.Add(InsertAtRadioButton);
             Controls.Add(label3);
-            Controls.Add(label4);
-            Controls.Add(label5);
             Controls.Add(label6);
-            Controls.Add(label2);
             Controls.Add(GADataTable);
-            Controls.Add(textBox1);
-            Controls.Add(NewItemPreStringTextBox);
-            Controls.Add(AddItemButton);
-            Controls.Add(MainGroupsListBox);
+            Controls.Add(ItemTemplateNameTextBox);
             Controls.Add(ItemTemplatesListBox);
             MaximizeBox = false;
             MinimizeBox = false;
             MinimumSize = new Size(1500, 750);
             Name = "ItemTemplateManagerForm";
             Text = "AddItemForm";
+            FormClosing += ItemTemplateManagerForm_FormClosing;
             Load += AddItemForm_Load;
             Shown += AddItemForm_Shown;
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
             AddEditDeleteItemTemplatePanel.ResumeLayout(false);
             SaveButtonPanel.ResumeLayout(false);
             contextMenuStrip1.ResumeLayout(false);
+            AddItemPanel.ResumeLayout(false);
+            AddItemPanel.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -422,7 +439,8 @@ namespace GroupAddress.UI
         private ToolStripMenuItem EditItemTemplateToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem DeleteItemTemplateToolStripMenuItem;
-        private TextBox textBox1;
+        private TextBox ItemTemplateNameTextBox;
         private Label label6;
+        private Panel AddItemPanel;
     }
 }

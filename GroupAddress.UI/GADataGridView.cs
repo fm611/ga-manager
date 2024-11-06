@@ -124,6 +124,7 @@ namespace GroupAddress.UI
             base.OnColumnHeaderMouseDoubleClick(e);
 
             if (TopLevelCollection == null) return;
+            if (ReadOnly) return;
 
             var currName = TopLevelCollection.SubGroupNames[e.ColumnIndex] ?? "Neue Mittelgruppe";
 
@@ -193,6 +194,8 @@ namespace GroupAddress.UI
             
             ga.Name = (string)editCell.Value;
 
+            TopLevelCollection.AddGA(ga);
+
             BeginInvoke(new MethodInvoker(UpdateTable));
         }
 
@@ -202,7 +205,8 @@ namespace GroupAddress.UI
 
             if (TopLevelCollection == null) return;
 
-            if (e.KeyValue == (char)Keys.Delete)
+
+            if (e.KeyValue == (char)Keys.Delete && !ReadOnly)
             {
                 if (SelectedGAs.Count == 0) return;
 
@@ -225,7 +229,7 @@ namespace GroupAddress.UI
                 e.Handled = true;
             }
 
-            if (e.KeyData == (Keys.Control | Keys.V) && SelectedCells.Count == 1)
+            if (e.KeyData == (Keys.Control | Keys.V) && SelectedCells.Count == 1 && !ReadOnly)
             {
                 var pasteCell = SelectedCells.Cast<DataGridViewCell>().First();
                 if (pasteCell == null) return;

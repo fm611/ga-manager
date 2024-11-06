@@ -15,6 +15,7 @@ namespace GroupAddress.Core
 
         public ItemTemplate(string name, IEnumerable<GA> gas) : base(name, gas)
         {
+
         }
 
 
