@@ -11,21 +11,6 @@ namespace GroupAddress.UI
     public partial class MainForm : Form
     {
 
-        private enum IdValidState
-        {
-            Invalid,
-            ValidNew,
-            ValidExisting
-        }
-
-
-        private enum GroupType
-        {
-            MainGroup,
-            SubGroup,
-            GA
-        }
-
         public AppDbContext Db { get; set; }
 
         public List<MainGroup> MainGroups { get; set; }
@@ -93,8 +78,15 @@ namespace GroupAddress.UI
 
         private void Save()
         {
-            var toAdd = MainGroups.Where(x => !Db.MainGroups.Contains(x)).ToList();
-            Db.MainGroups.AddRange(toAdd);
+            var mgToAdd = MainGroups.Where(x => !Db.MainGroups.Contains(x)).ToList();
+            Db.MainGroups.AddRange(mgToAdd);
+            var mgToDelete = Db.MainGroups.Where(x => !MainGroups.Contains(x)).ToList();
+            Db.MainGroups.RemoveRange(mgToDelete);
+
+            var tempToAdd = ItemTemplates.Where(x => !Db.ItemTemplates.Contains(x)).ToList();
+            Db.ItemTemplates.AddRange(tempToAdd);
+            var tempToDelete = Db.ItemTemplates.Where(x => !ItemTemplates.Contains(x)).ToList();
+            Db.ItemTemplates.RemoveRange(tempToDelete);
 
             Db.SaveChanges();
         }
@@ -103,7 +95,6 @@ namespace GroupAddress.UI
         {
             MainGroupWrapper.Update();
             GADataTable.UpdateTable();
-            //GADataTable.FirstDisplayedScrollingRowIndex = CurrentGARowScrollIndex;
         }
 
 
@@ -166,7 +157,6 @@ namespace GroupAddress.UI
             UpdataUI();
         }
 
-
         private void AddItemButton_Click(object sender, EventArgs e)
         {
             if (AddItemForm == null)
@@ -187,44 +177,28 @@ namespace GroupAddress.UI
             }
         }
 
-
         private void AddRowButton_Click(object sender, EventArgs e)
         {
-            //if (SelectedMainGroup == null) return;
-            //if (!int.TryParse(AddRowNumTextBox.Text, out var numRows)) return;
-
-            //var selectedCells = GADataTable
-            //    .SelectedCells
-            //    .Cast<DataGridViewCell>()
-            //    .Select(x => new { Row = x.RowIndex, Column = x.ColumnIndex })
-            //    .ToList();
+            if (SelectedMainGroup == null) return;
+            if (!int.TryParse(AddRowNumTextBox.Text, out var numRows)) return;
 
 
-            //var colMinRow = selectedCells
-            //    .GroupBy(x => x.Column)
-            //    .Select(x => new { SubGroupAddress = x.Key, MinRow = x.Min(y => y.Row) }).ToList();
+            var colMinRows = GADataTable.SelectedAddresses
+                .GroupBy(x => x.MiddleGroup)
+                .Select(g => g.MinBy(y => y.GA));
 
-            //foreach (var col in colMinRow)
-            //{
-            //    var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == col.SubGroupAddress);
-            //    if (subGroup == null) continue;
 
-            //    var gas = subGroup.GAs.Where(x => x.SubAddress >= col.MinRow);
+            foreach (var col in colMinRows)
+            {
+                var gas = SelectedMainGroup.GAs.Where(x => x.Addresse.MiddleGroup == col.MiddleGroup && x.Addresse.GA >= col.GA);
+                foreach (var g in gas)
+                {
+                    g.Addresse.GA += numRows;
+                }
+            }
 
-            //    foreach (var g in gas)
-            //    {
-            //        g.SubAddress += numRows;
-            //    }
-            //}
+            GADataTable.UpdateTable();
 
-            //UpdataUI();
-
-            //GADataTable.ClearSelection();
-
-            //foreach (var cell in colMinRow)
-            //{
-            //    GADataTable.Rows[cell.MinRow].Cells[cell.SubGroupAddress].Selected = true;
-            //}
         }
 
         private void AddRowNumTextBox_KeyPress(object sender, KeyPressEventArgs e)

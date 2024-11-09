@@ -66,7 +66,7 @@
             MainGroupsListBox.ItemHeight = 15;
             MainGroupsListBox.Location = new Point(12, 67);
             MainGroupsListBox.Name = "MainGroupsListBox";
-            MainGroupsListBox.Size = new Size(248, 439);
+            MainGroupsListBox.Size = new Size(248, 484);
             MainGroupsListBox.TabIndex = 0;
             MainGroupsListBox.SelectedIndexChanged += MainGroupsListBox_SelectedIndexChanged;
             MainGroupsListBox.KeyDown += MainGroupsListBox_KeyDown;
@@ -200,8 +200,8 @@
             AddItemButton.Image = (Image)resources.GetObject("AddItemButton.Image");
             AddItemButton.ImageTransparentColor = Color.Magenta;
             AddItemButton.Name = "AddItemButton";
-            AddItemButton.Size = new Size(60, 22);
-            AddItemButton.Text = "Add Item";
+            AddItemButton.Size = new Size(85, 22);
+            AddItemButton.Text = "Item Manager";
             AddItemButton.Click += AddItemButton_Click;
             // 
             // toolStripSeparator2

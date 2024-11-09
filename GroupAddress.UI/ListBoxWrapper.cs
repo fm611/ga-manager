@@ -42,16 +42,20 @@ namespace GroupAddress.UI
 
         public void Update()
         {
-            var currSelectedIndex = ListBox.SelectedIndex >= 0 ? ListBox.SelectedIndex : 0;
+
+            var currSelectedItem = ListBox.SelectedItem;
+            //var currSelectedIndex = ListBox.SelectedIndex >= 0 ? ListBox.SelectedIndex : 0;
 
             BindingList.Clear();
             BackingList.AddRange(SourceFunc());
             SortAndReset();
 
-            currSelectedIndex = ListBox.Items.Count <= currSelectedIndex ? ListBox.Items.Count-1 : currSelectedIndex;
+            var valueIndex = currSelectedItem != null ? ListBox.Items.IndexOf(currSelectedItem) : 0;
+
+            var currSelectedIndex = valueIndex < 0 ? ListBox.Items.Count-1 : valueIndex;
 
             if (BindingList.Count > 0)
-                ListBox.SetSelected(currSelectedIndex, true);
+               ListBox.SetSelected(currSelectedIndex, true);
         }
 
 

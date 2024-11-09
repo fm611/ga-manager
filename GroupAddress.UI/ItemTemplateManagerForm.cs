@@ -129,7 +129,7 @@ namespace GroupAddress.UI
             ItemTemplates.Add(newTemplate);
             ItemTemplatesWrapper.Update();
 
-            ItemTemplatesListBox.SelectedItem = newTemplate;
+            ItemTemplatesListBox.SelectedValue = newTemplate.Id;
             SetEditMode(true);
             ItemTemplateNameTextBox.Focus();
         }
@@ -138,7 +138,18 @@ namespace GroupAddress.UI
             if (SelectedItemTemplate == null) return;
 
             SetEditMode(true);
+        }
 
+        private void DeleteItemTemplateButton_Click(object sender, EventArgs e)
+        {
+            if (SelectedItemTemplate == null) return;
+
+            var res = MessageBox.Show("Template löschen?", "Template löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (res == DialogResult.Yes)
+            {
+                ItemTemplates.Remove(SelectedItemTemplate);
+                ItemTemplatesWrapper.Update();
+            }
         }
 
 

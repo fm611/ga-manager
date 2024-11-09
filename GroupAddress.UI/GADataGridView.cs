@@ -20,6 +20,7 @@ namespace GroupAddress.UI
         private List<CellPosition> _previousSelectedCells = [];
 
         public List<GA> SelectedGAs { get; private set; } = [];
+        public List<Addresse> SelectedAddresses { get; private set; } = [];
 
 
         //Key => GA Subaddress
@@ -109,12 +110,15 @@ namespace GroupAddress.UI
         {
             base.OnSelectionChanged(e);
 
-            if (TopLevelCollection == null) 
-                SelectedGAs = [];
-            else
-                SelectedGAs = SelectedCells
+            SelectedAddresses = SelectedCells
                     .Cast<DataGridViewCell>()
                     .Select(x => GetAddresse(new CellPosition(x)))
+                    .ToList();
+
+            if (TopLevelCollection == null)
+                SelectedGAs = [];
+            else
+                SelectedGAs = SelectedAddresses
                     .SelectMany(x => TopLevelCollection.GAs.Where(y => y.Addresse == x))
                     .ToList();
         }
