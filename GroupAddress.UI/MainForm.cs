@@ -173,7 +173,7 @@ namespace GroupAddress.UI
 
                 MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
                 GADataTable.FirstDisplayedScrollingRowIndex = AddItemForm.LastInsertedItem?.MinGASubAddress ?? 0;
-                
+
             }
         }
 
@@ -203,56 +203,31 @@ namespace GroupAddress.UI
 
         private void AddRowNumTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsDigit(e.KeyChar)) e.Handled = true;
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back && e.KeyChar != (char)Keys.Delete) e.Handled = true;
         }
 
         private void DeleteCellsButton_Click(object sender, EventArgs e)
         {
-            //if (SelectedMainGroup == null) return;
+            if (SelectedMainGroup == null) return;
 
-            //var selectedCells = GADataTable
-            //    .SelectedCells
-            //    .Cast<DataGridViewCell>()
-            //    .Select(x => new { SubGroupAddress = x.ColumnIndex, GAAddress = x.RowIndex }).ToList();
+            var gasDelete = GADataTable.SelectedGAs;
+            if (gasDelete.Count > 0)
+            {
+                var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (res == DialogResult.Yes)
+                {
+                    gasDelete.ForEach(x => SelectedMainGroup.RemoveGA(x));
+                }
+                else
+                    return;
+            }
+            foreach (var add in GADataTable.SelectedAddresses.OrderByDescending(a => a.GA))
+            {
+                var gasMoveUp = SelectedMainGroup.GAs.Where(x => x.Addresse.MiddleGroup == add.MiddleGroup && x.Addresse.GA > add.GA);
+                gasMoveUp.ToList().ForEach(x => x.Addresse.GA--);
+            }
 
-            //var gasDelete = SelectedMainGroup
-            //    .GAs
-            //    .Where(x => selectedCells
-            //        .Contains(new { SubGroupAddress = x.SubGroup.SubAddress, GAAddress = x.SubAddress }))
-            //    .GroupBy(x => x.SubGroup).ToList();
-            //if (gasDelete.Count > 0)
-            //{
-            //    var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            //    if (res == DialogResult.Yes)
-            //    {
-            //        gasDelete.ForEach(x =>
-            //            x.ToList().ForEach(ga =>
-            //                SelectedMainGroup
-            //                    .SubGroups
-            //                    .First(sub => sub.Id == x.Key.Id).GAs.Remove(ga)));
-            //    }
-            //}
-
-            //foreach (var cell in selectedCells)
-            //{
-            //    var subGroup = SelectedMainGroup.SubGroups.FirstOrDefault(x => x.SubAddress == cell.SubGroupAddress);
-            //    if (subGroup == null) continue;
-
-            //    var gasMoveUp = subGroup.GAs.Where(x => x.SubAddress > cell.GAAddress);
-
-            //    gasMoveUp.ToList().ForEach(x => x.SubAddress--);
-            //}
-
-            //UpdataUI();
-
-
-            //GADataTable.ClearSelection();
-
-            //foreach (var cell in selectedCells)
-            //{
-            //    GADataTable.Rows[cell.GAAddress].Cells[cell.SubGroupAddress].Selected = true;
-            //}
-
+            GADataTable.UpdateTable();
         }
 
         private void AddMainGroupToolStripMenuItem_Click(object sender, EventArgs e)
