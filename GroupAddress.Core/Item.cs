@@ -8,9 +8,22 @@ using System.Threading.Tasks;
 namespace GroupAddress.Core
 {
 
-    public class Item : TopLevelCollection
+    public class Item
     {
-        public Item(string name) : base(name) { }
+
+
+        public string Id { get; set; }
+        public string Name { get; set; } = "";
+
+        public Item()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+
+        public Item(string name)
+        {
+
+        }
 
 
     }

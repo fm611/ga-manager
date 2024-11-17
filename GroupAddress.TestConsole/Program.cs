@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Diagnostics;
 
 namespace GroupAddress.TestConsole
 {
@@ -12,38 +13,51 @@ namespace GroupAddress.TestConsole
         static void Main(string[] args)
         {
 
-            var db = new AppDbContext();
-            db.Database.Migrate();
-            db.InitData();
+            var p = Project.GetSampleProject();
+
+            var json = p.GetJson();
+
+            string folder = Path.GetDirectoryName(Environment.ProcessPath);
+            string path = Path.Join(folder, "sampleProject.json");
+
+            FileStream createStream = File.Create(path);
+            JsonSerializer.Serialize(createStream, p, new JsonSerializerOptions()
+            {
+                WriteIndented = true,
+            });
+
+            //var db = new AppDbContext();
+            //db.Database.Migrate();
+            //db.InitData();
 
 
 
-            var mg = db.MainGroups
-                .Include(x => x.GAs)
-                .Include(x => x.Items)
-                .First(x => x.SubAddress == 1);
+            //var mg = db.MainGroups
+            //    .Include(x => x.GAs)
+            //    .Include(x => x.Items)
+            //    .First(x => x.SubAddress == 1);
 
-            var template = DefaultItemTemplates.Light;
+            //var template = DefaultItemTemplates.Light;
 
-            mg.AddItem(template, "EG_HWR_Licht_Decke");
+            //mg.AddItem(template, "EG_HWR_Licht_Decke");
 
-            mg.AddItem(template, "EG_KU_Licht_Esstisch");
-
-
-            //var sg = mg.SubGroups.FirstOrDefault(x => x.SubAddress == 0);
-
-            //sg.Name = "Zentral 000";
-
-            db.SaveChanges();
+            //mg.AddItem(template, "EG_KU_Licht_Esstisch");
 
 
-            var ga = mg.GAs.ElementAt(4);
+            ////var sg = mg.SubGroups.FirstOrDefault(x => x.SubAddress == 0);
 
-            mg.RemoveGA(ga);
+            ////sg.Name = "Zentral 000";
 
-            db.SaveChanges();
+            //db.SaveChanges();
 
-            Console.WriteLine("Done");
+
+            //var ga = mg.GAs.ElementAt(4);
+
+            //mg.RemoveGA(ga);
+
+            //db.SaveChanges();
+
+            //Console.WriteLine("Done");
 
 
 

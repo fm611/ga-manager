@@ -260,5 +260,10 @@ namespace GroupAddress.UI
                 AddMainGroup();
             }
         }
+
+        private void dateiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -14,6 +14,8 @@ namespace GroupAddress.Core
         public string Name { get; set; } = "";
         public Addresse Addresse { get; set; } = new Addresse();
 
+        public string? ItemId { get; set; }
+
         private GA()
         {
             Id = Guid.NewGuid().ToString();
