@@ -20,8 +20,8 @@ namespace GroupAddress.Core
                 "GET Misc"
                 };
 
-    private List<Item> _items = [];
-        public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
+        //private List<Item> _items = [];
+        //public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
 
        
 
@@ -57,14 +57,18 @@ namespace GroupAddress.Core
         {
             var newItem = new Item(gaPrefix);
             var gas = template.GAs.Select(x => x.CloneWithPrefix(gaPrefix)).ToList();
-            newItem.AddGARange(gas);
-            newItem.ShiftGA(startIndex);
 
-            if (newItem.GAs.Any(x => GAs.Any(y => y.Addresse.EqualsWithoutMainGroup(x.Addresse))))
+            gas.ForEach(x => x.ItemId = newItem.Id);
+            gas.ForEach(x => x.Shift(startIndex));
+
+            //newItem.AddGARange(gas);
+            //newItem.ShiftGA(startIndex);
+
+            if (gas.Any(x => GAs.Any(y => y.Addresse.EqualsWithoutMainGroup(x.Addresse))))
                 return null;
 
             AddGARange(gas);
-            _items.Add(newItem);
+            //_items.Add(newItem);
             return newItem;
         }
 
@@ -79,11 +83,21 @@ namespace GroupAddress.Core
 
         public override void RemoveGA(GA ga)
         {
-            var item = _items.Where(x => x.GAs.Contains(ga)).FirstOrDefault();
+            //var item = _items.Where(x => x.GAs.Contains(ga)).FirstOrDefault();
             
-            item?.RemoveGA(ga);
+            //item?.RemoveGA(ga);
 
             base.RemoveGA(ga);
+        }
+
+        public List<GA> GetItemGAs(Item item)
+        {
+            return GetItemGAs(item.Id);
+        }
+
+        public List<GA> GetItemGAs(string itemId)
+        {
+            return GAs.Where(x => x.ItemId == itemId).ToList();
         }
 
         public string AddressName => SubAddress + " - " + Name;

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace GroupAddress.Core
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext_Old : DbContext
     {
         public DbSet<MainGroup> MainGroups { get; set; }
         public DbSet<GA> GAs { get; set; }
@@ -24,13 +24,13 @@ namespace GroupAddress.Core
 
         public string DbPath { get; }
 
-        public AppDbContext()
+        public AppDbContext_Old()
         {
             string folder = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
             DbPath = Path.Join(folder, "data.db");
         }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        public AppDbContext_Old(DbContextOptions<AppDbContext_Old> options) : base(options)
         {
         }
 

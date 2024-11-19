@@ -15,9 +15,7 @@ namespace GroupAddress.UI
 {
     public partial class ItemTemplateManagerForm : Form
     {
-
-        public List<MainGroup> MainGroups { get; set; }
-        public List<ItemTemplate> ItemTemplates { get; set; }
+        public Project Project { get; set; }
         public ListBoxWrapper<MainGroup> MainGroupsWrapper { get; set; }
         public ListBoxWrapper<ItemTemplate> ItemTemplatesWrapper { get; set; }
 
@@ -34,12 +32,25 @@ namespace GroupAddress.UI
         private bool _editMode = false;
 
 
-        public ItemTemplateManagerForm(List<MainGroup> mainGroups, List<ItemTemplate> itemTemplates)
+        public ItemTemplateManagerForm(Project project)
         {
             InitializeComponent();
 
-            MainGroups = mainGroups;
-            ItemTemplates = itemTemplates;
+            Project = project;
+
+            ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(
+                ItemTemplatesListBox,
+                (a, b) => a.Name.CompareTo(b.Name),
+                nameof(ItemTemplate.Name),
+                nameof(ItemTemplate.Id),
+                () => Project.ItemTemplates);
+
+            MainGroupsWrapper = new ListBoxWrapper<MainGroup>(
+                MainGroupsListBox,
+                (a, b) => a.AddressName.CompareTo(b.AddressName),
+                nameof(MainGroup.AddressName),
+                nameof(MainGroup.Id),
+                () => Project.MainGroups);
 
             LoadData();
         }
@@ -63,24 +74,13 @@ namespace GroupAddress.UI
 
         public void LoadData()
         {
-            ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(
-                ItemTemplatesListBox,
-                (a, b) => a.Name.CompareTo(b.Name),
-                nameof(ItemTemplate.Name),
-                nameof(ItemTemplate.Id),
-                () => ItemTemplates);
+
             ItemTemplatesWrapper.Update();
 
             if (ItemTemplatesListBox.Items.Count > 0 && ItemTemplatesListBox.SelectedItem == null)
                 ItemTemplatesListBox.SelectedIndex = 0;
 
 
-            MainGroupsWrapper = new ListBoxWrapper<MainGroup>(
-                MainGroupsListBox,
-                (a, b) => a.AddressName.CompareTo(b.AddressName),
-                nameof(MainGroup.AddressName),
-                nameof(MainGroup.Id),
-                () => MainGroups);
             MainGroupsWrapper.Update();
 
             if (MainGroupsListBox.Items.Count > 0 && MainGroupsListBox.SelectedItem == null)
@@ -126,7 +126,7 @@ namespace GroupAddress.UI
         public void AddItemTemplateButton_Click(object sender, EventArgs e)
         {
             var newTemplate = new ItemTemplate("Neues Template", []);
-            ItemTemplates.Add(newTemplate);
+            Project.ItemTemplates.Add(newTemplate);
             ItemTemplatesWrapper.Update();
 
             ItemTemplatesListBox.SelectedValue = newTemplate.Id;
@@ -147,7 +147,7 @@ namespace GroupAddress.UI
             var res = MessageBox.Show("Template löschen?", "Template löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res == DialogResult.Yes)
             {
-                ItemTemplates.Remove(SelectedItemTemplate);
+                Project.ItemTemplates.Remove(SelectedItemTemplate);
                 ItemTemplatesWrapper.Update();
             }
         }
@@ -206,7 +206,6 @@ namespace GroupAddress.UI
                 DialogResult = DialogResult.Abort;
                 return;
             }
-
 
             LastInsertedItem = SelectedMainGroup.AddItem(SelectedItemTemplate, NewItemPreStringTextBox.Text, GetInsertIndex());
 

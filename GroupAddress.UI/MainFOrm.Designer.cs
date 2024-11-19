@@ -29,9 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             MainGroupsListBox = new ListBox();
             MainGroupsListBoxContextMenu = new ContextMenuStrip(components);
             AddMainGroupToolStripMenuItem = new ToolStripMenuItem();
@@ -42,33 +41,22 @@
             StatusInfoLabel = new ToolStripStatusLabel();
             GADataTable = new GADataGridView();
             label2 = new Label();
-            toolStripButton1 = new ToolStripButton();
-            toolStripButton3 = new ToolStripButton();
-            toolStripSeparator1 = new ToolStripSeparator();
-            AddItemButton = new ToolStripButton();
-            toolStripSeparator2 = new ToolStripSeparator();
-            AddRowNumTextBox = new ToolStripTextBox();
-            AddRowButton = new ToolStripButton();
-            toolStripSeparator3 = new ToolStripSeparator();
-            DeleteCellsButton = new ToolStripButton();
-            toolStrip1 = new ToolStrip();
-            ExportButton = new ToolStripButton();
-            toolStripSeparator4 = new ToolStripSeparator();
-            ImportButton = new ToolStripButton();
             menuStrip1 = new MenuStrip();
             FileToolStripMenuItem = new ToolStripMenuItem();
             OpenToolStripMenuItem = new ToolStripMenuItem();
+            OpenSampleProjectToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator6 = new ToolStripSeparator();
             SaveToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator5 = new ToolStripSeparator();
             ExportToolStripMenuItem = new ToolStripMenuItem();
             ImportToolStripMenuItem = new ToolStripMenuItem();
             ItemManagerToolStripMenuItem = new ToolStripMenuItem();
-            beispielToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator6 = new ToolStripSeparator();
+            AddCellsNumTextBox = new ToolStripTextBox();
+            AddCellsStripMenuItem = new ToolStripMenuItem();
+            DeleteCellsStripMenuItem = new ToolStripMenuItem();
             MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
-            toolStrip1.SuspendLayout();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -144,24 +132,24 @@
             GADataTable.AllowUserToDeleteRows = false;
             GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = SystemColors.ControlLight;
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle5.Padding = new Padding(0, 5, 0, 5);
-            dataGridViewCellStyle5.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
-            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.ControlLight;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.Padding = new Padding(0, 5, 0, 5);
+            dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = SystemColors.Window;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle6.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle6.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle6.WrapMode = DataGridViewTriState.False;
-            GADataTable.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
             GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(266, 67);
             GADataTable.Name = "GADataTable";
@@ -182,117 +170,12 @@
             label2.TabIndex = 1;
             label2.Text = "Gruppenadressen";
             // 
-            // toolStripButton1
-            // 
-            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
-            toolStripButton1.ImageTransparentColor = Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new Size(37, 22);
-            toolStripButton1.Text = "Load";
-            toolStripButton1.TextImageRelation = TextImageRelation.TextBeforeImage;
-            toolStripButton1.Click += LoadButton_Click;
-            // 
-            // toolStripButton3
-            // 
-            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
-            toolStripButton3.ImageTransparentColor = Color.Magenta;
-            toolStripButton3.Name = "toolStripButton3";
-            toolStripButton3.Size = new Size(35, 22);
-            toolStripButton3.Text = "Save";
-            toolStripButton3.Click += SaveButton_Click;
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(6, 25);
-            // 
-            // AddItemButton
-            // 
-            AddItemButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            AddItemButton.Image = (Image)resources.GetObject("AddItemButton.Image");
-            AddItemButton.ImageTransparentColor = Color.Magenta;
-            AddItemButton.Name = "AddItemButton";
-            AddItemButton.Size = new Size(85, 22);
-            AddItemButton.Text = "Item Manager";
-            AddItemButton.Click += AddItemButton_Click;
-            // 
-            // toolStripSeparator2
-            // 
-            toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(6, 25);
-            // 
-            // AddRowNumTextBox
-            // 
-            AddRowNumTextBox.Name = "AddRowNumTextBox";
-            AddRowNumTextBox.Size = new Size(50, 25);
-            AddRowNumTextBox.Text = "1";
-            AddRowNumTextBox.KeyPress += AddRowNumTextBox_KeyPress;
-            // 
-            // AddRowButton
-            // 
-            AddRowButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            AddRowButton.Image = (Image)resources.GetObject("AddRowButton.Image");
-            AddRowButton.ImageTransparentColor = Color.Magenta;
-            AddRowButton.Name = "AddRowButton";
-            AddRowButton.Size = new Size(23, 22);
-            AddRowButton.Text = "Zeile einfügen";
-            AddRowButton.Click += AddRowButton_Click;
-            // 
-            // toolStripSeparator3
-            // 
-            toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(6, 25);
-            // 
-            // DeleteCellsButton
-            // 
-            DeleteCellsButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            DeleteCellsButton.Image = (Image)resources.GetObject("DeleteCellsButton.Image");
-            DeleteCellsButton.ImageTransparentColor = Color.Magenta;
-            DeleteCellsButton.Name = "DeleteCellsButton";
-            DeleteCellsButton.Size = new Size(23, 22);
-            DeleteCellsButton.Text = "Zellen löschen";
-            DeleteCellsButton.Click += DeleteCellsButton_Click;
-            // 
-            // toolStrip1
-            // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton3, toolStripSeparator1, ExportButton, ImportButton, toolStripSeparator4, AddItemButton, toolStripSeparator2, AddRowNumTextBox, AddRowButton, toolStripSeparator3, DeleteCellsButton });
-            toolStrip1.Location = new Point(0, 24);
-            toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(1324, 25);
-            toolStrip1.TabIndex = 35;
-            toolStrip1.Text = "toolStrip1";
-            // 
-            // ExportButton
-            // 
-            ExportButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            ExportButton.Image = (Image)resources.GetObject("ExportButton.Image");
-            ExportButton.ImageTransparentColor = Color.Magenta;
-            ExportButton.Name = "ExportButton";
-            ExportButton.Size = new Size(44, 22);
-            ExportButton.Text = "Export";
-            // 
-            // toolStripSeparator4
-            // 
-            toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(6, 25);
-            // 
-            // ImportButton
-            // 
-            ImportButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            ImportButton.Image = (Image)resources.GetObject("ImportButton.Image");
-            ImportButton.ImageTransparentColor = Color.Magenta;
-            ImportButton.Name = "ImportButton";
-            ImportButton.Size = new Size(47, 22);
-            ImportButton.Text = "Import";
-            // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, ItemManagerToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, ItemManagerToolStripMenuItem, AddCellsNumTextBox, AddCellsStripMenuItem, DeleteCellsStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1324, 24);
+            menuStrip1.Size = new Size(1324, 27);
             menuStrip1.TabIndex = 36;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -300,63 +183,88 @@
             // 
             FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenToolStripMenuItem, SaveToolStripMenuItem, toolStripSeparator5, ExportToolStripMenuItem, ImportToolStripMenuItem });
             FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            FileToolStripMenuItem.Size = new Size(46, 20);
+            FileToolStripMenuItem.Size = new Size(46, 23);
             FileToolStripMenuItem.Text = "Datei";
-            FileToolStripMenuItem.Click += dateiToolStripMenuItem_Click;
             // 
             // OpenToolStripMenuItem
             // 
-            OpenToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { beispielToolStripMenuItem, toolStripSeparator6 });
+            OpenToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenSampleProjectToolStripMenuItem, toolStripSeparator6 });
             OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
-            OpenToolStripMenuItem.Size = new Size(180, 22);
+            OpenToolStripMenuItem.Size = new Size(126, 22);
             OpenToolStripMenuItem.Text = "Öffnen";
+            // 
+            // OpenSampleProjectToolStripMenuItem
+            // 
+            OpenSampleProjectToolStripMenuItem.Name = "OpenSampleProjectToolStripMenuItem";
+            OpenSampleProjectToolStripMenuItem.Size = new Size(114, 22);
+            OpenSampleProjectToolStripMenuItem.Text = "Beispiel";
+            OpenSampleProjectToolStripMenuItem.Click += OpenSampleProjectToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator6
+            // 
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new Size(111, 6);
             // 
             // SaveToolStripMenuItem
             // 
             SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
-            SaveToolStripMenuItem.Size = new Size(180, 22);
+            SaveToolStripMenuItem.Size = new Size(126, 22);
             SaveToolStripMenuItem.Text = "Speichern";
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(177, 6);
+            toolStripSeparator5.Size = new Size(123, 6);
             // 
             // ExportToolStripMenuItem
             // 
             ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
-            ExportToolStripMenuItem.Size = new Size(180, 22);
+            ExportToolStripMenuItem.Size = new Size(126, 22);
             ExportToolStripMenuItem.Text = "Export";
             // 
             // ImportToolStripMenuItem
             // 
             ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
-            ImportToolStripMenuItem.Size = new Size(180, 22);
+            ImportToolStripMenuItem.Size = new Size(126, 22);
             ImportToolStripMenuItem.Text = "Import";
             // 
             // ItemManagerToolStripMenuItem
             // 
             ItemManagerToolStripMenuItem.Name = "ItemManagerToolStripMenuItem";
-            ItemManagerToolStripMenuItem.Size = new Size(93, 20);
+            ItemManagerToolStripMenuItem.Size = new Size(93, 23);
             ItemManagerToolStripMenuItem.Text = "Item Manager";
+            ItemManagerToolStripMenuItem.Click += ItemManagerToolStripMenuItem_Click;
             // 
-            // beispielToolStripMenuItem
+            // AddCellsNumTextBox
             // 
-            beispielToolStripMenuItem.Name = "beispielToolStripMenuItem";
-            beispielToolStripMenuItem.Size = new Size(180, 22);
-            beispielToolStripMenuItem.Text = "Beispiel";
+            AddCellsNumTextBox.Name = "AddCellsNumTextBox";
+            AddCellsNumTextBox.Size = new Size(50, 23);
+            AddCellsNumTextBox.Text = "1";
+            AddCellsNumTextBox.KeyPress += AddCellsNumTextBox_KeyPress;
             // 
-            // toolStripSeparator6
+            // AddCellsStripMenuItem
             // 
-            toolStripSeparator6.Name = "toolStripSeparator6";
-            toolStripSeparator6.Size = new Size(177, 6);
+            AddCellsStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            AddCellsStripMenuItem.Image = Properties.Resources.insert_row_1_16;
+            AddCellsStripMenuItem.Name = "AddCellsStripMenuItem";
+            AddCellsStripMenuItem.Size = new Size(28, 23);
+            AddCellsStripMenuItem.Text = "toolStripMenuItem1";
+            AddCellsStripMenuItem.Click += AddCellsToolStripMenuItem_Click;
+            // 
+            // DeleteCellsStripMenuItem
+            // 
+            DeleteCellsStripMenuItem.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            DeleteCellsStripMenuItem.Image = Properties.Resources.times_square_regular;
+            DeleteCellsStripMenuItem.Name = "DeleteCellsStripMenuItem";
+            DeleteCellsStripMenuItem.Size = new Size(28, 23);
+            DeleteCellsStripMenuItem.Text = "toolStripMenuItem2";
+            DeleteCellsStripMenuItem.Click += DeleteCellsToolStripMenuItem_Click;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1324, 807);
-            Controls.Add(toolStrip1);
             Controls.Add(GADataTable);
             Controls.Add(statusStrip1);
             Controls.Add(menuStrip1);
@@ -366,13 +274,10 @@
             MainMenuStrip = menuStrip1;
             Name = "MainForm";
             Text = "Form1";
-            Load += Form1_Load;
             MainGroupsListBoxContextMenu.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
-            toolStrip1.ResumeLayout(false);
-            toolStrip1.PerformLayout();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ResumeLayout(false);
@@ -391,23 +296,10 @@
 
         private GADataGridView GADataTable;
         private Label label2;
-        private ToolStripButton toolStripButton1;
-        private ToolStripButton toolStripButton3;
-        private ToolStripSeparator toolStripSeparator1;
-        private ToolStripButton AddItemButton;
-        private ToolStripSeparator toolStripSeparator2;
-        private ToolStripTextBox AddRowNumTextBox;
-        private ToolStripButton AddRowButton;
-        private ToolStripSeparator toolStripSeparator3;
-        private ToolStripButton DeleteCellsButton;
-        private ToolStrip toolStrip1;
         private ContextMenuStrip MainGroupsListBoxContextMenu;
         private ToolStripMenuItem AddMainGroupToolStripMenuItem;
         private ToolStripMenuItem EditMainGroupToolStripMenuItem;
         private ToolStripMenuItem DeleteMainGroupToolStripMenuItem;
-        private ToolStripButton ExportButton;
-        private ToolStripButton ImportButton;
-        private ToolStripSeparator toolStripSeparator4;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem FileToolStripMenuItem;
         private ToolStripMenuItem OpenToolStripMenuItem;
@@ -416,7 +308,10 @@
         private ToolStripMenuItem ExportToolStripMenuItem;
         private ToolStripMenuItem ImportToolStripMenuItem;
         private ToolStripMenuItem ItemManagerToolStripMenuItem;
-        private ToolStripMenuItem beispielToolStripMenuItem;
+        private ToolStripMenuItem OpenSampleProjectToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator6;
+        private ToolStripTextBox AddCellsNumTextBox;
+        private ToolStripMenuItem AddCellsStripMenuItem;
+        private ToolStripMenuItem DeleteCellsStripMenuItem;
     }
 }

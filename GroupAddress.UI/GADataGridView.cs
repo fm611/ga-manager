@@ -104,6 +104,18 @@ namespace GroupAddress.UI
             return Rows[pos.Row].Cells[pos.Column];
         }
 
+        public CellPosition? GetCell(GA ga)
+        {
+            for (int i = 0; i < RowData.Count; i++)
+            {
+                if (RowData.ElementAt(i).Value.Contains(ga))
+                {
+                    return new CellPosition(i, ga.Addresse.MiddleGroup);
+                }
+            }
+            return null;
+        }
+
         //Events
 
         protected override void OnSelectionChanged(EventArgs e)

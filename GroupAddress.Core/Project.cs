@@ -11,14 +11,19 @@ namespace GroupAddress.Core
 {
     public class Project
     {
-        public string Name { get; set; }
+        
+        //public string Name { get; set; }
 
         public List<MainGroup> MainGroups { get; set; } = [];
 
         public List<ItemTemplate> ItemTemplates { get; set; } = [];
 
+        public List<Item> Items { get; set; } = [];
 
-        public Project(string name) { Name = name; }
+        public Project() { }
+
+        //public Project() : this("") { }
+        //public Project(string name) { Name = name; }
 
 
         public string GetJson()
@@ -33,7 +38,7 @@ namespace GroupAddress.Core
 
         public static Project GetSampleProject()
         {
-            var proj = new Project("Beispiel Projekt");
+            var proj = new Project();
 
             #region Init ItemTemplates
 
@@ -97,7 +102,9 @@ namespace GroupAddress.Core
 
             var mGroup1 = proj.MainGroups.First(x => x.SubAddress == 1);
 
-            mGroup1.AddItem(DefaultItemTemplates.Light, "EG_HWR_Licht_Decke");
+            var item = mGroup1.AddItem(DefaultItemTemplates.Light, "EG_HWR_Licht_Decke");
+            if (item != null)
+                proj.Items.Add(item);            
 
             #endregion
 

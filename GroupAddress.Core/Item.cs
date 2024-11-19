@@ -10,19 +10,16 @@ namespace GroupAddress.Core
 
     public class Item
     {
-
-
         public string Id { get; set; }
         public string Name { get; set; } = "";
 
-        public Item()
+        private Item()
         {
             Id = Guid.NewGuid().ToString();
         }
 
-        public Item(string name)
-        {
-
+        public Item(string name) : this() { 
+            Name = name;
         }
 
 

@@ -11,11 +11,13 @@ namespace GroupAddress.UI
     public partial class MainForm : Form
     {
 
-        public AppDbContext Db { get; set; }
+        //public AppDbContext Db { get; set; }
 
-        public List<MainGroup> MainGroups { get; set; }
+        public Project Project { get; set; }
 
-        public List<ItemTemplate> ItemTemplates { get; set; }
+        //public List<MainGroup> MainGroups { get; set; }
+
+        //public List<ItemTemplate> ItemTemplates { get; set; }
 
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
 
@@ -35,84 +37,127 @@ namespace GroupAddress.UI
         {
             InitializeComponent();
 
-
             Comparison<MainGroup> mainGroupComparison = (a, b) => a.SubAddress.CompareTo(b.SubAddress);
 
-            MainGroups = [];
+            Project = new Project();
 
             MainGroupWrapper = new ListBoxWrapper<MainGroup>(
                 MainGroupsListBox,
                 mainGroupComparison,
                 nameof(MainGroup.ListBoxString),
                 "Id",
-                () => MainGroups);
+                () => Project.MainGroups);
 
-            InitDatabase();
+            //InitDatabase();
         }
 
-        private void InitDatabase()
-        {
-            Db = new AppDbContext();
-            Db.Database.Migrate();
-            Db.InitData();
+        //private void InitDatabase()
+        //{
+        //    Db = new AppDbContext();
+        //    Db.Database.Migrate();
+        //    Db.InitData();
 
 
-            MainGroups = Db.MainGroups
-                .Include(x => x.GAs)
-                .Include(x => x.Items)
-                .ToList();
+        //    MainGroups = Db.MainGroups
+        //        .Include(x => x.GAs)
+        //        .Include(x => x.Items)
+        //        .ToList();
 
-            ItemTemplates = Db.ItemTemplates
-                .Include(x => x.GAs)
-                .ToList();
+        //    ItemTemplates = Db.ItemTemplates
+        //        .Include(x => x.GAs)
+        //        .ToList();
+        //}
 
-
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            InitDatabase();
-            UpdataUI();
-        }
+        //private void Form1_Load(object sender, EventArgs e)
+        //{
+        //    //InitDatabase();
+        //    UpdataUI();
+        //}
 
 
-        private void Save()
-        {
-            var mgToAdd = MainGroups.Where(x => !Db.MainGroups.Contains(x)).ToList();
-            Db.MainGroups.AddRange(mgToAdd);
-            var mgToDelete = Db.MainGroups.Where(x => !MainGroups.Contains(x)).ToList();
-            Db.MainGroups.RemoveRange(mgToDelete);
+        //private void Save()
+        //{
+        //    var mgToAdd = MainGroups.Where(x => !Db.MainGroups.Contains(x)).ToList();
+        //    Db.MainGroups.AddRange(mgToAdd);
+        //    var mgToDelete = Db.MainGroups.Where(x => !MainGroups.Contains(x)).ToList();
+        //    Db.MainGroups.RemoveRange(mgToDelete);
 
-            var tempToAdd = ItemTemplates.Where(x => !Db.ItemTemplates.Contains(x)).ToList();
-            Db.ItemTemplates.AddRange(tempToAdd);
-            var tempToDelete = Db.ItemTemplates.Where(x => !ItemTemplates.Contains(x)).ToList();
-            Db.ItemTemplates.RemoveRange(tempToDelete);
+        //    var tempToAdd = ItemTemplates.Where(x => !Db.ItemTemplates.Contains(x)).ToList();
+        //    Db.ItemTemplates.AddRange(tempToAdd);
+        //    var tempToDelete = Db.ItemTemplates.Where(x => !ItemTemplates.Contains(x)).ToList();
+        //    Db.ItemTemplates.RemoveRange(tempToDelete);
 
-            Db.SaveChanges();
-        }
+        //    Db.SaveChanges();
+        //}
 
-        private void UpdataUI()
+        private void UpdateUI()
         {
             MainGroupWrapper.Update();
             GADataTable.UpdateTable();
         }
 
 
+        #region Open Save Export Import
+
+
+        private void OpenSampleProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Project = Project.GetSampleProject();
+            UpdateUI();
+        }
+
+        private void ItemManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (AddItemForm == null)
+                AddItemForm = new ItemTemplateManagerForm(Project);
+
+            AddItemForm.LoadData();
+            AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);
+
+            AddItemForm.ShowDialog();
+
+            if (AddItemForm.DialogResult == DialogResult.OK)
+            {
+                UpdateUI();
+
+                if(AddItemForm.SelectedMainGroup != null)
+                {
+                    var insertMainGroup = AddItemForm.SelectedMainGroup;
+                    MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
+
+                    GADataTable.SetTopLevelCollection(insertMainGroup);
+
+                    var newItem = AddItemForm.LastInsertedItem;
+
+                    if (newItem != null)
+                    {
+                        var itemGAs = insertMainGroup.GetItemGAs(newItem);
+                        var minGA = itemGAs.MinBy(x => x.Addresse.GA);
+                        GADataTable.FirstDisplayedScrollingRowIndex = minGA == null ? 0 : GADataTable.GetCell(minGA)?.Row ?? 0;
+                    }
+                }
+            }
+
+        }
+
+
+        #endregion
+
         #region MainGroup
 
         private void AddMainGroup()
         {
-            var addMainGroupForm = new AddEditMainGroupForm(MainGroups);
+            var addMainGroupForm = new AddEditMainGroupForm(Project.MainGroups);
             var result = addMainGroupForm.ShowDialog();
 
             if (result != DialogResult.OK || addMainGroupForm.MainGroup == null) return;
 
-            MainGroups.Add(addMainGroupForm.MainGroup);
+            Project.MainGroups.Add(addMainGroupForm.MainGroup);
             MainGroupWrapper.Update();
         }
         private void EditMainGroup(string id)
         {
-            var addMainGroupForm = new AddEditMainGroupForm(MainGroups, id);
+            var addMainGroupForm = new AddEditMainGroupForm(Project.MainGroups, id);
             var result = addMainGroupForm.ShowDialog();
 
             if (result != DialogResult.OK || addMainGroupForm.MainGroup == null) return;
@@ -125,10 +170,10 @@ namespace GroupAddress.UI
 
             if (MessageBox.Show("Haupgruppe löschen?", "Hauptgruppe löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                MainGroups.Remove(SelectedMainGroup);
+                Project.MainGroups.Remove(SelectedMainGroup);
             }
 
-            UpdataUI();
+            UpdateUI();
         }
 
 
@@ -143,44 +188,11 @@ namespace GroupAddress.UI
         #endregion
 
 
-        private void SaveButton_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
 
-        private void LoadButton_Click(object sender, EventArgs e)
-        {
-            Db = new AppDbContext();
-            Db.Database.Migrate();
-            Db.InitData();
-
-            UpdataUI();
-        }
-
-        private void AddItemButton_Click(object sender, EventArgs e)
-        {
-            if (AddItemForm == null)
-                AddItemForm = new ItemTemplateManagerForm(MainGroups, ItemTemplates);
-
-            AddItemForm.LoadData();
-            AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);
-
-            AddItemForm.ShowDialog();
-
-            if (AddItemForm.DialogResult == DialogResult.OK)
-            {
-                UpdataUI();
-
-                MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
-                GADataTable.FirstDisplayedScrollingRowIndex = AddItemForm.LastInsertedItem?.MinGASubAddress ?? 0;
-
-            }
-        }
-
-        private void AddRowButton_Click(object sender, EventArgs e)
+        private void AddCellsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (SelectedMainGroup == null) return;
-            if (!int.TryParse(AddRowNumTextBox.Text, out var numRows)) return;
+            if (!int.TryParse(AddCellsNumTextBox.Text, out var numRows)) return;
 
 
             var colMinRows = GADataTable.SelectedAddresses
@@ -201,12 +213,12 @@ namespace GroupAddress.UI
 
         }
 
-        private void AddRowNumTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        private void AddCellsNumTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!char.IsDigit(e.KeyChar) && e.KeyChar != (char)Keys.Back && e.KeyChar != (char)Keys.Delete) e.Handled = true;
         }
 
-        private void DeleteCellsButton_Click(object sender, EventArgs e)
+        private void DeleteCellsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (SelectedMainGroup == null) return;
 
@@ -261,9 +273,6 @@ namespace GroupAddress.UI
             }
         }
 
-        private void dateiToolStripMenuItem_Click(object sender, EventArgs e)
-        {
 
-        }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GroupAddress.Core
 {
@@ -30,6 +29,11 @@ namespace GroupAddress.Core
         {
             Name = name;
             Addresse = addresse;
+        }
+
+        public void Shift(int x)
+        {
+            Addresse.GA += x;
         }
 
 
