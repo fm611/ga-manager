@@ -43,9 +43,12 @@
             label2 = new Label();
             menuStrip1 = new MenuStrip();
             FileToolStripMenuItem = new ToolStripMenuItem();
+            NewProjectMenuItem = new ToolStripMenuItem();
             OpenToolStripMenuItem = new ToolStripMenuItem();
+            OpenFileStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
             OpenSampleProjectToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator6 = new ToolStripSeparator();
+            OpenRecentToolStripSeparator = new ToolStripSeparator();
             SaveToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator5 = new ToolStripSeparator();
             ExportToolStripMenuItem = new ToolStripMenuItem();
@@ -54,6 +57,7 @@
             AddCellsNumTextBox = new ToolStripTextBox();
             AddCellsStripMenuItem = new ToolStripMenuItem();
             DeleteCellsStripMenuItem = new ToolStripMenuItem();
+            saveFileDialog1 = new SaveFileDialog();
             MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
@@ -181,51 +185,72 @@
             // 
             // FileToolStripMenuItem
             // 
-            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenToolStripMenuItem, SaveToolStripMenuItem, toolStripSeparator5, ExportToolStripMenuItem, ImportToolStripMenuItem });
+            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { NewProjectMenuItem, OpenToolStripMenuItem, SaveToolStripMenuItem, toolStripSeparator5, ExportToolStripMenuItem, ImportToolStripMenuItem });
             FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             FileToolStripMenuItem.Size = new Size(46, 23);
             FileToolStripMenuItem.Text = "Datei";
             // 
+            // NewProjectMenuItem
+            // 
+            NewProjectMenuItem.Name = "NewProjectMenuItem";
+            NewProjectMenuItem.Size = new Size(180, 22);
+            NewProjectMenuItem.Text = "Neu";
+            // 
             // OpenToolStripMenuItem
             // 
-            OpenToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenSampleProjectToolStripMenuItem, toolStripSeparator6 });
+            OpenToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenFileStripMenuItem, toolStripSeparator1, OpenSampleProjectToolStripMenuItem, OpenRecentToolStripSeparator });
             OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
-            OpenToolStripMenuItem.Size = new Size(126, 22);
+            OpenToolStripMenuItem.Size = new Size(180, 22);
             OpenToolStripMenuItem.Text = "Öffnen";
+            // 
+            // OpenFileStripMenuItem
+            // 
+            OpenFileStripMenuItem.Name = "OpenFileStripMenuItem";
+            OpenFileStripMenuItem.Size = new Size(180, 22);
+            OpenFileStripMenuItem.Text = "Datei...";
+            OpenFileStripMenuItem.Click += OpenFileToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(177, 6);
             // 
             // OpenSampleProjectToolStripMenuItem
             // 
             OpenSampleProjectToolStripMenuItem.Name = "OpenSampleProjectToolStripMenuItem";
-            OpenSampleProjectToolStripMenuItem.Size = new Size(114, 22);
+            OpenSampleProjectToolStripMenuItem.Size = new Size(180, 22);
             OpenSampleProjectToolStripMenuItem.Text = "Beispiel";
             OpenSampleProjectToolStripMenuItem.Click += OpenSampleProjectToolStripMenuItem_Click;
             // 
-            // toolStripSeparator6
+            // OpenRecentToolStripSeparator
             // 
-            toolStripSeparator6.Name = "toolStripSeparator6";
-            toolStripSeparator6.Size = new Size(111, 6);
+            OpenRecentToolStripSeparator.Name = "OpenRecentToolStripSeparator";
+            OpenRecentToolStripSeparator.Size = new Size(177, 6);
+            OpenRecentToolStripSeparator.Visible = false;
             // 
             // SaveToolStripMenuItem
             // 
             SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
-            SaveToolStripMenuItem.Size = new Size(126, 22);
+            SaveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
+            SaveToolStripMenuItem.Size = new Size(180, 22);
             SaveToolStripMenuItem.Text = "Speichern";
+            SaveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(123, 6);
+            toolStripSeparator5.Size = new Size(177, 6);
             // 
             // ExportToolStripMenuItem
             // 
             ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
-            ExportToolStripMenuItem.Size = new Size(126, 22);
+            ExportToolStripMenuItem.Size = new Size(180, 22);
             ExportToolStripMenuItem.Text = "Export";
             // 
             // ImportToolStripMenuItem
             // 
             ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
-            ImportToolStripMenuItem.Size = new Size(126, 22);
+            ImportToolStripMenuItem.Size = new Size(180, 22);
             ImportToolStripMenuItem.Text = "Import";
             // 
             // ItemManagerToolStripMenuItem
@@ -309,9 +334,13 @@
         private ToolStripMenuItem ImportToolStripMenuItem;
         private ToolStripMenuItem ItemManagerToolStripMenuItem;
         private ToolStripMenuItem OpenSampleProjectToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator6;
+        private ToolStripSeparator OpenRecentToolStripSeparator;
         private ToolStripTextBox AddCellsNumTextBox;
         private ToolStripMenuItem AddCellsStripMenuItem;
         private ToolStripMenuItem DeleteCellsStripMenuItem;
+        private SaveFileDialog saveFileDialog1;
+        private ToolStripMenuItem OpenFileStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem NewProjectMenuItem;
     }
 }

@@ -3,21 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
+using System.Text.Json;
 using System.Windows.Forms;
 using System.Xml;
+using static System.Windows.Forms.LinkLabel;
 
 namespace GroupAddress.UI
 {
     public partial class MainForm : Form
     {
-
-        //public AppDbContext Db { get; set; }
+        private string currentProjectFile;
 
         public Project Project { get; set; }
-
-        //public List<MainGroup> MainGroups { get; set; }
-
-        //public List<ItemTemplate> ItemTemplates { get; set; }
 
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
 
@@ -28,7 +26,20 @@ namespace GroupAddress.UI
 
         public int CurrentGARowScrollIndex { get; set; }
 
-
+        public string CurrentProjectFile
+        {
+            get => currentProjectFile; set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    Text = "Neues Projekt";
+                } else
+                {
+                    Text = new FileInfo(value).Name;
+                }
+                currentProjectFile = value;
+            }
+        }
 
 
 
@@ -39,6 +50,7 @@ namespace GroupAddress.UI
 
             Comparison<MainGroup> mainGroupComparison = (a, b) => a.SubAddress.CompareTo(b.SubAddress);
 
+            CurrentProjectFile = "";
             Project = new Project();
 
             MainGroupWrapper = new ListBoxWrapper<MainGroup>(
@@ -48,47 +60,10 @@ namespace GroupAddress.UI
                 "Id",
                 () => Project.MainGroups);
 
-            //InitDatabase();
         }
 
-        //private void InitDatabase()
-        //{
-        //    Db = new AppDbContext();
-        //    Db.Database.Migrate();
-        //    Db.InitData();
 
 
-        //    MainGroups = Db.MainGroups
-        //        .Include(x => x.GAs)
-        //        .Include(x => x.Items)
-        //        .ToList();
-
-        //    ItemTemplates = Db.ItemTemplates
-        //        .Include(x => x.GAs)
-        //        .ToList();
-        //}
-
-        //private void Form1_Load(object sender, EventArgs e)
-        //{
-        //    //InitDatabase();
-        //    UpdataUI();
-        //}
-
-
-        //private void Save()
-        //{
-        //    var mgToAdd = MainGroups.Where(x => !Db.MainGroups.Contains(x)).ToList();
-        //    Db.MainGroups.AddRange(mgToAdd);
-        //    var mgToDelete = Db.MainGroups.Where(x => !MainGroups.Contains(x)).ToList();
-        //    Db.MainGroups.RemoveRange(mgToDelete);
-
-        //    var tempToAdd = ItemTemplates.Where(x => !Db.ItemTemplates.Contains(x)).ToList();
-        //    Db.ItemTemplates.AddRange(tempToAdd);
-        //    var tempToDelete = Db.ItemTemplates.Where(x => !ItemTemplates.Contains(x)).ToList();
-        //    Db.ItemTemplates.RemoveRange(tempToDelete);
-
-        //    Db.SaveChanges();
-        //}
 
         private void UpdateUI()
         {
@@ -99,6 +74,51 @@ namespace GroupAddress.UI
 
         #region Open Save Export Import
 
+        private void Save()
+        {
+            if (string.IsNullOrEmpty(CurrentProjectFile))
+            {
+                var saveDialog = new SaveFileDialog();
+                saveDialog.DefaultExt = "gaproj";
+                saveDialog.Filter = "Project files (*.gaproj)|*.gaproj";
+
+                var res = saveDialog.ShowDialog();
+
+                if (res == DialogResult.OK)
+                {
+                    var filePath = saveDialog.FileName;
+                    CurrentProjectFile = filePath;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(CurrentProjectFile))
+            {
+                using StreamWriter outputFile = new StreamWriter(CurrentProjectFile, false);
+                outputFile.Write(Project.GetJson());
+            }
+        }
+
+
+        private void OpenProject()
+        {
+            var openDialog = new OpenFileDialog();
+            openDialog.Filter = "Project files (*.gaproj)|*.gaproj";
+            openDialog.RestoreDirectory = true;
+
+            var res = openDialog.ShowDialog();
+
+
+
+        }
+
+
+
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+            Save();
+        }
+
 
         private void OpenSampleProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -106,39 +126,12 @@ namespace GroupAddress.UI
             UpdateUI();
         }
 
-        private void ItemManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (AddItemForm == null)
-                AddItemForm = new ItemTemplateManagerForm(Project);
 
-            AddItemForm.LoadData();
-            AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);
-
-            AddItemForm.ShowDialog();
-
-            if (AddItemForm.DialogResult == DialogResult.OK)
-            {
-                UpdateUI();
-
-                if(AddItemForm.SelectedMainGroup != null)
-                {
-                    var insertMainGroup = AddItemForm.SelectedMainGroup;
-                    MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
-
-                    GADataTable.SetTopLevelCollection(insertMainGroup);
-
-                    var newItem = AddItemForm.LastInsertedItem;
-
-                    if (newItem != null)
-                    {
-                        var itemGAs = insertMainGroup.GetItemGAs(newItem);
-                        var minGA = itemGAs.MinBy(x => x.Addresse.GA);
-                        GADataTable.FirstDisplayedScrollingRowIndex = minGA == null ? 0 : GADataTable.GetCell(minGA)?.Row ?? 0;
-                    }
-                }
-            }
-
+            OpenProject();
         }
+
 
 
         #endregion
@@ -186,6 +179,42 @@ namespace GroupAddress.UI
         }
 
         #endregion
+
+
+        private void ItemManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (AddItemForm == null)
+                AddItemForm = new ItemTemplateManagerForm(Project);
+
+            AddItemForm.LoadData();
+            AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);
+
+            AddItemForm.ShowDialog();
+
+            if (AddItemForm.DialogResult == DialogResult.OK)
+            {
+                UpdateUI();
+
+                if (AddItemForm.SelectedMainGroup != null)
+                {
+                    var insertMainGroup = AddItemForm.SelectedMainGroup;
+                    MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
+
+                    GADataTable.SetTopLevelCollection(insertMainGroup);
+
+                    var newItem = AddItemForm.LastInsertedItem;
+
+                    if (newItem != null)
+                    {
+                        var itemGAs = insertMainGroup.GetItemGAs(newItem);
+                        var minGA = itemGAs.MinBy(x => x.Addresse.GA);
+                        GADataTable.FirstDisplayedScrollingRowIndex = minGA == null ? 0 : GADataTable.GetCell(minGA)?.Row ?? 0;
+                    }
+                }
+            }
+
+        }
+
 
 
 
@@ -272,7 +301,6 @@ namespace GroupAddress.UI
                 AddMainGroup();
             }
         }
-
 
     }
 }

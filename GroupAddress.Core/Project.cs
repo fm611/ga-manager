@@ -12,7 +12,9 @@ namespace GroupAddress.Core
     public class Project
     {
         
-        //public string Name { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime Saved { get; set; }
+
 
         public List<MainGroup> MainGroups { get; set; } = [];
 
@@ -20,7 +22,9 @@ namespace GroupAddress.Core
 
         public List<Item> Items { get; set; } = [];
 
-        public Project() { }
+        public Project() {
+            Created = DateTime.Now;
+        }
 
         //public Project() : this("") { }
         //public Project(string name) { Name = name; }
@@ -28,6 +32,7 @@ namespace GroupAddress.Core
 
         public string GetJson()
         {
+            Saved = DateTime.Now;
             return JsonSerializer.Serialize(this,
                 new JsonSerializerOptions
                 {

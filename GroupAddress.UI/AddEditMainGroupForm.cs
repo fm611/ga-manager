@@ -24,7 +24,7 @@ namespace GroupAddress.UI
 
             MainGroups = mainGroups;
 
-            var nextId = MainGroups.Max(x => x.SubAddress) + 1;
+            var nextId = MainGroups.DefaultIfEmpty().Max(x => x?.SubAddress??-1) + 1;
             if (!MainGroup.IsValidSubAddress(nextId))
             {
                 nextId = Enumerable.Range(0, 32).Where(x => !MainGroups.Any(y => y.SubAddress == x)).Min();
