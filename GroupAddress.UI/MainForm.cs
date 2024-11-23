@@ -41,9 +41,6 @@ namespace GroupAddress.UI
             }
         }
 
-
-
-
         public MainForm()
         {
             InitializeComponent();
@@ -94,6 +91,7 @@ namespace GroupAddress.UI
             if (!string.IsNullOrEmpty(CurrentProjectFile))
             {
                 using StreamWriter outputFile = new StreamWriter(CurrentProjectFile, false);
+                var json = Project.GetJson();
                 outputFile.Write(Project.GetJson());
             }
         }
@@ -107,6 +105,13 @@ namespace GroupAddress.UI
 
             var res = openDialog.ShowDialog();
 
+            if(res == DialogResult.OK)
+            {
+                using StreamReader reader = new StreamReader(CurrentProjectFile);
+                var json = reader.ReadToEnd();
+
+                var obj = JsonSerializer.Deserialize<Project>(json);
+            }
 
 
         }
