@@ -4,7 +4,10 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
+using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using System.Windows.Forms;
 using System.Xml;
 using static System.Windows.Forms.LinkLabel;
@@ -33,13 +36,18 @@ namespace GroupAddress.UI
                 if (string.IsNullOrEmpty(value))
                 {
                     Text = "Neues Projekt";
-                } else
+                }
+                else
                 {
                     Text = new FileInfo(value).Name;
                 }
                 currentProjectFile = value;
             }
         }
+
+        public string RecentFilesJsonPath { get; set; }
+        public List<FileInfo> RecentFiles { get; set; }
+        public ToolStripItem[] RecentFilesToolStripItems { get; set; } = [];
 
         public MainForm()
         {
@@ -57,6 +65,11 @@ namespace GroupAddress.UI
                 "Id",
                 () => Project.MainGroups);
 
+            RecentFilesJsonPath = "recent.json";
+            RecentFiles = [];
+
+
+            ReadRecentFilesList();
         }
 
 
@@ -70,6 +83,93 @@ namespace GroupAddress.UI
 
 
         #region Open Save Export Import
+
+        private void ReadRecentFilesList()
+        {
+            if (File.Exists(RecentFilesJsonPath))
+            {
+                using StreamReader reader = new StreamReader(RecentFilesJsonPath);
+                var json = reader.ReadToEnd();
+                try
+                {
+                    var obj = JsonSerializer.Deserialize<List<string>>(json);
+                    if (obj == null) throw new Exception();
+                    RecentFiles = obj.Select(x => new FileInfo(x)).Where(x => x.Exists).Take(10).ToList();
+                } catch
+                {
+                    RecentFiles = [];
+                }
+            }
+            UpdateRecentFilesMenu();
+        }
+
+        private void WriteRecentFilesList()
+        {
+            using StreamWriter outputFile = new StreamWriter(RecentFilesJsonPath, false);
+            var json = JsonSerializer.Serialize(RecentFiles.Select(x => x.FullName),
+                new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+                }
+            );
+            outputFile.Write(json);
+        }
+
+        private void UpdateRecentFilesMenu()
+        {
+            foreach (var item in RecentFilesToolStripItems)
+            {
+                OpenToolStripMenuItem.DropDownItems.Remove(item);
+            }
+            RecentFilesToolStripItems = [];
+
+            var toolStripItems = RecentFiles.Select(r => new ToolStripMenuItem(r.Name, null, (sender, e) => OpenProjectFile(r.FullName))).ToArray();
+
+            if (RecentFiles.Any())
+                RecentFilesToolStripItems = [.. new ToolStripItem[] { new ToolStripSeparator() }, .. toolStripItems];
+
+            OpenToolStripMenuItem.DropDownItems.AddRange(RecentFilesToolStripItems);
+        }
+
+        private void EnqueueRecentFiles(string path)
+        {
+            var oldEntries = RecentFiles.Where(x => x.FullName != path).Take(9).ToList();
+            RecentFiles.Clear();
+
+            RecentFiles.Add(new FileInfo(path));
+            RecentFiles.AddRange(oldEntries);
+
+            WriteRecentFilesList();
+            UpdateRecentFilesMenu();
+        }
+
+        private void OpenProjectFile(string path)
+        {
+            if (!File.Exists(path))
+            {
+                var fi = RecentFiles.FirstOrDefault(x => x.FullName == path);
+                if (fi != null)
+                    RecentFiles.Remove(fi);
+                fi = new FileInfo(path);
+                WriteRecentFilesList();
+                UpdateRecentFilesMenu();
+                MessageBox.Show("Projektdatei nicht gefunden.", fi.Name, MessageBoxButtons.OK);
+                return;
+            }
+
+            using StreamReader reader = new StreamReader(path);
+            var json = reader.ReadToEnd();
+
+            var obj = JsonSerializer.Deserialize<Project>(json);
+
+            if (obj != null)
+            {
+                Project = obj;
+                UpdateUI();
+                EnqueueRecentFiles(path);
+            }
+        }
 
         private void Save()
         {
@@ -93,9 +193,10 @@ namespace GroupAddress.UI
                 using StreamWriter outputFile = new StreamWriter(CurrentProjectFile, false);
                 var json = Project.GetJson();
                 outputFile.Write(Project.GetJson());
+
+                EnqueueRecentFiles(CurrentProjectFile);
             }
         }
-
 
         private void OpenProject()
         {
@@ -105,25 +206,17 @@ namespace GroupAddress.UI
 
             var res = openDialog.ShowDialog();
 
-            if(res == DialogResult.OK)
+            if (res == DialogResult.OK)
             {
-                using StreamReader reader = new StreamReader(CurrentProjectFile);
-                var json = reader.ReadToEnd();
-
-                var obj = JsonSerializer.Deserialize<Project>(json);
+                OpenProjectFile(openDialog.FileName);
             }
-
-
         }
-
-
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+
             Save();
         }
-
 
         private void OpenSampleProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -133,11 +226,8 @@ namespace GroupAddress.UI
 
         private void OpenFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             OpenProject();
         }
-
-
 
         #endregion
 
@@ -188,6 +278,13 @@ namespace GroupAddress.UI
 
         private void ItemManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if(SelectedMainGroup == null)
+            {
+                MessageBox.Show("Bitte erst eine Hauptgruppe erstellen/auswählen.", "Keine Hauptgruppe", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
             if (AddItemForm == null)
                 AddItemForm = new ItemTemplateManagerForm(Project);
 
@@ -219,8 +316,6 @@ namespace GroupAddress.UI
             }
 
         }
-
-
 
 
         private void AddCellsToolStripMenuItem_Click(object sender, EventArgs e)

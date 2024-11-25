@@ -28,7 +28,7 @@ namespace GroupAddress.UI
         public Dictionary<int, List<GA>> RowData { get; set; } = [];
 
 
-        public void SetTopLevelCollection(TopLevelCollection coll)
+        public void SetTopLevelCollection(TopLevelCollection? coll)
         {
             TopLevelCollection = coll;
             FillTable();
@@ -43,7 +43,11 @@ namespace GroupAddress.UI
 
         private void FillTable()
         {
-            if (TopLevelCollection == null) return;
+            if (TopLevelCollection == null)
+            {
+                DataSource = null;
+                return;
+            }
 
             var table = new DataTable();
             var cols = TopLevelCollection.SubGroupNames

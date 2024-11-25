@@ -97,12 +97,10 @@ namespace GroupAddress.UI
         }
 
 
-
-
-
         public void SelectMainGroup(string? id)
         {
-            MainGroupsListBox.SelectedValue = id;
+            if(!string.IsNullOrEmpty(id))
+                MainGroupsListBox.SelectedValue = id;
         }
 
         private void ItemTemplatesListBox_SelectedIndexChanged(object sender, EventArgs e)
