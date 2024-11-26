@@ -61,14 +61,10 @@ namespace GroupAddress.Core
             gas.ForEach(x => x.ItemId = newItem.Id);
             gas.ForEach(x => x.Shift(startIndex));
 
-            //newItem.AddGARange(gas);
-            //newItem.ShiftGA(startIndex);
-
             if (gas.Any(x => GAs.Any(y => y.Addresse.EqualsWithoutMainGroup(x.Addresse))))
                 return null;
 
             AddGARange(gas);
-            //_items.Add(newItem);
             return newItem;
         }
 

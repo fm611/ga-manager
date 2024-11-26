@@ -21,10 +21,5 @@ namespace GroupAddress.Core
         public Item(string name) : this() { 
             Name = name;
         }
-
-
     }
-
-
-
 }

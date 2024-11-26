@@ -58,6 +58,9 @@
             AddCellsStripMenuItem = new ToolStripMenuItem();
             DeleteCellsStripMenuItem = new ToolStripMenuItem();
             saveFileDialog1 = new SaveFileDialog();
+            ItemsListBox = new ListBox();
+            label3 = new Label();
+            UnselectItemsButton = new Button();
             MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
@@ -72,7 +75,7 @@
             MainGroupsListBox.ItemHeight = 15;
             MainGroupsListBox.Location = new Point(12, 67);
             MainGroupsListBox.Name = "MainGroupsListBox";
-            MainGroupsListBox.Size = new Size(248, 484);
+            MainGroupsListBox.Size = new Size(248, 394);
             MainGroupsListBox.TabIndex = 0;
             MainGroupsListBox.SelectedIndexChanged += MainGroupsListBox_SelectedIndexChanged;
             MainGroupsListBox.KeyDown += MainGroupsListBox_KeyDown;
@@ -161,7 +164,7 @@
             GADataTable.ShowAllRows = true;
             GADataTable.ShowEditingIcon = false;
             GADataTable.ShowEmptyRows = true;
-            GADataTable.Size = new Size(1046, 488);
+            GADataTable.Size = new Size(1046, 709);
             GADataTable.TabIndex = 34;
             GADataTable.TopLevelCollection = null;
             // 
@@ -193,64 +196,64 @@
             // NewProjectMenuItem
             // 
             NewProjectMenuItem.Name = "NewProjectMenuItem";
-            NewProjectMenuItem.Size = new Size(180, 22);
+            NewProjectMenuItem.Size = new Size(168, 22);
             NewProjectMenuItem.Text = "Neu";
             // 
             // OpenToolStripMenuItem
             // 
             OpenToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenFileStripMenuItem, toolStripSeparator1, OpenSampleProjectToolStripMenuItem, OpenRecentToolStripSeparator });
             OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
-            OpenToolStripMenuItem.Size = new Size(180, 22);
+            OpenToolStripMenuItem.Size = new Size(168, 22);
             OpenToolStripMenuItem.Text = "Öffnen";
             // 
             // OpenFileStripMenuItem
             // 
             OpenFileStripMenuItem.Name = "OpenFileStripMenuItem";
-            OpenFileStripMenuItem.Size = new Size(180, 22);
+            OpenFileStripMenuItem.Size = new Size(114, 22);
             OpenFileStripMenuItem.Text = "Datei...";
             OpenFileStripMenuItem.Click += OpenFileToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(177, 6);
+            toolStripSeparator1.Size = new Size(111, 6);
             // 
             // OpenSampleProjectToolStripMenuItem
             // 
             OpenSampleProjectToolStripMenuItem.Name = "OpenSampleProjectToolStripMenuItem";
-            OpenSampleProjectToolStripMenuItem.Size = new Size(180, 22);
+            OpenSampleProjectToolStripMenuItem.Size = new Size(114, 22);
             OpenSampleProjectToolStripMenuItem.Text = "Beispiel";
             OpenSampleProjectToolStripMenuItem.Click += OpenSampleProjectToolStripMenuItem_Click;
             // 
             // OpenRecentToolStripSeparator
             // 
             OpenRecentToolStripSeparator.Name = "OpenRecentToolStripSeparator";
-            OpenRecentToolStripSeparator.Size = new Size(177, 6);
+            OpenRecentToolStripSeparator.Size = new Size(111, 6);
             OpenRecentToolStripSeparator.Visible = false;
             // 
             // SaveToolStripMenuItem
             // 
             SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
             SaveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            SaveToolStripMenuItem.Size = new Size(180, 22);
+            SaveToolStripMenuItem.Size = new Size(168, 22);
             SaveToolStripMenuItem.Text = "Speichern";
             SaveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(177, 6);
+            toolStripSeparator5.Size = new Size(165, 6);
             // 
             // ExportToolStripMenuItem
             // 
             ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
-            ExportToolStripMenuItem.Size = new Size(180, 22);
+            ExportToolStripMenuItem.Size = new Size(168, 22);
             ExportToolStripMenuItem.Text = "Export";
             // 
             // ImportToolStripMenuItem
             // 
             ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
-            ImportToolStripMenuItem.Size = new Size(180, 22);
+            ImportToolStripMenuItem.Size = new Size(168, 22);
             ImportToolStripMenuItem.Text = "Import";
             // 
             // ItemManagerToolStripMenuItem
@@ -285,11 +288,49 @@
             DeleteCellsStripMenuItem.Text = "toolStripMenuItem2";
             DeleteCellsStripMenuItem.Click += DeleteCellsToolStripMenuItem_Click;
             // 
+            // ItemsListBox
+            // 
+            ItemsListBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            ItemsListBox.ContextMenuStrip = MainGroupsListBoxContextMenu;
+            ItemsListBox.FormattingEnabled = true;
+            ItemsListBox.ItemHeight = 15;
+            ItemsListBox.Location = new Point(12, 502);
+            ItemsListBox.Name = "ItemsListBox";
+            ItemsListBox.SelectionMode = SelectionMode.MultiExtended;
+            ItemsListBox.Size = new Size(248, 274);
+            ItemsListBox.TabIndex = 37;
+            ItemsListBox.SelectedIndexChanged += ItemsListBox_SelectedIndexChanged;
+            // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label3.AutoSize = true;
+            label3.Location = new Point(12, 475);
+            label3.Name = "label3";
+            label3.Size = new Size(36, 15);
+            label3.TabIndex = 38;
+            label3.Text = "Items";
+            // 
+            // UnselectItemsButton
+            // 
+            UnselectItemsButton.BackgroundImage = Properties.Resources.times_square_regular;
+            UnselectItemsButton.BackgroundImageLayout = ImageLayout.Zoom;
+            UnselectItemsButton.FlatStyle = FlatStyle.Flat;
+            UnselectItemsButton.Location = new Point(236, 475);
+            UnselectItemsButton.Name = "UnselectItemsButton";
+            UnselectItemsButton.Size = new Size(24, 21);
+            UnselectItemsButton.TabIndex = 39;
+            UnselectItemsButton.UseVisualStyleBackColor = true;
+            UnselectItemsButton.Click += UnselectItemsButton_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1324, 807);
+            Controls.Add(UnselectItemsButton);
+            Controls.Add(label3);
+            Controls.Add(ItemsListBox);
             Controls.Add(GADataTable);
             Controls.Add(statusStrip1);
             Controls.Add(menuStrip1);
@@ -342,5 +383,8 @@
         private ToolStripMenuItem OpenFileStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem NewProjectMenuItem;
+        private ListBox ItemsListBox;
+        private Label label3;
+        private Button UnselectItemsButton;
     }
 }

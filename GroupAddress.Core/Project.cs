@@ -29,9 +29,14 @@ namespace GroupAddress.Core
             Created = DateTime.Now;
         }
 
-        //public Project() : this("") { }
-        //public Project(string name) { Name = name; }
 
+        public List<Item> GetItems(MainGroup? mainGroup)
+        {
+            if (mainGroup == null) return [];
+            var mgItems = mainGroup.GAs.Where(x => x.ItemId !=null).Select(x => x.ItemId).ToList();
+
+            return Items.Where(x => mgItems.Contains(x.Id)).ToList();
+        }
 
         public string GetJson()
         {
@@ -123,6 +128,8 @@ namespace GroupAddress.Core
 
         }
 
+
+        
 
     }
 }

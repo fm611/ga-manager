@@ -60,7 +60,6 @@ namespace GroupAddress.UI
             return !(a == b);
         }
 
-
     }
 
 }

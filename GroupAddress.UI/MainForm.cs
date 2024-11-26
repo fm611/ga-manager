@@ -16,20 +16,24 @@ namespace GroupAddress.UI
 {
     public partial class MainForm : Form
     {
-        private string currentProjectFile;
+        private string? currentProjectFile;
 
         public Project Project { get; set; }
 
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
+        public ListBoxWrapper<Item> ItemWrapper { get; set; }
 
         public MainGroup? SelectedMainGroup { get; set; }
         public string? SelectedMainGroupId { get; set; }
 
-        public ItemTemplateManagerForm AddItemForm { get; set; }
+        public List<Item> SelectedItems { get; set; }
+
+
+        public ItemTemplateManagerForm? AddItemForm { get; set; }
 
         public int CurrentGARowScrollIndex { get; set; }
 
-        public string CurrentProjectFile
+        public string? CurrentProjectFile
         {
             get => currentProjectFile; set
             {
@@ -53,17 +57,22 @@ namespace GroupAddress.UI
         {
             InitializeComponent();
 
-            Comparison<MainGroup> mainGroupComparison = (a, b) => a.SubAddress.CompareTo(b.SubAddress);
-
             CurrentProjectFile = "";
             Project = new Project();
 
             MainGroupWrapper = new ListBoxWrapper<MainGroup>(
                 MainGroupsListBox,
-                mainGroupComparison,
+                (a, b) => a.SubAddress.CompareTo(b.SubAddress),
                 nameof(MainGroup.ListBoxString),
-                "Id",
+                nameof(MainGroup.Id),
                 () => Project.MainGroups);
+
+            ItemWrapper = new ListBoxWrapper<Item>(
+                ItemsListBox,
+                (a, b) => a.Name.CompareTo(b.Name),
+                nameof(Item.Name),
+                nameof(Item.Id),
+                () => Project.GetItems(SelectedMainGroup));
 
             RecentFilesJsonPath = "recent.json";
             RecentFiles = [];
@@ -78,6 +87,7 @@ namespace GroupAddress.UI
         private void UpdateUI()
         {
             MainGroupWrapper.Update();
+            ItemWrapper.Update();
             GADataTable.UpdateTable();
         }
 
@@ -95,7 +105,8 @@ namespace GroupAddress.UI
                     var obj = JsonSerializer.Deserialize<List<string>>(json);
                     if (obj == null) throw new Exception();
                     RecentFiles = obj.Select(x => new FileInfo(x)).Where(x => x.Exists).Take(10).ToList();
-                } catch
+                }
+                catch
                 {
                     RecentFiles = [];
                 }
@@ -270,6 +281,7 @@ namespace GroupAddress.UI
             SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
             SelectedMainGroupId = (string?)MainGroupsListBox.SelectedValue;
 
+            ItemWrapper.Update();
             GADataTable.SetTopLevelCollection(SelectedMainGroup);
         }
 
@@ -278,7 +290,7 @@ namespace GroupAddress.UI
 
         private void ItemManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(SelectedMainGroup == null)
+            if (SelectedMainGroup == null)
             {
                 MessageBox.Show("Bitte erst eine Hauptgruppe erstellen/auswählen.", "Keine Hauptgruppe", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -331,6 +343,7 @@ namespace GroupAddress.UI
 
             foreach (var col in colMinRows)
             {
+                if (col == null) continue;
                 var gas = SelectedMainGroup.GAs.Where(x => x.Addresse.MiddleGroup == col.MiddleGroup && x.Addresse.GA >= col.GA);
                 foreach (var g in gas)
                 {
@@ -402,5 +415,15 @@ namespace GroupAddress.UI
             }
         }
 
+        private void UnselectItemsButton_Click(object sender, EventArgs e)
+        {
+            ItemsListBox.ClearSelected();
+        }
+
+        private void ItemsListBox_SelectedIndexChanged(object sender, EventArgs e)        
+        {
+            var items = ItemsListBox.SelectedItems;
+
+        }
     }
 }
