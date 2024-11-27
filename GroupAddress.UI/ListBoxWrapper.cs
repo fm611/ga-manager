@@ -15,11 +15,13 @@ namespace GroupAddress.UI
         public List<T> BackingList { get; set; }
         public BindingList<T> BindingList { get; set; }
 
-        public Comparison<T> Comparison {get;set;}
+        public Comparison<T> Comparison { get; set; }
 
-        public Func<IEnumerable<T>> SourceFunc {get;set;}
+        public Func<IEnumerable<T>> SourceFunc { get; set; }
 
-        public ListBoxWrapper(ListBox listbox, Comparison<T> comp, string displayMember, string valueMember, Func<IEnumerable<T>> sourceFunc)
+        public bool AlwaysSelect { get; set; }
+
+        public ListBoxWrapper(ListBox listbox, Comparison<T> comp, string displayMember, string valueMember, Func<IEnumerable<T>> sourceFunc, bool alwaysSelect = true)
         {
             ListBox = listbox;
             BackingList = [];
@@ -27,11 +29,11 @@ namespace GroupAddress.UI
             SourceFunc = sourceFunc;
 
             Comparison = comp;
+            AlwaysSelect = alwaysSelect;
 
             ListBox.DataSource = BindingList;
             ListBox.DisplayMember = displayMember;
             ListBox.ValueMember = valueMember;
-
         }
 
         public void SortAndReset()
@@ -44,18 +46,35 @@ namespace GroupAddress.UI
         {
 
             var currSelectedItem = ListBox.SelectedItem;
+            var currSelectedItems = ListBox.SelectedItems.Cast<T>().ToList();
+
             //var currSelectedIndex = ListBox.SelectedIndex >= 0 ? ListBox.SelectedIndex : 0;
 
             BindingList.Clear();
             BackingList.AddRange(SourceFunc());
             SortAndReset();
 
+
+            ListBox.ClearSelected();
+
+
+            if (currSelectedItems.Count == 0 && !AlwaysSelect) return;
+
+            var itemsInList = currSelectedItems.OfType<T>().Where(x => x!=null).Where(x => ListBox.Items.Contains(x)).ToList();
+
+
             var valueIndex = currSelectedItem != null ? ListBox.Items.IndexOf(currSelectedItem) : 0;
 
-            var currSelectedIndex = valueIndex < 0 ? ListBox.Items.Count-1 : valueIndex;
+            var valueIndexes = currSelectedItems.Where(x => x!=null).Select(x => ListBox.Items.IndexOf(x)).Where(x => x>=0).ToList();
 
-            if (BindingList.Count > 0)
-               ListBox.SetSelected(currSelectedIndex, true);
+            if (valueIndexes.Count == 0) valueIndexes.Add(ListBox.Items.Count - 1);
+
+            //var currSelectedIndex = valueIndex < 0 ? ListBox.Items.Count - 1 : valueIndex;
+
+            foreach(var i  in valueIndexes)
+            {
+                ListBox.SetSelected(i, true);
+            }
         }
 
 

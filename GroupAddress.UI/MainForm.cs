@@ -72,7 +72,8 @@ namespace GroupAddress.UI
                 (a, b) => a.Name.CompareTo(b.Name),
                 nameof(Item.Name),
                 nameof(Item.Id),
-                () => Project.GetItems(SelectedMainGroup));
+                () => Project.GetItems(SelectedMainGroup),
+                false);
 
             RecentFilesJsonPath = "recent.json";
             RecentFiles = [];
