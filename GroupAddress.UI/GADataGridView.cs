@@ -22,6 +22,9 @@ namespace GroupAddress.UI
         public List<GA> SelectedGAs { get; private set; } = [];
         public List<Addresse> SelectedAddresses { get; private set; } = [];
 
+        public List<Item>? FilterItems { get; private set; }
+        public string? FilterString { get; private set; }
+
 
         //Key => GA Subaddress
         //ElementAt Index => RowIndex
@@ -31,18 +34,42 @@ namespace GroupAddress.UI
         public void SetTopLevelCollection(TopLevelCollection? coll)
         {
             TopLevelCollection = coll;
-            FillTable();
+            UpdateTable();
+            //FillTable(null,null);
         }
 
         public void UpdateTable()
         {
+            UpdateTable(true);
+        }
+
+        public void UpdateTable(bool resetFilter = true)
+        {
+
+            if(resetFilter)
+            {
+                FilterItems = null;
+                FilterString = null;
+            }
+
             SaveSelection();
-            FillTable();
+            FillTable(FilterItems, FilterString);
             ResetSelection();
         }
 
-        private void FillTable()
+
+        public void FilterByItem(List<Item> items)
         {
+            FilterItems = items;
+            FilterString = null;
+
+            UpdateTable(false);
+        }
+
+        private void FillTable(List<Item>? filterItems, string? filterString)
+        {
+            filterItems ??= [];
+
             if (TopLevelCollection == null)
             {
                 DataSource = null;
@@ -61,11 +88,17 @@ namespace GroupAddress.UI
 
             for (int i = 0; i < maxRow; i++)
             {
+
                 var rowGAs = TopLevelCollection
                         .GAs
                         .Where(x => x.Addresse.GA == i);
 
-                if (rowGAs.Count() == 0 && !ShowEmptyRows) continue;
+                var filterGAs = rowGAs.Where(x => filterItems.Count == 0 || filterItems.Select(x => x.Id).Contains(x.ItemId));
+
+
+                if (!filterGAs.Any() && 
+                    (!ShowEmptyRows || filterItems.Count>0)) 
+                    continue;
 
                 var newRow = table.NewRow();
                 for (int j = 0; j < TopLevelCollection.SubGroupNames.Length; j++)
@@ -92,9 +125,8 @@ namespace GroupAddress.UI
             foreach (var cPos in _previousSelectedCells)
             {
                 var selPos = cPos;
-                if (selPos.Row >= Rows.Count) selPos.Row--;
-
-                if (selPos.Row < Rows.Count) Rows[selPos.Row].Cells[selPos.Column].Selected = true;
+                if (selPos.Row >= Rows.Count) selPos.Row = Rows.Count-1;
+                if (selPos.Row < Rows.Count && selPos.Row >= 0) Rows[selPos.Row].Cells[selPos.Column].Selected = true;
             }
         }
 
@@ -120,7 +152,19 @@ namespace GroupAddress.UI
             return null;
         }
 
+
         //Events
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            //// Create pen.
+            //Pen blackPen = new Pen(Color.Red, 2);
+
+            //e.Graphics.DrawRectangle(blackPen, -2,-2, Width+4,Height+4);
+            ////e.Graphics.
+        }
 
         protected override void OnSelectionChanged(EventArgs e)
         {

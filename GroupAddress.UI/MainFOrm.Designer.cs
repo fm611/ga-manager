@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             MainGroupsListBox = new ListBox();
             MainGroupsListBoxContextMenu = new ContextMenuStrip(components);
             AddMainGroupToolStripMenuItem = new ToolStripMenuItem();
@@ -61,10 +61,12 @@
             ItemsListBox = new ListBox();
             label3 = new Label();
             UnselectItemsButton = new Button();
+            GADataTableBackPanel = new Panel();
             MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
             menuStrip1.SuspendLayout();
+            GADataTableBackPanel.SuspendLayout();
             SuspendLayout();
             // 
             // MainGroupsListBox
@@ -139,32 +141,32 @@
             GADataTable.AllowUserToDeleteRows = false;
             GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.ControlLight;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.Padding = new Padding(0, 5, 0, 5);
-            dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.ControlLight;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.Padding = new Padding(0, 5, 0, 5);
+            dataGridViewCellStyle3.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            GADataTable.DefaultCellStyle = dataGridViewCellStyle4;
             GADataTable.EnableHeadersVisualStyles = false;
-            GADataTable.Location = new Point(266, 67);
+            GADataTable.Location = new Point(4, 4);
             GADataTable.Name = "GADataTable";
             GADataTable.RowData = null;
             GADataTable.ShowAllRows = true;
             GADataTable.ShowEditingIcon = false;
             GADataTable.ShowEmptyRows = true;
-            GADataTable.Size = new Size(1046, 709);
+            GADataTable.Size = new Size(1048, 709);
             GADataTable.TabIndex = 34;
             GADataTable.TopLevelCollection = null;
             // 
@@ -323,15 +325,26 @@
             UnselectItemsButton.UseVisualStyleBackColor = true;
             UnselectItemsButton.Click += UnselectItemsButton_Click;
             // 
+            // GADataTableBackPanel
+            // 
+            GADataTableBackPanel.BackColor = Color.Transparent;
+            GADataTableBackPanel.Controls.Add(GADataTable);
+            GADataTableBackPanel.Location = new Point(266, 63);
+            GADataTableBackPanel.Margin = new Padding(30);
+            GADataTableBackPanel.Name = "GADataTableBackPanel";
+            GADataTableBackPanel.Padding = new Padding(4);
+            GADataTableBackPanel.Size = new Size(1056, 717);
+            GADataTableBackPanel.TabIndex = 40;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1324, 807);
+            Controls.Add(GADataTableBackPanel);
             Controls.Add(UnselectItemsButton);
             Controls.Add(label3);
             Controls.Add(ItemsListBox);
-            Controls.Add(GADataTable);
             Controls.Add(statusStrip1);
             Controls.Add(menuStrip1);
             Controls.Add(label2);
@@ -346,6 +359,7 @@
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            GADataTableBackPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -386,5 +400,6 @@
         private ListBox ItemsListBox;
         private Label label3;
         private Button UnselectItemsButton;
+        private Panel GADataTableBackPanel;
     }
 }

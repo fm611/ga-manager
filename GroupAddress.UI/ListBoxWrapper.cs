@@ -34,7 +34,9 @@ namespace GroupAddress.UI
             ListBox.DataSource = BindingList;
             ListBox.DisplayMember = displayMember;
             ListBox.ValueMember = valueMember;
+
         }
+
 
         public void SortAndReset()
         {
@@ -42,20 +44,22 @@ namespace GroupAddress.UI
             BindingList.ResetBindings();
         }
 
+
+
         public void Update()
         {
 
+            var selectionMode = ListBox.SelectionMode;
+            ListBox.SelectionMode = SelectionMode.None;
+
             var currSelectedItem = ListBox.SelectedItem;
             var currSelectedItems = ListBox.SelectedItems.Cast<T>().ToList();
-
-            //var currSelectedIndex = ListBox.SelectedIndex >= 0 ? ListBox.SelectedIndex : 0;
 
             BindingList.Clear();
             BackingList.AddRange(SourceFunc());
             SortAndReset();
 
-
-            ListBox.ClearSelected();
+            ListBox.SelectionMode = selectionMode;
 
 
             if (currSelectedItems.Count == 0 && !AlwaysSelect) return;
@@ -63,13 +67,11 @@ namespace GroupAddress.UI
             var itemsInList = currSelectedItems.OfType<T>().Where(x => x!=null).Where(x => ListBox.Items.Contains(x)).ToList();
 
 
-            var valueIndex = currSelectedItem != null ? ListBox.Items.IndexOf(currSelectedItem) : 0;
 
             var valueIndexes = currSelectedItems.Where(x => x!=null).Select(x => ListBox.Items.IndexOf(x)).Where(x => x>=0).ToList();
 
-            if (valueIndexes.Count == 0) valueIndexes.Add(ListBox.Items.Count - 1);
+            if (valueIndexes.Count == 0 && ListBox.Items.Count > 0) valueIndexes.Add(0);
 
-            //var currSelectedIndex = valueIndex < 0 ? ListBox.Items.Count - 1 : valueIndex;
 
             foreach(var i  in valueIndexes)
             {

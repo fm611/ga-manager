@@ -85,6 +85,7 @@ namespace GroupAddress.UI
 
 
 
+
         private void UpdateUI()
         {
             MainGroupWrapper.Update();
@@ -421,9 +422,20 @@ namespace GroupAddress.UI
             ItemsListBox.ClearSelected();
         }
 
-        private void ItemsListBox_SelectedIndexChanged(object sender, EventArgs e)        
+        private void ItemsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var items = ItemsListBox.SelectedItems;
+            var selectedItems = ItemsListBox.SelectedItems.Cast<Item>().ToList();
+
+            if (selectedItems != null && selectedItems.Count > 0)
+            {
+                GADataTableBackPanel.BackColor = Color.Red;
+                GADataTable.FilterByItem(selectedItems);
+            } else
+            {
+                GADataTableBackPanel.BackColor = Color.Transparent;
+                GADataTable.UpdateTable();
+            }
+
 
         }
     }
