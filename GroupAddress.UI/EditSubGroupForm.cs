@@ -37,7 +37,7 @@ namespace GroupAddress.UI
 
             if (e.KeyValue == (char)Keys.Return)
             {
-                SaveButton_Click(null, null);
+                SaveButton_Click(sender, e);
                 e.SuppressKeyPress = true;
             }
         }

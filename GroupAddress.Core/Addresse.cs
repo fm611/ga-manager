@@ -8,6 +8,11 @@ namespace GroupAddress.Core
 {
     public class Addresse : IEquatable<Addresse?>
     {
+        private int mainGroup;
+        private int middleGroup;
+        private int gA;
+
+        public event EventHandler<EventArgs> Changed;
         public Addresse() : this(-1,-1,-1)
         {
         }
@@ -23,9 +28,23 @@ namespace GroupAddress.Core
             GA = ga;
         }
 
-        public int MainGroup { get; set; }
-        public int MiddleGroup { get; set; }
-        public int GA { get; set; }
+        public int MainGroup { get => mainGroup; set { 
+                mainGroup = value;
+                Changed?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        public int MiddleGroup { get => middleGroup; 
+            set { 
+                middleGroup = value;
+                Changed?.Invoke(this, EventArgs.Empty);
+            } 
+        }
+        public int GA { get => gA; set 
+            { 
+                gA = value;
+                Changed?.Invoke(this, EventArgs.Empty);
+            }
+        }
 
         public Addresse Clone()
         {
@@ -65,6 +84,11 @@ namespace GroupAddress.Core
         public static bool operator !=(Addresse? left, Addresse? right)
         {
             return !(left == right);
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
         }
     }
 }

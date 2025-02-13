@@ -9,9 +9,28 @@ namespace GroupAddress.Core
 
     public class GA: IComparable<GA>
     {
+        private string name = "";
+        private Addresse addresse = new Addresse();
+
+        public event EventHandler<EventArgs> Changed;
         public string Id { get; set; }
-        public string Name { get; set; } = "";
-        public Addresse Addresse { get; set; } = new Addresse();
+        public string Name { get => name; 
+            set {
+                name = value;
+               Addresse_Changed(this, EventArgs.Empty);
+            }
+        }
+        public Addresse Addresse { get => addresse; 
+            private set { 
+                addresse = value;
+                addresse.Changed += Addresse_Changed;
+            } 
+        }
+
+        private void Addresse_Changed(object? sender, EventArgs e)
+        {
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
 
         public string? ItemId { get; set; }
 

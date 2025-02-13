@@ -8,6 +8,7 @@ namespace GroupAddress.Core
 {
     public abstract class TopLevelCollection
     {
+        public event EventHandler<EventArgs>? Changed;
         private List<GA> _gAs = [];
         public IReadOnlyCollection<GA> GAs => _gAs.AsReadOnly();
 
@@ -57,7 +58,15 @@ namespace GroupAddress.Core
 
             ga.Addresse.MainGroup = SubAddress;
             _gAs.Add(ga);
+            ga.Changed += Ga_Changed;
+            Changed?.Invoke(this, EventArgs.Empty);
         }
+
+        private void Ga_Changed(object? sender, EventArgs e)
+        {
+           Changed?.Invoke(sender, e);
+        }
+
         public void AddGARange(IEnumerable<GA> gas)
         {
             foreach (var item in gas)
@@ -68,12 +77,14 @@ namespace GroupAddress.Core
         public virtual void RemoveGA(GA ga)
         {
             _gAs.Remove(ga);
+            ga.Changed -= Ga_Changed;
+            Changed?.Invoke(this, EventArgs.Empty);
         }
         public void ShiftGA(int s)
         {
-            foreach (var item in _gAs)
+            foreach (var ga in _gAs)
             {
-                item.Addresse.GA += s;
+                ga.Addresse.GA += s;
             }
         }
 

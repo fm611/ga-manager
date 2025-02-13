@@ -18,11 +18,12 @@ namespace GroupAddress.UI
         public List<MainGroup> MainGroups { get; set; }
         public MainGroup? MainGroup { get; set; }
 
-        public AddEditMainGroupForm(List<MainGroup> mainGroups)
+        //public AddEditMainGroupForm(List<MainGroup> mainGroups)
+        public AddEditMainGroupForm(IEnumerable<MainGroup> mainGroups)
         {
             InitializeComponent();
 
-            MainGroups = mainGroups;
+            MainGroups = new List<MainGroup>(mainGroups);
 
             var nextId = MainGroups.DefaultIfEmpty().Max(x => x?.SubAddress??-1) + 1;
             if (!MainGroup.IsValidSubAddress(nextId))
@@ -36,7 +37,7 @@ namespace GroupAddress.UI
             Text = "Hauptgruppe hinzufügen";
         }
 
-        public AddEditMainGroupForm(List<MainGroup> mainGroups, string id) : this(mainGroups)
+        public AddEditMainGroupForm(IEnumerable<MainGroup> mainGroups, string id) : this(mainGroups)
         {
             MainGroup = MainGroups.FirstOrDefault(x => x.Id == id);
 

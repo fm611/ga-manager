@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -14,19 +15,68 @@ namespace GroupAddress.Core
 {
     public class Project
     {
+        public event EventHandler<EventArgs>? Changed;
         
         public DateTime Created { get; set; }
         public DateTime Saved { get; set; }
 
 
-        public List<MainGroup> MainGroups { get; set; } = [];
+        private List<MainGroup> _mainGroups = [];
+        public IReadOnlyCollection<MainGroup> MainGroups => _mainGroups.AsReadOnly();
 
-        public List<ItemTemplate> ItemTemplates { get; set; } = [];
+        private List<ItemTemplate> _itemTemplates = [];
+        public IReadOnlyCollection<ItemTemplate> ItemTemplates => _itemTemplates.AsReadOnly();
 
         public List<Item> Items { get; set; } = [];
 
         public Project() {
             Created = DateTime.Now;
+        }
+
+
+        public void AddMainGroup(MainGroup mainGroup)
+        {
+            _mainGroups.Add(mainGroup);
+            mainGroup.Changed += MainGroup_Changed;
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void MainGroup_Changed(object? sender, EventArgs e)
+        {
+            Changed?.Invoke(sender, e);
+        }
+
+        public bool RemoveMainGroup(MainGroup mainGroup)
+        {
+            var res = _mainGroups.Remove(mainGroup);
+            if (res)
+            {
+                Changed?.Invoke(this, EventArgs.Empty);
+                mainGroup.Changed -= MainGroup_Changed;
+            }
+            return res;
+        }
+
+        public void AddItemTemplate(ItemTemplate itemTemplate)
+        {
+            _itemTemplates.Add(itemTemplate);
+            itemTemplate.Changed += ItemTemplate_Changed;
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ItemTemplate_Changed(object? sender, EventArgs e)
+        {
+            Changed?.Invoke(sender, e);
+        }
+
+        public bool RemoveItemTemplate(ItemTemplate itemTemplate)
+        {
+            var res = _itemTemplates.Remove(itemTemplate);
+            if (res) {
+                Changed?.Invoke(this, EventArgs.Empty);
+                itemTemplate.Changed -= ItemTemplate_Changed;
+            }
+            return res;
         }
 
 
@@ -73,7 +123,8 @@ namespace GroupAddress.Core
 
                 var template = itemTemplates[i];
                 template.Id = guid;
-                proj.ItemTemplates.Add(template);
+                //proj.ItemTemplates.Add(template);
+                proj.AddItemTemplate(template);
 
             }
 
@@ -108,7 +159,8 @@ namespace GroupAddress.Core
 
                 var template = mainGroupTemplates[i];
                 template.Id = guid;
-                proj.MainGroups.Add(template);
+                //proj.MainGroups.Add(template);
+                proj.AddMainGroup(template);
             }
 
             #endregion
@@ -128,8 +180,7 @@ namespace GroupAddress.Core
 
         }
 
-
-        
+               
 
     }
 }

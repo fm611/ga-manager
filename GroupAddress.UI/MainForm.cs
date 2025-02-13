@@ -17,8 +17,22 @@ namespace GroupAddress.UI
     public partial class MainForm : Form
     {
         private string? currentProjectFile;
+        private Project project;
+        public bool ProjectChanged { get; set; } = false;
 
-        public Project Project { get; set; }
+        public Project Project { get => project; 
+            set {
+                project = value;
+                project.Changed += Project_Changed;
+                ProjectChanged = false;
+            }
+        }
+
+        private void Project_Changed(object? sender, EventArgs e)
+        {
+            ProjectChanged = true;
+            Text += "*";
+        }
 
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
         public ListBoxWrapper<Item> ItemWrapper { get; set; }
@@ -83,9 +97,6 @@ namespace GroupAddress.UI
         }
 
 
-
-
-
         private void UpdateUI()
         {
             MainGroupWrapper.Update();
@@ -137,7 +148,18 @@ namespace GroupAddress.UI
             }
             RecentFilesToolStripItems = [];
 
-            var toolStripItems = RecentFiles.Select(r => new ToolStripMenuItem(r.Name, null, (sender, e) => OpenProjectFile(r.FullName))).ToArray();
+            var toolStripItems = RecentFiles.Select(r => new ToolStripMenuItem(
+                    r.Name,
+                    null, 
+                    (sender, e) => {
+                        if (ProjectChanged)
+                        {
+                            var res2 = MessageBox.Show("Änderungen am aktuellen Projekt verwerfen?", "Projekt öffnen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            if (res2 != DialogResult.Yes) return;
+                        }
+                        ReadProjectFile(r.FullName);
+                        }
+                    )).ToArray();
 
             if (RecentFiles.Any())
                 RecentFilesToolStripItems = [.. new ToolStripItem[] { new ToolStripSeparator() }, .. toolStripItems];
@@ -157,7 +179,7 @@ namespace GroupAddress.UI
             UpdateRecentFilesMenu();
         }
 
-        private void OpenProjectFile(string path)
+        private void ReadProjectFile(string path)
         {
             if (!File.Exists(path))
             {
@@ -178,8 +200,8 @@ namespace GroupAddress.UI
 
             if (obj != null)
             {
-                Project = obj;
-                UpdateUI();
+                CurrentProjectFile = path;
+                SetProjectFile(obj);
                 EnqueueRecentFiles(path);
             }
         }
@@ -211,8 +233,15 @@ namespace GroupAddress.UI
             }
         }
 
-        private void OpenProject()
+        private void OpenProjectFile()
         {
+            if (ProjectChanged)
+            {
+                var res2 = MessageBox.Show("Änderungen am aktuellen Projekt verwerfen?", "Projekt öffnen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (res2 != DialogResult.Yes) return;
+            }
+
+
             var openDialog = new OpenFileDialog();
             openDialog.Filter = "Project files (*.gaproj)|*.gaproj";
             openDialog.RestoreDirectory = true;
@@ -221,26 +250,41 @@ namespace GroupAddress.UI
 
             if (res == DialogResult.OK)
             {
-                OpenProjectFile(openDialog.FileName);
+                ReadProjectFile(openDialog.FileName);
             }
         }
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
             Save();
         }
 
         private void OpenSampleProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Project = Project.GetSampleProject();
-            UpdateUI();
+            if (ProjectChanged)
+            {
+                var res2 = MessageBox.Show("Änderungen am aktuellen Projekt verwerfen?", "Projekt öffnen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (res2 != DialogResult.Yes) return;
+            }
+
+            SetProjectFile(Project.GetSampleProject());
+            //Project = Project.GetSampleProject();
+            //AddItemForm = null;
+            //UpdateUI();
         }
 
         private void OpenFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenProject();
+            OpenProjectFile();
         }
+
+        private void SetProjectFile(Project project)
+        {
+            Project = project;
+            AddItemForm = null;
+            UpdateUI();
+        }
+
 
         #endregion
 
@@ -253,7 +297,8 @@ namespace GroupAddress.UI
 
             if (result != DialogResult.OK || addMainGroupForm.MainGroup == null) return;
 
-            Project.MainGroups.Add(addMainGroupForm.MainGroup);
+            //Project.MainGroups.Add(addMainGroupForm.MainGroup);
+            Project.AddMainGroup(addMainGroupForm.MainGroup);
             MainGroupWrapper.Update();
         }
         private void EditMainGroup(string id)
@@ -271,7 +316,8 @@ namespace GroupAddress.UI
 
             if (MessageBox.Show("Haupgruppe löschen?", "Hauptgruppe löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                Project.MainGroups.Remove(SelectedMainGroup);
+                //Project.MainGroups.Remove(SelectedMainGroup);
+                Project.RemoveMainGroup(SelectedMainGroup);
             }
 
             UpdateUI();
@@ -330,7 +376,6 @@ namespace GroupAddress.UI
             }
 
         }
-
 
         private void AddCellsToolStripMenuItem_Click(object sender, EventArgs e)
         {

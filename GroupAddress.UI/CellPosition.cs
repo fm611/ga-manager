@@ -60,6 +60,17 @@ namespace GroupAddress.UI
             return !(a == b);
         }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is CellPosition position &&
+                   Row == position.Row &&
+                   Column == position.Column;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Row, Column);
+        }
     }
 
 }

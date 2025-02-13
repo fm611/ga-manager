@@ -124,7 +124,8 @@ namespace GroupAddress.UI
         public void AddItemTemplateButton_Click(object sender, EventArgs e)
         {
             var newTemplate = new ItemTemplate("Neues Template", []);
-            Project.ItemTemplates.Add(newTemplate);
+            //Project.ItemTemplates.Add(newTemplate);
+            Project.AddItemTemplate(newTemplate);
             ItemTemplatesWrapper.Update();
 
             ItemTemplatesListBox.SelectedValue = newTemplate.Id;
@@ -145,7 +146,8 @@ namespace GroupAddress.UI
             var res = MessageBox.Show("Template löschen?", "Template löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res == DialogResult.Yes)
             {
-                Project.ItemTemplates.Remove(SelectedItemTemplate);
+                //Project.ItemTemplates.Remove(SelectedItemTemplate);
+                Project.RemoveItemTemplate(SelectedItemTemplate);
                 ItemTemplatesWrapper.Update();
             }
         }
