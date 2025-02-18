@@ -18,20 +18,20 @@ namespace GroupAddress.UI
     {
         private string? currentProjectFile;
         private Project project;
-        public bool ProjectChanged { get; set; } = false;
 
-        public Project Project { get => project; 
-            set {
+        public Project Project
+        {
+            get => project;
+            set
+            {
                 project = value;
                 project.Changed += Project_Changed;
-                ProjectChanged = false;
             }
         }
 
         private void Project_Changed(object? sender, EventArgs e)
         {
-            ProjectChanged = true;
-            Text += "*";
+            SetTitle(Project.Dirty);
         }
 
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
@@ -51,15 +51,8 @@ namespace GroupAddress.UI
         {
             get => currentProjectFile; set
             {
-                if (string.IsNullOrEmpty(value))
-                {
-                    Text = "Neues Projekt";
-                }
-                else
-                {
-                    Text = new FileInfo(value).Name;
-                }
                 currentProjectFile = value;
+                SetTitle();
             }
         }
 
@@ -96,16 +89,50 @@ namespace GroupAddress.UI
             ReadRecentFilesList();
         }
 
+        private void SetTitle(bool dirty = false)
+        {
+            if (string.IsNullOrEmpty(CurrentProjectFile))
+            {
+                Text = "Neues Projekt";
+            }
+            else
+            {
+                Text = new FileInfo(CurrentProjectFile).Name;
+            }
+
+            if (dirty) Text += "*";
+        }
+
 
         private void UpdateUI()
         {
+
             MainGroupWrapper.Update();
+            MainGroupsListBox_SelectedIndexChanged(null, null);
+
             ItemWrapper.Update();
             GADataTable.UpdateTable();
         }
 
 
         #region Open Save Export Import
+
+        private bool HandleProjectChanged()
+        {
+            if (!Project.Dirty) return true;
+
+            var res2 = MessageBox.Show("Änderungen am aktuellen Projekt speichern?", "Projekt geändert", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            if (res2 == DialogResult.Cancel) return false;
+            if (res2 == DialogResult.Yes) return Save();
+            return true;            
+        }
+
+        private void NewProjectMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!HandleProjectChanged()) return;
+
+            SetProjectFile(new Project());
+        }
 
         private void ReadRecentFilesList()
         {
@@ -150,15 +177,13 @@ namespace GroupAddress.UI
 
             var toolStripItems = RecentFiles.Select(r => new ToolStripMenuItem(
                     r.Name,
-                    null, 
-                    (sender, e) => {
-                        if (ProjectChanged)
-                        {
-                            var res2 = MessageBox.Show("Änderungen am aktuellen Projekt verwerfen?", "Projekt öffnen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                            if (res2 != DialogResult.Yes) return;
-                        }
+                    null,
+                    (sender, e) =>
+                    {
+                        if (!HandleProjectChanged()) return;
+   
                         ReadProjectFile(r.FullName);
-                        }
+                    }
                     )).ToArray();
 
             if (RecentFiles.Any())
@@ -196,7 +221,7 @@ namespace GroupAddress.UI
             using StreamReader reader = new StreamReader(path);
             var json = reader.ReadToEnd();
 
-            var obj = JsonSerializer.Deserialize<Project>(json);
+            var obj = Project.FromJson(json);
 
             if (obj != null)
             {
@@ -206,7 +231,7 @@ namespace GroupAddress.UI
             }
         }
 
-        private void Save()
+        private bool Save()
         {
             if (string.IsNullOrEmpty(CurrentProjectFile))
             {
@@ -221,6 +246,10 @@ namespace GroupAddress.UI
                     var filePath = saveDialog.FileName;
                     CurrentProjectFile = filePath;
                 }
+                else
+                {
+                    return false;
+                }
             }
 
             if (!string.IsNullOrEmpty(CurrentProjectFile))
@@ -230,16 +259,18 @@ namespace GroupAddress.UI
                 outputFile.Write(Project.GetJson());
 
                 EnqueueRecentFiles(CurrentProjectFile);
+                Project.Dirty = false;
+
+                return true;
+
             }
+            return false;
         }
 
         private void OpenProjectFile()
         {
-            if (ProjectChanged)
-            {
-                var res2 = MessageBox.Show("Änderungen am aktuellen Projekt verwerfen?", "Projekt öffnen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (res2 != DialogResult.Yes) return;
-            }
+
+            if(!HandleProjectChanged()) return;
 
 
             var openDialog = new OpenFileDialog();
@@ -261,16 +292,9 @@ namespace GroupAddress.UI
 
         private void OpenSampleProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (ProjectChanged)
-            {
-                var res2 = MessageBox.Show("Änderungen am aktuellen Projekt verwerfen?", "Projekt öffnen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (res2 != DialogResult.Yes) return;
-            }
+            if (!HandleProjectChanged()) return;
 
             SetProjectFile(Project.GetSampleProject());
-            //Project = Project.GetSampleProject();
-            //AddItemForm = null;
-            //UpdateUI();
         }
 
         private void OpenFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -475,7 +499,8 @@ namespace GroupAddress.UI
             {
                 GADataTableBackPanel.BackColor = Color.Red;
                 GADataTable.FilterByItem(selectedItems);
-            } else
+            }
+            else
             {
                 GADataTableBackPanel.BackColor = Color.Transparent;
                 GADataTable.UpdateTable();
@@ -483,5 +508,6 @@ namespace GroupAddress.UI
 
 
         }
+
     }
 }

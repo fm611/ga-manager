@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GroupAddress.Core
@@ -10,7 +11,6 @@ namespace GroupAddress.Core
     public class GA: IComparable<GA>
     {
         private string name = "";
-        private Addresse addresse = new Addresse();
 
         public event EventHandler<EventArgs> Changed;
         public string Id { get; set; }
@@ -20,6 +20,9 @@ namespace GroupAddress.Core
                Addresse_Changed(this, EventArgs.Empty);
             }
         }
+        [JsonInclude]
+        private Addresse addresse = new Addresse();
+        [JsonIgnore]
         public Addresse Addresse { get => addresse; 
             private set { 
                 addresse = value;
@@ -34,6 +37,7 @@ namespace GroupAddress.Core
 
         public string? ItemId { get; set; }
 
+        [JsonConstructor]
         private GA()
         {
             Id = Guid.NewGuid().ToString();

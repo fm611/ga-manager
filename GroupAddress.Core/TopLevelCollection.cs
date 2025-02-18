@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace GroupAddress.Core
@@ -9,7 +10,9 @@ namespace GroupAddress.Core
     public abstract class TopLevelCollection
     {
         public event EventHandler<EventArgs>? Changed;
+        [JsonInclude]
         private List<GA> _gAs = [];
+        [JsonIgnore]
         public IReadOnlyCollection<GA> GAs => _gAs.AsReadOnly();
 
         public string[] SubGroupNames { get; private set; } = new string[8];

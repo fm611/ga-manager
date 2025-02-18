@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using System.Threading.Tasks;
 using System.Xml;
@@ -16,15 +17,18 @@ namespace GroupAddress.Core
     public class Project
     {
         public event EventHandler<EventArgs>? Changed;
+        public bool Dirty { get; set; } = false;
         
         public DateTime Created { get; set; }
         public DateTime Saved { get; set; }
 
-
+        [JsonInclude]
         private List<MainGroup> _mainGroups = [];
+        [JsonIgnore]
         public IReadOnlyCollection<MainGroup> MainGroups => _mainGroups.AsReadOnly();
-
+        [JsonInclude]
         private List<ItemTemplate> _itemTemplates = [];
+        [JsonIgnore]
         public IReadOnlyCollection<ItemTemplate> ItemTemplates => _itemTemplates.AsReadOnly();
 
         public List<Item> Items { get; set; } = [];
@@ -37,22 +41,38 @@ namespace GroupAddress.Core
         public void AddMainGroup(MainGroup mainGroup)
         {
             _mainGroups.Add(mainGroup);
-            mainGroup.Changed += MainGroup_Changed;
+            mainGroup.Changed += (sender,e) => OnChange();
+            OnChange();
+        }
+
+        public void ResetEventBindings()
+        {
+            foreach (var mg in _mainGroups)
+            {
+                mg.Changed -= (sender, e) => OnChange();
+                mg.Changed += (sender, e) => OnChange();
+            }
+            foreach (var it in _itemTemplates)
+            {
+                it.Changed -= (sender, e) => OnChange();
+                it.Changed += (sender, e) => OnChange();
+            }
+        }
+
+
+        private void OnChange()
+        {
+            Dirty = true;
             Changed?.Invoke(this, EventArgs.Empty);
         }
-
-        private void MainGroup_Changed(object? sender, EventArgs e)
-        {
-            Changed?.Invoke(sender, e);
-        }
-
+        
         public bool RemoveMainGroup(MainGroup mainGroup)
         {
             var res = _mainGroups.Remove(mainGroup);
             if (res)
             {
-                Changed?.Invoke(this, EventArgs.Empty);
-                mainGroup.Changed -= MainGroup_Changed;
+                OnChange();
+                mainGroup.Changed -= (sender,e) => OnChange();
             }
             return res;
         }
@@ -60,21 +80,17 @@ namespace GroupAddress.Core
         public void AddItemTemplate(ItemTemplate itemTemplate)
         {
             _itemTemplates.Add(itemTemplate);
-            itemTemplate.Changed += ItemTemplate_Changed;
-            Changed?.Invoke(this, EventArgs.Empty);
+            itemTemplate.Changed += (sender,e) => OnChange();
+            OnChange();
         }
 
-        private void ItemTemplate_Changed(object? sender, EventArgs e)
-        {
-            Changed?.Invoke(sender, e);
-        }
 
         public bool RemoveItemTemplate(ItemTemplate itemTemplate)
         {
             var res = _itemTemplates.Remove(itemTemplate);
             if (res) {
-                Changed?.Invoke(this, EventArgs.Empty);
-                itemTemplate.Changed -= ItemTemplate_Changed;
+                OnChange();
+                itemTemplate.Changed -= (sender,e) => OnChange();
             }
             return res;
         }
@@ -99,6 +115,22 @@ namespace GroupAddress.Core
                     Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
                 }
             );
+        }
+
+        public static Project? FromJson(string json)
+        {
+            var obj = JsonSerializer.Deserialize<Project>(json, 
+                new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+                }
+            );
+            if (obj != null)
+            {
+                obj.ResetEventBindings();
+            }
+            return obj;
         }
 
         public static Project GetSampleProject()
