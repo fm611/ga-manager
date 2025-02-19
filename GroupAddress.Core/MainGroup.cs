@@ -20,10 +20,6 @@ namespace GroupAddress.Core
                 "GET Misc"
                 };
 
-        //private List<Item> _items = [];
-        //public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
-
-       
 
 
         public int DefaultBlockLength { get; set; } = 1;

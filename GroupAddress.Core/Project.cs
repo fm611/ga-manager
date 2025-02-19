@@ -17,7 +17,6 @@ namespace GroupAddress.Core
     public class Project
     {
         public event EventHandler<EventArgs>? Changed;
-        public bool Dirty { get; set; } = false;
         
         public DateTime Created { get; set; }
         public DateTime Saved { get; set; }
@@ -62,7 +61,6 @@ namespace GroupAddress.Core
 
         private void OnChange()
         {
-            Dirty = true;
             Changed?.Invoke(this, EventArgs.Empty);
         }
         
@@ -84,7 +82,6 @@ namespace GroupAddress.Core
             OnChange();
         }
 
-
         public bool RemoveItemTemplate(ItemTemplate itemTemplate)
         {
             var res = _itemTemplates.Remove(itemTemplate);
@@ -94,7 +91,6 @@ namespace GroupAddress.Core
             }
             return res;
         }
-
 
         public List<Item> GetItems(MainGroup? mainGroup)
         {

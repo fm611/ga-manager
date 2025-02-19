@@ -62,11 +62,16 @@
             label3 = new Label();
             UnselectItemsButton = new Button();
             GADataTableBackPanel = new Panel();
+            ItemsListBoxContextMenu = new ContextMenuStrip(components);
+            NewItemToolStripMenuItem = new ToolStripMenuItem();
+            EditItemToolStripMenuItem = new ToolStripMenuItem();
+            DeleteItemToolStripMenuItem = new ToolStripMenuItem();
             MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
             menuStrip1.SuspendLayout();
             GADataTableBackPanel.SuspendLayout();
+            ItemsListBoxContextMenu.SuspendLayout();
             SuspendLayout();
             // 
             // MainGroupsListBox
@@ -198,7 +203,7 @@
             // NewProjectMenuItem
             // 
             NewProjectMenuItem.Name = "NewProjectMenuItem";
-            NewProjectMenuItem.Size = new Size(180, 22);
+            NewProjectMenuItem.Size = new Size(168, 22);
             NewProjectMenuItem.Text = "Neu";
             NewProjectMenuItem.Click += NewProjectMenuItem_Click;
             // 
@@ -206,7 +211,7 @@
             // 
             OpenToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { OpenFileStripMenuItem, toolStripSeparator1, OpenSampleProjectToolStripMenuItem, OpenRecentToolStripSeparator });
             OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
-            OpenToolStripMenuItem.Size = new Size(180, 22);
+            OpenToolStripMenuItem.Size = new Size(168, 22);
             OpenToolStripMenuItem.Text = "Öffnen";
             // 
             // OpenFileStripMenuItem
@@ -238,25 +243,25 @@
             // 
             SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
             SaveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            SaveToolStripMenuItem.Size = new Size(180, 22);
+            SaveToolStripMenuItem.Size = new Size(168, 22);
             SaveToolStripMenuItem.Text = "Speichern";
             SaveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(177, 6);
+            toolStripSeparator5.Size = new Size(165, 6);
             // 
             // ExportToolStripMenuItem
             // 
             ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
-            ExportToolStripMenuItem.Size = new Size(180, 22);
+            ExportToolStripMenuItem.Size = new Size(168, 22);
             ExportToolStripMenuItem.Text = "Export";
             // 
             // ImportToolStripMenuItem
             // 
             ImportToolStripMenuItem.Name = "ImportToolStripMenuItem";
-            ImportToolStripMenuItem.Size = new Size(180, 22);
+            ImportToolStripMenuItem.Size = new Size(168, 22);
             ImportToolStripMenuItem.Text = "Import";
             // 
             // ItemManagerToolStripMenuItem
@@ -294,7 +299,7 @@
             // ItemsListBox
             // 
             ItemsListBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            ItemsListBox.ContextMenuStrip = MainGroupsListBoxContextMenu;
+            ItemsListBox.ContextMenuStrip = ItemsListBoxContextMenu;
             ItemsListBox.FormattingEnabled = true;
             ItemsListBox.ItemHeight = 15;
             ItemsListBox.Location = new Point(12, 502);
@@ -337,6 +342,33 @@
             GADataTableBackPanel.Size = new Size(1056, 717);
             GADataTableBackPanel.TabIndex = 40;
             // 
+            // ItemsListBoxContextMenu
+            // 
+            ItemsListBoxContextMenu.Items.AddRange(new ToolStripItem[] { NewItemToolStripMenuItem, EditItemToolStripMenuItem, DeleteItemToolStripMenuItem });
+            ItemsListBoxContextMenu.Name = "ItemsListBoxContextMenu";
+            ItemsListBoxContextMenu.Size = new Size(131, 70);
+            // 
+            // NewItemToolStripMenuItem
+            // 
+            NewItemToolStripMenuItem.Name = "NewItemToolStripMenuItem";
+            NewItemToolStripMenuItem.Size = new Size(130, 22);
+            NewItemToolStripMenuItem.Text = "Neu";
+            NewItemToolStripMenuItem.Click += NewItemToolStripMenuItem_Click;
+            // 
+            // EditItemToolStripMenuItem
+            // 
+            EditItemToolStripMenuItem.Name = "EditItemToolStripMenuItem";
+            EditItemToolStripMenuItem.Size = new Size(130, 22);
+            EditItemToolStripMenuItem.Text = "Bearbeiten";
+            EditItemToolStripMenuItem.Click += EditItemToolStripMenuItem_Click;
+            // 
+            // DeleteItemToolStripMenuItem
+            // 
+            DeleteItemToolStripMenuItem.Name = "DeleteItemToolStripMenuItem";
+            DeleteItemToolStripMenuItem.Size = new Size(130, 22);
+            DeleteItemToolStripMenuItem.Text = "Löschen";
+            DeleteItemToolStripMenuItem.Click += DeleteItemToolStripMenuItem_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -361,6 +393,7 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             GADataTableBackPanel.ResumeLayout(false);
+            ItemsListBoxContextMenu.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -402,5 +435,9 @@
         private Label label3;
         private Button UnselectItemsButton;
         private Panel GADataTableBackPanel;
+        private ContextMenuStrip ItemsListBoxContextMenu;
+        private ToolStripMenuItem NewItemToolStripMenuItem;
+        private ToolStripMenuItem EditItemToolStripMenuItem;
+        private ToolStripMenuItem DeleteItemToolStripMenuItem;
     }
 }

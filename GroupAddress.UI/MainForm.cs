@@ -26,12 +26,23 @@ namespace GroupAddress.UI
             {
                 project = value;
                 project.Changed += Project_Changed;
+                ProjectDirty = false;
+            }
+        }
+        private bool _projectDirty;
+        public bool ProjectDirty
+        {
+            get => _projectDirty;
+            set
+            {
+                _projectDirty = value;
+                SetTitle(value);
             }
         }
 
         private void Project_Changed(object? sender, EventArgs e)
         {
-            SetTitle(Project.Dirty);
+            ProjectDirty = true;
         }
 
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
@@ -106,7 +117,6 @@ namespace GroupAddress.UI
 
         private void UpdateUI()
         {
-
             MainGroupWrapper.Update();
             MainGroupsListBox_SelectedIndexChanged(null, null);
 
@@ -119,12 +129,12 @@ namespace GroupAddress.UI
 
         private bool HandleProjectChanged()
         {
-            if (!Project.Dirty) return true;
+            if (!ProjectDirty) return true;
 
             var res2 = MessageBox.Show("Änderungen am aktuellen Projekt speichern?", "Projekt geändert", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
             if (res2 == DialogResult.Cancel) return false;
             if (res2 == DialogResult.Yes) return Save();
-            return true;            
+            return true;
         }
 
         private void NewProjectMenuItem_Click(object sender, EventArgs e)
@@ -181,7 +191,7 @@ namespace GroupAddress.UI
                     (sender, e) =>
                     {
                         if (!HandleProjectChanged()) return;
-   
+
                         ReadProjectFile(r.FullName);
                     }
                     )).ToArray();
@@ -225,8 +235,8 @@ namespace GroupAddress.UI
 
             if (obj != null)
             {
-                CurrentProjectFile = path;
-                SetProjectFile(obj);
+                //CurrentProjectFile = path;
+                SetProjectFile(obj, path);
                 EnqueueRecentFiles(path);
             }
         }
@@ -259,7 +269,7 @@ namespace GroupAddress.UI
                 outputFile.Write(Project.GetJson());
 
                 EnqueueRecentFiles(CurrentProjectFile);
-                Project.Dirty = false;
+                ProjectDirty = false;
 
                 return true;
 
@@ -270,7 +280,7 @@ namespace GroupAddress.UI
         private void OpenProjectFile()
         {
 
-            if(!HandleProjectChanged()) return;
+            if (!HandleProjectChanged()) return;
 
 
             var openDialog = new OpenFileDialog();
@@ -302,8 +312,9 @@ namespace GroupAddress.UI
             OpenProjectFile();
         }
 
-        private void SetProjectFile(Project project)
+        private void SetProjectFile(Project project, string? path = null)
         {
+            CurrentProjectFile = path;
             Project = project;
             AddItemForm = null;
             UpdateUI();
@@ -509,5 +520,23 @@ namespace GroupAddress.UI
 
         }
 
+        #region Items ListBox
+
+        private void NewItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ItemManagerToolStripMenuItem_Click(sender, e);
+        }
+
+        private void EditItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DeleteItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        #endregion
     }
 }
