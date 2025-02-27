@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             MainGroupsListBox = new ListBox();
             MainGroupsListBoxContextMenu = new ContextMenuStrip(components);
             AddMainGroupToolStripMenuItem = new ToolStripMenuItem();
@@ -59,19 +59,19 @@
             DeleteCellsStripMenuItem = new ToolStripMenuItem();
             saveFileDialog1 = new SaveFileDialog();
             ItemsListBox = new ListBox();
-            label3 = new Label();
-            UnselectItemsButton = new Button();
-            GADataTableBackPanel = new Panel();
             ItemsListBoxContextMenu = new ContextMenuStrip(components);
             NewItemToolStripMenuItem = new ToolStripMenuItem();
             EditItemToolStripMenuItem = new ToolStripMenuItem();
             DeleteItemToolStripMenuItem = new ToolStripMenuItem();
+            label3 = new Label();
+            UnselectItemsButton = new Button();
+            GADataTableBackPanel = new Panel();
             MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
             menuStrip1.SuspendLayout();
-            GADataTableBackPanel.SuspendLayout();
             ItemsListBoxContextMenu.SuspendLayout();
+            GADataTableBackPanel.SuspendLayout();
             SuspendLayout();
             // 
             // MainGroupsListBox
@@ -146,24 +146,24 @@
             GADataTable.AllowUserToDeleteRows = false;
             GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.ControlLight;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.Padding = new Padding(0, 5, 0, 5);
-            dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.ControlLight;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.Padding = new Padding(0, 5, 0, 5);
+            dataGridViewCellStyle3.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            GADataTable.DefaultCellStyle = dataGridViewCellStyle4;
             GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(4, 4);
             GADataTable.Name = "GADataTable";
@@ -308,39 +308,7 @@
             ItemsListBox.Size = new Size(248, 274);
             ItemsListBox.TabIndex = 37;
             ItemsListBox.SelectedIndexChanged += ItemsListBox_SelectedIndexChanged;
-            // 
-            // label3
-            // 
-            label3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            label3.AutoSize = true;
-            label3.Location = new Point(12, 475);
-            label3.Name = "label3";
-            label3.Size = new Size(36, 15);
-            label3.TabIndex = 38;
-            label3.Text = "Items";
-            // 
-            // UnselectItemsButton
-            // 
-            UnselectItemsButton.BackgroundImage = Properties.Resources.times_square_regular;
-            UnselectItemsButton.BackgroundImageLayout = ImageLayout.Zoom;
-            UnselectItemsButton.FlatStyle = FlatStyle.Flat;
-            UnselectItemsButton.Location = new Point(236, 475);
-            UnselectItemsButton.Name = "UnselectItemsButton";
-            UnselectItemsButton.Size = new Size(24, 21);
-            UnselectItemsButton.TabIndex = 39;
-            UnselectItemsButton.UseVisualStyleBackColor = true;
-            UnselectItemsButton.Click += UnselectItemsButton_Click;
-            // 
-            // GADataTableBackPanel
-            // 
-            GADataTableBackPanel.BackColor = Color.Transparent;
-            GADataTableBackPanel.Controls.Add(GADataTable);
-            GADataTableBackPanel.Location = new Point(266, 63);
-            GADataTableBackPanel.Margin = new Padding(30);
-            GADataTableBackPanel.Name = "GADataTableBackPanel";
-            GADataTableBackPanel.Padding = new Padding(4);
-            GADataTableBackPanel.Size = new Size(1056, 717);
-            GADataTableBackPanel.TabIndex = 40;
+            ItemsListBox.MouseDown += ItemsListBox_MouseDown;
             // 
             // ItemsListBoxContextMenu
             // 
@@ -369,6 +337,41 @@
             DeleteItemToolStripMenuItem.Text = "Löschen";
             DeleteItemToolStripMenuItem.Click += DeleteItemToolStripMenuItem_Click;
             // 
+            // label3
+            // 
+            label3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label3.AutoSize = true;
+            label3.Location = new Point(12, 475);
+            label3.Name = "label3";
+            label3.Size = new Size(36, 15);
+            label3.TabIndex = 38;
+            label3.Text = "Items";
+            // 
+            // UnselectItemsButton
+            // 
+            UnselectItemsButton.BackgroundImageLayout = ImageLayout.Zoom;
+            UnselectItemsButton.FlatStyle = FlatStyle.Flat;
+            UnselectItemsButton.ImageAlign = ContentAlignment.TopCenter;
+            UnselectItemsButton.Location = new Point(178, 467);
+            UnselectItemsButton.Name = "UnselectItemsButton";
+            UnselectItemsButton.Size = new Size(82, 29);
+            UnselectItemsButton.TabIndex = 39;
+            UnselectItemsButton.Text = "Clear Filter";
+            UnselectItemsButton.TextImageRelation = TextImageRelation.ImageBeforeText;
+            UnselectItemsButton.UseVisualStyleBackColor = true;
+            UnselectItemsButton.Click += UnselectItemsButton_Click;
+            // 
+            // GADataTableBackPanel
+            // 
+            GADataTableBackPanel.BackColor = Color.Transparent;
+            GADataTableBackPanel.Controls.Add(GADataTable);
+            GADataTableBackPanel.Location = new Point(266, 63);
+            GADataTableBackPanel.Margin = new Padding(30);
+            GADataTableBackPanel.Name = "GADataTableBackPanel";
+            GADataTableBackPanel.Padding = new Padding(4);
+            GADataTableBackPanel.Size = new Size(1056, 717);
+            GADataTableBackPanel.TabIndex = 40;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -392,8 +395,8 @@
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
-            GADataTableBackPanel.ResumeLayout(false);
             ItemsListBoxContextMenu.ResumeLayout(false);
+            GADataTableBackPanel.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }

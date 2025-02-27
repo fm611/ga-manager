@@ -192,12 +192,12 @@ namespace GroupAddress.UI
 
             var currName = TopLevelCollection.SubGroupNames[e.ColumnIndex] ?? "Neue Mittelgruppe";
 
-            var editSubGroupForm = new EditSubGroupForm(currName);
+            var editSubGroupForm = new TextBoxDialog("Mittelgruppe",currName);
             editSubGroupForm.ShowDialog();
 
             if (editSubGroupForm.DialogResult != DialogResult.OK) return;
 
-            TopLevelCollection.SetSubGroupname(e.ColumnIndex, editSubGroupForm.SubGroupName);
+            TopLevelCollection.SetSubGroupname(e.ColumnIndex, editSubGroupForm.Content);
 
             UpdateTable();
         }

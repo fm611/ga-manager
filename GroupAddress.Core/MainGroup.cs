@@ -1,7 +1,4 @@
 ﻿
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.SqlTypes;
 
 namespace GroupAddress.Core
 {

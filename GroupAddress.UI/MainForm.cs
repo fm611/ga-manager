@@ -1,5 +1,4 @@
 using GroupAddress.Core;
-using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
@@ -529,6 +528,19 @@ namespace GroupAddress.UI
 
         private void EditItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var selectedItem = (Item?)ItemsListBox.SelectedItem;
+            if (selectedItem == null) return;
+
+
+            var diag = new TextBoxDialog("Item", ((Item)ItemsListBox.SelectedItem).Name);
+            var res = diag.ShowDialog();
+
+            if (res == DialogResult.OK)
+            {
+                ((Item)ItemsListBox.SelectedItem).Name = diag.Content;
+                UpdateUI();
+            }
+
 
         }
 
@@ -538,5 +550,19 @@ namespace GroupAddress.UI
         }
 
         #endregion
+
+        private void ItemsListBox_MouseDown(object sender, MouseEventArgs e)
+        {
+
+            if (e.Button == MouseButtons.Right)
+            {
+                int index = this.ItemsListBox.IndexFromPoint(e.Location);
+                if (index != ListBox.NoMatches)
+                {
+                    ItemsListBox.ClearSelected();
+                    ItemsListBox.SelectedIndex = index;
+                }
+            }
+        }
     }
 }

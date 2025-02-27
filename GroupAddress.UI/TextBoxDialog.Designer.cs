@@ -1,6 +1,6 @@
 ﻿namespace GroupAddress.UI
 {
-    partial class EditSubGroupForm
+    partial class TextBoxDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             SaveButton = new Button();
-            SubGroupNameTextBox = new TextBox();
+            ContentTextBox = new TextBox();
             SuspendLayout();
             // 
             // SaveButton
@@ -44,12 +44,12 @@
             // 
             // SubGroupNameTextBox
             // 
-            SubGroupNameTextBox.Location = new Point(12, 12);
-            SubGroupNameTextBox.Name = "SubGroupNameTextBox";
-            SubGroupNameTextBox.Size = new Size(229, 23);
-            SubGroupNameTextBox.TabIndex = 1;
-            SubGroupNameTextBox.Enter += SubGroupNameTextBox_Enter;
-            SubGroupNameTextBox.KeyUp += SubGroupNameTextBox_KeyUp;
+            ContentTextBox.Location = new Point(12, 12);
+            ContentTextBox.Name = "SubGroupNameTextBox";
+            ContentTextBox.Size = new Size(229, 23);
+            ContentTextBox.TabIndex = 1;
+            ContentTextBox.Enter += SubGroupNameTextBox_Enter;
+            ContentTextBox.KeyUp += SubGroupNameTextBox_KeyUp;
             // 
             // EditSubGroupForm
             // 
@@ -57,11 +57,11 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(249, 72);
-            Controls.Add(SubGroupNameTextBox);
+            Controls.Add(ContentTextBox);
             Controls.Add(SaveButton);
             Name = "EditSubGroupForm";
             StartPosition = FormStartPosition.CenterParent;
-            Text = "Mittelgruppe";
+            base.Text = "Mittelgruppe";
             Load += EditSubGroupForm_Shown;
             Shown += EditSubGroupForm_Shown;
             ResumeLayout(false);
@@ -71,6 +71,6 @@
         #endregion
 
         private Button SaveButton;
-        private TextBox SubGroupNameTextBox;
+        private TextBox ContentTextBox;
     }
 }

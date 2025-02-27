@@ -10,30 +10,31 @@ using System.Windows.Forms;
 
 namespace GroupAddress.UI
 {
-    public partial class EditSubGroupForm : Form
+    public partial class TextBoxDialog : Form
     {
-        public string SubGroupName { get; set; }
+        public string Content { get; set; }
 
-        public EditSubGroupForm(string name = "Neue Mittelgruppe")
+        public TextBoxDialog(string title, string content)
         {
             InitializeComponent();
-            SubGroupNameTextBox.Text = name;
+            Content = title;
+            ContentTextBox.Text = content;
         }
 
 
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(SubGroupNameTextBox.Text))
+            if (!string.IsNullOrEmpty(ContentTextBox.Text))
             {
-                SubGroupName = SubGroupNameTextBox.Text;
+                Content = ContentTextBox.Text;
                 DialogResult = DialogResult.OK;
             }
         }
 
         private void SubGroupNameTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            SaveButton.Enabled = !string.IsNullOrEmpty(SubGroupNameTextBox.Text);
+            SaveButton.Enabled = !string.IsNullOrEmpty(ContentTextBox.Text);
 
             if (e.KeyValue == (char)Keys.Return)
             {
@@ -49,7 +50,7 @@ namespace GroupAddress.UI
 
         private void EditSubGroupForm_Shown(object sender, EventArgs e)
         {
-            SubGroupNameTextBox.Focus();
+            ContentTextBox.Focus();
         }
     }
 }

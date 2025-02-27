@@ -1,5 +1,4 @@
 ﻿using GroupAddress.Core;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -52,6 +51,7 @@ namespace GroupAddress.UI
                 nameof(MainGroup.Id),
                 () => Project.MainGroups);
 
+            AddItemButton.Enabled = false;
             LoadData();
         }
 
@@ -79,6 +79,8 @@ namespace GroupAddress.UI
 
             if (ItemTemplatesListBox.Items.Count > 0 && ItemTemplatesListBox.SelectedItem == null)
                 ItemTemplatesListBox.SelectedIndex = 0;
+            if (ItemTemplatesListBox.SelectedItem == null)
+                AddItemButton.Enabled = false;
 
 
             MainGroupsWrapper.Update();
@@ -114,8 +116,8 @@ namespace GroupAddress.UI
             if (SelectedItemTemplate != null)
             {
                 ItemTemplateNameTextBox.Text = SelectedItemTemplate.Name;
-
             }
+            UpdateAddItemButton();
 
         }
 
@@ -249,10 +251,21 @@ namespace GroupAddress.UI
         }
         private void NewItemPreStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
+            if (!UpdateAddItemButton()) return;
             if (e.KeyValue == (char)Keys.Return)
             {
                 AddItemButton_Click(null, null);
             }
+        }
+
+        private bool UpdateAddItemButton()
+        {
+            AddItemButton.Enabled = false;
+
+            if(!string.IsNullOrEmpty(NewItemPreStringTextBox.Text) && SelectedItemTemplate != null)
+                AddItemButton.Enabled = true;
+
+            return AddItemButton.Enabled;
         }
 
         #endregion
