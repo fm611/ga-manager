@@ -503,18 +503,19 @@ namespace GroupAddress.UI
 
         private void ItemsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selectedItems = ItemsListBox.SelectedItems.Cast<Item>().ToList();
+            SelectedItems = ItemsListBox.SelectedItems.Cast<Item>().ToList();
 
-            if (selectedItems != null && selectedItems.Count > 0)
-            {
+            SetGaItemFilter();
+        }
+
+        private void SetGaItemFilter()
+        {
+            GADataTable.FilterByItem(SelectedItems);
+
+            if(SelectedItems != null && SelectedItems.Count > 0)
                 GADataTableBackPanel.BackColor = Color.Red;
-                GADataTable.FilterByItem(selectedItems);
-            }
             else
-            {
                 GADataTableBackPanel.BackColor = Color.Transparent;
-                GADataTable.UpdateTable();
-            }
 
 
         }
@@ -546,11 +547,26 @@ namespace GroupAddress.UI
 
         private void DeleteItemToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (SelectedMainGroup == null) return;
+            if (SelectedItems == null || SelectedItems.Count == 0) return;
+
+            var itemGAs = SelectedMainGroup.GAs.Where(ga => SelectedItems.Select(x => x.Id).Contains(ga.ItemId)).ToList();
+
+            if(itemGAs.Count == 0)
+            {
+                var res = MessageBox.Show("Möchten Sie das Item wirklich löschen?", "Item löschen", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                if (res != DialogResult.OK) return;
+            } else
+            {
+                var delItemDiag = new DeleteItemDialog(itemGAs);
+                var res = delItemDiag.ShowDialog();
+
+
+            }
+
+
 
         }
-
-        #endregion
-
         private void ItemsListBox_MouseDown(object sender, MouseEventArgs e)
         {
 
@@ -564,5 +580,8 @@ namespace GroupAddress.UI
                 }
             }
         }
+
+        #endregion
+
     }
 }

@@ -58,8 +58,14 @@ namespace GroupAddress.UI
         }
 
 
-        public void FilterByItem(List<Item> items)
+        public void FilterByItem(List<Item>? items)
         {
+            if (items == null || items.Count == 0)
+            {
+                UpdateTable(true);
+                return;
+            }
+
             FilterItems = items;
             FilterString = null;
 

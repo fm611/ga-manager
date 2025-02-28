@@ -78,7 +78,7 @@ namespace GroupAddress.Core
             if(other == null) return 1;
             if(other == this) return 0;
 
-            return Addresse.ToString().CompareTo(other.Addresse);
+            return Addresse.ToString().CompareTo(other.Addresse.ToString());
         }
 
         public string AddressName => Addresse + " - " + Name;
