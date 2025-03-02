@@ -50,7 +50,7 @@ namespace GroupAddress.UI
         public MainGroup? SelectedMainGroup { get; set; }
         public string? SelectedMainGroupId { get; set; }
 
-        public List<Item> SelectedItems { get; set; }
+        public List<Item> SelectedItems { get; set; } = [];
 
 
         public ItemTemplateManagerForm? AddItemForm { get; set; }
@@ -120,6 +120,7 @@ namespace GroupAddress.UI
             MainGroupsListBox_SelectedIndexChanged(null, null);
 
             ItemWrapper.Update();
+            ItemsListBox_SelectedIndexChanged(null, null);
             GADataTable.UpdateTable();
         }
 
@@ -357,14 +358,29 @@ namespace GroupAddress.UI
             UpdateUI();
         }
 
-
         private void MainGroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (SelectedMainGroup == (MainGroup?)MainGroupsListBox.SelectedItem) return;
+
             SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
             SelectedMainGroupId = (string?)MainGroupsListBox.SelectedValue;
 
             ItemWrapper.Update();
             GADataTable.SetTopLevelCollection(SelectedMainGroup);
+        }
+
+        private void MainGroupsListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyValue == (char)Keys.Delete)
+            {
+                if (SelectedMainGroup == null) return;
+                DeleteMainGroup(SelectedMainGroup.Id);
+            }
+            if (e.KeyData == (Keys.Control | Keys.N))
+            {
+                if (SelectedMainGroup == null) return;
+                AddMainGroup();
+            }
         }
 
         #endregion
@@ -482,19 +498,6 @@ namespace GroupAddress.UI
             DeleteMainGroup(SelectedMainGroup.Id);
         }
 
-        private void MainGroupsListBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyValue == (char)Keys.Delete)
-            {
-                if (SelectedMainGroup == null) return;
-                DeleteMainGroup(SelectedMainGroup.Id);
-            }
-            if (e.KeyData == (Keys.Control | Keys.N))
-            {
-                if (SelectedMainGroup == null) return;
-                AddMainGroup();
-            }
-        }
 
         private void UnselectItemsButton_Click(object sender, EventArgs e)
         {
@@ -503,7 +506,11 @@ namespace GroupAddress.UI
 
         private void ItemsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedItems = ItemsListBox.SelectedItems.Cast<Item>().ToList();
+            var newSelectedItems = ItemsListBox.SelectedItems.Cast<Item>().ToList();
+
+            if (SelectedItems.All(newSelectedItems.Contains) && SelectedItems.Count == newSelectedItems.Count) return;
+
+            SelectedItems = newSelectedItems;
 
             SetGaItemFilter();
         }
@@ -550,21 +557,34 @@ namespace GroupAddress.UI
             if (SelectedMainGroup == null) return;
             if (SelectedItems == null || SelectedItems.Count == 0) return;
 
-            var itemGAs = SelectedMainGroup.GAs.Where(ga => SelectedItems.Select(x => x.Id).Contains(ga.ItemId)).ToList();
+            var item = SelectedItems.FirstOrDefault();
+            if (item == null) return;
 
-            if(itemGAs.Count == 0)
+            //var itemGAs = SelectedMainGroup.GAs.Where(ga => SelectedItems.Select(x => x.Id).Contains(ga.ItemId)).ToList();
+            var itemGAs = SelectedMainGroup.GAs.Where(ga => ga.ItemId==item.Id).ToList();
+
+            if (itemGAs.Count == 0)
             {
                 var res = MessageBox.Show("Möchten Sie das Item wirklich löschen?", "Item löschen", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                 if (res != DialogResult.OK) return;
-            } else
+            } 
+            else
             {
                 var delItemDiag = new DeleteItemDialog(itemGAs);
                 var res = delItemDiag.ShowDialog();
 
+                if (res != DialogResult.OK) return;
 
+                if(delItemDiag.IncludeGAs)
+                {
+                    itemGAs.ForEach(SelectedMainGroup.RemoveGA);
+                }
             }
 
+            SelectedMainGroup.GAs.Where(ga => SelectedItems.Select(x => x.Id).Contains(ga.ItemId)).ToList().ForEach(x => x.ItemId = null);
+            Project.RemoveItem(item);
 
+            UpdateUI();
 
         }
         private void ItemsListBox_MouseDown(object sender, MouseEventArgs e)

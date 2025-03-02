@@ -72,10 +72,6 @@ namespace GroupAddress.Core
 
         public override void RemoveGA(GA ga)
         {
-            //var item = _items.Where(x => x.GAs.Contains(ga)).FirstOrDefault();
-            
-            //item?.RemoveGA(ga);
-
             base.RemoveGA(ga);
         }
 

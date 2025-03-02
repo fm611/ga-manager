@@ -71,6 +71,7 @@
             // 
             // DeleteOnlyItemButton
             // 
+            DeleteOnlyItemButton.DialogResult = DialogResult.OK;
             DeleteOnlyItemButton.Location = new Point(179, 173);
             DeleteOnlyItemButton.Name = "DeleteOnlyItemButton";
             DeleteOnlyItemButton.Size = new Size(115, 23);
@@ -86,6 +87,7 @@
             DeleteWithGAsButton.TabIndex = 2;
             DeleteWithGAsButton.Text = "Item + GA's löschen";
             DeleteWithGAsButton.UseVisualStyleBackColor = true;
+            DeleteWithGAsButton.Click += DeleteWithGAsButton_Click;
             // 
             // label1
             // 

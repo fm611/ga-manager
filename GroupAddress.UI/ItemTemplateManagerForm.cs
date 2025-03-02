@@ -211,7 +211,7 @@ namespace GroupAddress.UI
 
             LastInsertedItem = SelectedMainGroup.AddItem(SelectedItemTemplate, NewItemPreStringTextBox.Text, GetInsertIndex());
             if(LastInsertedItem !=null)
-                Project.Items.Add(LastInsertedItem);
+                Project.AddItem(LastInsertedItem);
 
 
             _lastInsertMainGroupId = SelectedMainGroup.Id;

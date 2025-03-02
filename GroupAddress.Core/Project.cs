@@ -22,13 +22,14 @@ namespace GroupAddress.Core
         private List<ItemTemplate> _itemTemplates = [];
         [JsonIgnore]
         public IReadOnlyCollection<ItemTemplate> ItemTemplates => _itemTemplates.AsReadOnly();
-
-        public List<Item> Items { get; set; } = [];
+        [JsonInclude]
+        private List<Item> _items = [];
+        [JsonIgnore]
+        public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
 
         public Project() {
             Created = DateTime.Now;
         }
-
 
         public void AddMainGroup(MainGroup mainGroup)
         {
@@ -84,6 +85,26 @@ namespace GroupAddress.Core
             }
             return res;
         }
+
+
+        public void AddItem(Item item)
+        {
+            _items.Add(item);
+            item.Changed += (sender, e) => OnChange();
+            OnChange();
+        }
+        public bool RemoveItem(Item item)
+        {
+            var res = _items.Remove(item);
+            if (res)
+            {
+                OnChange();
+                item.Changed -= (sender, e) => OnChange();
+            }
+            return res;
+        }
+
+
 
         public List<Item> GetItems(MainGroup? mainGroup)
         {
@@ -192,7 +213,7 @@ namespace GroupAddress.Core
 
             var item = mGroup1.AddItem(DefaultItemTemplates.Light, "EG_HWR_Licht_Decke");
             if (item != null)
-                proj.Items.Add(item);            
+                proj.AddItem(item);            
 
             #endregion
 
