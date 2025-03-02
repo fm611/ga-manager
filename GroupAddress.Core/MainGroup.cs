@@ -35,7 +35,7 @@ namespace GroupAddress.Core
 
         public new void AddGA(GA ga)
         {
-            ga.Addresse.MainGroup = SubAddress;
+            ga.Address.MainGroup = SubAddress;
             base.AddGA(ga);
         }
         public new void AddGARange(IEnumerable<GA> gas)
@@ -54,7 +54,7 @@ namespace GroupAddress.Core
             gas.ForEach(x => x.ItemId = newItem.Id);
             gas.ForEach(x => x.Shift(startIndex));
 
-            if (gas.Any(x => GAs.Any(y => y.Addresse.EqualsWithoutMainGroup(x.Addresse))))
+            if (gas.Any(x => GAs.Any(y => y.Address.EqualsWithoutMainGroup(x.Address))))
                 return null;
 
             AddGARange(gas);

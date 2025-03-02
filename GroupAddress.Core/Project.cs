@@ -15,14 +15,17 @@ namespace GroupAddress.Core
         public DateTime Saved { get; set; }
 
         [JsonInclude]
+        [JsonPropertyName("MainGroups")]
         private List<MainGroup> _mainGroups = [];
         [JsonIgnore]
         public IReadOnlyCollection<MainGroup> MainGroups => _mainGroups.AsReadOnly();
         [JsonInclude]
+        [JsonPropertyName("ItemTemplates")]
         private List<ItemTemplate> _itemTemplates = [];
         [JsonIgnore]
         public IReadOnlyCollection<ItemTemplate> ItemTemplates => _itemTemplates.AsReadOnly();
         [JsonInclude]
+        [JsonPropertyName("Items")]
         private List<Item> _items = [];
         [JsonIgnore]
         public IReadOnlyCollection<Item> Items => _items.AsReadOnly();

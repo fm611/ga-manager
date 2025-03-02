@@ -20,7 +20,7 @@ namespace GroupAddress.UI
         private List<CellPosition> _previousSelectedCells = [];
 
         public List<GA> SelectedGAs { get; private set; } = [];
-        public List<Addresse> SelectedAddresses { get; private set; } = [];
+        public List<Address> SelectedAddresses { get; private set; } = [];
 
         public List<Item>? FilterItems { get; private set; }
         public string? FilterString { get; private set; }
@@ -97,7 +97,7 @@ namespace GroupAddress.UI
 
                 var rowGAs = TopLevelCollection
                         .GAs
-                        .Where(x => x.Addresse.GA == i);
+                        .Where(x => x.Address.GA == i);
 
                 var filterGAs = rowGAs.Where(x => filterItems.Count == 0 || filterItems.Select(x => x.Id).Contains(x.ItemId));
 
@@ -110,7 +110,7 @@ namespace GroupAddress.UI
                 for (int j = 0; j < TopLevelCollection.SubGroupNames.Length; j++)
                 {
                     newRow[j] = rowGAs
-                        .FirstOrDefault(x => x.Addresse.MiddleGroup == j)?
+                        .FirstOrDefault(x => x.Address.MiddleGroup == j)?
                         .AddressName;
                 }
                 table.Rows.Add(newRow);
@@ -136,9 +136,9 @@ namespace GroupAddress.UI
             }
         }
 
-        private Addresse GetAddresse(CellPosition pos)
+        private Address GetAddress(CellPosition pos)
         {
-            return new Addresse(TopLevelCollection?.SubAddress??-1, pos.Column, RowData.ElementAt(pos.Row).Key); 
+            return new Address(TopLevelCollection?.SubAddress??-1, pos.Column, RowData.ElementAt(pos.Row).Key); 
         }
 
         private DataGridViewCell GetCell(CellPosition pos)
@@ -152,7 +152,7 @@ namespace GroupAddress.UI
             {
                 if (RowData.ElementAt(i).Value.Contains(ga))
                 {
-                    return new CellPosition(i, ga.Addresse.MiddleGroup);
+                    return new CellPosition(i, ga.Address.MiddleGroup);
                 }
             }
             return null;
@@ -178,14 +178,14 @@ namespace GroupAddress.UI
 
             SelectedAddresses = SelectedCells
                     .Cast<DataGridViewCell>()
-                    .Select(x => GetAddresse(new CellPosition(x)))
+                    .Select(x => GetAddress(new CellPosition(x)))
                     .ToList();
 
             if (TopLevelCollection == null)
                 SelectedGAs = [];
             else
                 SelectedGAs = SelectedAddresses
-                    .SelectMany(x => TopLevelCollection.GAs.Where(y => y.Addresse == x))
+                    .SelectMany(x => TopLevelCollection.GAs.Where(y => y.Address == x))
                     .ToList();
         }
 
@@ -233,11 +233,11 @@ namespace GroupAddress.UI
 
             var pos = new CellPosition(e);
             var editCell = GetCell(pos);
-            var addr = GetAddresse(pos);
+            var addr = GetAddress(pos);
 
             if (!string.IsNullOrEmpty(editCell.Value as string))
             {
-                var ga = SelectedGAs.FirstOrDefault(x => x.Addresse==addr);
+                var ga = SelectedGAs.FirstOrDefault(x => x.Address==addr);
 
                 if (ga == null) return;
                 editCell.Value = ga.Name;
@@ -253,11 +253,11 @@ namespace GroupAddress.UI
 
             var pos = new CellPosition(e);
             var editCell = GetCell(pos);
-            var addr = GetAddresse(pos);
+            var addr = GetAddress(pos);
 
             if (string.IsNullOrEmpty(editCell.Value as string)) return;
 
-            var ga = SelectedGAs.FirstOrDefault(x => x.Addresse == addr);
+            var ga = SelectedGAs.FirstOrDefault(x => x.Address == addr);
 
             if (ga == null)
                 ga = new GA(addr, (string)editCell.Value);

@@ -17,20 +17,21 @@ namespace GroupAddress.Core
         public string Name { get => name; 
             set {
                 name = value;
-               Addresse_Changed(this, EventArgs.Empty);
+               Address_Changed(this, EventArgs.Empty);
             }
         }
         [JsonInclude]
-        private Addresse addresse = new Addresse();
+        [JsonPropertyName("Address")]
+        private Address address = new Address();
         [JsonIgnore]
-        public Addresse Addresse { get => addresse; 
+        public Address Address { get => address; 
             private set { 
-                addresse = value;
-                addresse.Changed += Addresse_Changed;
+                address = value;
+                address.Changed += Address_Changed;
             } 
         }
 
-        private void Addresse_Changed(object? sender, EventArgs e)
+        private void Address_Changed(object? sender, EventArgs e)
         {
             Changed?.Invoke(this, EventArgs.Empty);
         }
@@ -46,17 +47,17 @@ namespace GroupAddress.Core
         public GA(int middleGroupAddress, int subAddress, string name) : this()
         {
             Name = name;
-            Addresse = new(middleGroupAddress, subAddress);
+            Address = new(middleGroupAddress, subAddress);
         }
-        public GA(Addresse addresse, string name) : this()
+        public GA(Address address, string name) : this()
         {
             Name = name;
-            Addresse = addresse;
+            Address = address;
         }
 
         public void Shift(int x)
         {
-            Addresse.GA += x;
+            Address.GA += x;
         }
 
 
@@ -64,13 +65,13 @@ namespace GroupAddress.Core
         {
             var newGA = new GA();
             newGA.Name = string.Join("_", [preString, Name]);
-            newGA.Addresse = Addresse.Clone();
+            newGA.Address = Address.Clone();
             return newGA;
         }
 
         public override string ToString()
         {
-            return Addresse + " - " + Name;
+            return Address + " - " + Name;
         }
 
         public int CompareTo(GA? other)
@@ -78,10 +79,10 @@ namespace GroupAddress.Core
             if(other == null) return 1;
             if(other == this) return 0;
 
-            return Addresse.ToString().CompareTo(other.Addresse.ToString());
+            return Address.ToString().CompareTo(other.Address.ToString());
         }
 
-        public string AddressName => Addresse + " - " + Name;
+        public string AddressName => Address + " - " + Name;
 
     }
 

@@ -43,19 +43,19 @@ namespace GroupAddress.UI
         {
             return !(a == b);
         }
-        public static bool operator ==(CellPosition a, Addresse b)
+        public static bool operator ==(CellPosition a, Address b)
         {
             return a.Row == b.GA && a.Column == b.MiddleGroup;
         }
-        public static bool operator !=(CellPosition a, Addresse b)
+        public static bool operator !=(CellPosition a, Address b)
         {
             return !(a == b);
         }
-        public static bool operator ==(Addresse a, CellPosition b)
+        public static bool operator ==(Address a, CellPosition b)
         {
             return b == a;
         }
-        public static bool operator !=(Addresse a, CellPosition b)
+        public static bool operator !=(Address a, CellPosition b)
         {
             return !(a == b);
         }

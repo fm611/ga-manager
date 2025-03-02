@@ -419,7 +419,7 @@ namespace GroupAddress.UI
                     if (newItem != null)
                     {
                         var itemGAs = insertMainGroup.GetItemGAs(newItem);
-                        var minGA = itemGAs.MinBy(x => x.Addresse.GA);
+                        var minGA = itemGAs.MinBy(x => x.Address.GA);
                         GADataTable.FirstDisplayedScrollingRowIndex = minGA == null ? 0 : GADataTable.GetCell(minGA)?.Row ?? 0;
                     }
                 }
@@ -441,10 +441,10 @@ namespace GroupAddress.UI
             foreach (var col in colMinRows)
             {
                 if (col == null) continue;
-                var gas = SelectedMainGroup.GAs.Where(x => x.Addresse.MiddleGroup == col.MiddleGroup && x.Addresse.GA >= col.GA);
+                var gas = SelectedMainGroup.GAs.Where(x => x.Address.MiddleGroup == col.MiddleGroup && x.Address.GA >= col.GA);
                 foreach (var g in gas)
                 {
-                    g.Addresse.GA += numRows;
+                    g.Address.GA += numRows;
                 }
             }
 
@@ -474,8 +474,8 @@ namespace GroupAddress.UI
             }
             foreach (var add in GADataTable.SelectedAddresses.OrderByDescending(a => a.GA))
             {
-                var gasMoveUp = SelectedMainGroup.GAs.Where(x => x.Addresse.MiddleGroup == add.MiddleGroup && x.Addresse.GA > add.GA);
-                gasMoveUp.ToList().ForEach(x => x.Addresse.GA--);
+                var gasMoveUp = SelectedMainGroup.GAs.Where(x => x.Address.MiddleGroup == add.MiddleGroup && x.Address.GA > add.GA);
+                gasMoveUp.ToList().ForEach(x => x.Address.GA--);
             }
 
             GADataTable.UpdateTable();

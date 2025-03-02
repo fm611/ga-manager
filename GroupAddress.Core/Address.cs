@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace GroupAddress.Core
 {
-    public class Addresse : IEquatable<Addresse?>
+    public class Address : IEquatable<Address?>
     {
         private int mainGroup;
         private int middleGroup;
         private int gA;
 
         public event EventHandler<EventArgs> Changed;
-        public Addresse() : this(-1,-1,-1)
+        public Address() : this(-1,-1,-1)
         {
         }
 
-        public Addresse(int middleGroup, int ga) : this(-1,middleGroup,ga)
+        public Address(int middleGroup, int ga) : this(-1,middleGroup,ga)
         {
         }
 
-        public Addresse(int mainGroup, int middleGroup, int ga)
+        public Address(int mainGroup, int middleGroup, int ga)
         {
             MainGroup = mainGroup;
             MiddleGroup = middleGroup;
@@ -46,9 +46,9 @@ namespace GroupAddress.Core
             }
         }
 
-        public Addresse Clone()
+        public Address Clone()
         {
-            return new Addresse(MainGroup, MiddleGroup, GA);
+            return new Address(MainGroup, MiddleGroup, GA);
         }
 
         public override string ToString()
@@ -58,17 +58,17 @@ namespace GroupAddress.Core
 
         public override bool Equals(object? obj)
         {
-            return Equals(obj as Addresse);
+            return Equals(obj as Address);
         }
 
-        public bool EqualsWithoutMainGroup(Addresse? other)
+        public bool EqualsWithoutMainGroup(Address? other)
         {
             return other is not null &&
                    MiddleGroup == other.MiddleGroup &&
                    GA == other.GA;
         }
 
-        public bool Equals(Addresse? other)
+        public bool Equals(Address? other)
         {
             return other is not null &&
                    MainGroup == other.MainGroup &&
@@ -76,12 +76,12 @@ namespace GroupAddress.Core
                    GA == other.GA;
         }
 
-        public static bool operator ==(Addresse? left, Addresse? right)
+        public static bool operator ==(Address? left, Address? right)
         {
-            return EqualityComparer<Addresse>.Default.Equals(left, right);
+            return EqualityComparer<Address>.Default.Equals(left, right);
         }
 
-        public static bool operator !=(Addresse? left, Addresse? right)
+        public static bool operator !=(Address? left, Address? right)
         {
             return !(left == right);
         }

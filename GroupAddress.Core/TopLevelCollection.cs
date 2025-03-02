@@ -11,6 +11,7 @@ namespace GroupAddress.Core
     {
         public event EventHandler<EventArgs>? Changed;
         [JsonInclude]
+        [JsonPropertyName("GAs")]
         private List<GA> _gAs = [];
         [JsonIgnore]
         public IReadOnlyCollection<GA> GAs => _gAs.AsReadOnly();
@@ -20,8 +21,8 @@ namespace GroupAddress.Core
         public string Id { get; set; }
         public string Name { get; set; } = "";
 
-        public int MinGASubAddress => GAs.Select(x => x.Addresse.GA).DefaultIfEmpty(-1).Min();
-        public int MaxGASubAddress => GAs.Select(x => x.Addresse.GA).DefaultIfEmpty(-1).Max();
+        public int MinGASubAddress => GAs.Select(x => x.Address.GA).DefaultIfEmpty(-1).Min();
+        public int MaxGASubAddress => GAs.Select(x => x.Address.GA).DefaultIfEmpty(-1).Max();
 
         public int SubAddress { get; protected set; } = -1;
 
@@ -41,25 +42,25 @@ namespace GroupAddress.Core
             gas.ToList().ForEach(x => _gAs.Add(x));
         }
 
-        public void SetSubGroupname(int addresse, string subgroupname)
+        public void SetSubGroupname(int address, string subgroupname)
         {
-            SubGroupNames[addresse] = subgroupname;
+            SubGroupNames[address] = subgroupname;
         }
         public void SetSubAddress(int subAddress)
         {
             SubAddress = subAddress;
             foreach (var ga in _gAs)
             {
-                ga.Addresse.MainGroup = subAddress;
+                ga.Address.MainGroup = subAddress;
             }
         }
 
 
         public void AddGA(GA ga)
         {
-            if (_gAs.Any(x => x.Addresse == ga.Addresse)) return;
+            if (_gAs.Any(x => x.Address == ga.Address)) return;
 
-            ga.Addresse.MainGroup = SubAddress;
+            ga.Address.MainGroup = SubAddress;
             _gAs.Add(ga);
             ga.Changed += Ga_Changed;
             Changed?.Invoke(this, EventArgs.Empty);
@@ -87,7 +88,7 @@ namespace GroupAddress.Core
         {
             foreach (var ga in _gAs)
             {
-                ga.Addresse.GA += s;
+                ga.Address.GA += s;
             }
         }
 
