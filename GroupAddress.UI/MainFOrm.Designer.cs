@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             MainGroupsListBox = new ListBox();
             MainGroupsListBoxContextMenu = new ContextMenuStrip(components);
             AddMainGroupToolStripMenuItem = new ToolStripMenuItem();
@@ -66,6 +66,7 @@
             label3 = new Label();
             UnselectItemsButton = new Button();
             GADataTableBackPanel = new Panel();
+            NewEmptyItemToolStripMenuItem = new ToolStripMenuItem();
             MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
@@ -146,24 +147,24 @@
             GADataTable.AllowUserToDeleteRows = false;
             GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = SystemColors.ControlLight;
-            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.Padding = new Padding(0, 5, 0, 5);
-            dataGridViewCellStyle3.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.ControlLight;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.Padding = new Padding(0, 5, 0, 5);
+            dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = SystemColors.Window;
-            dataGridViewCellStyle4.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
-            GADataTable.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
             GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(4, 4);
             GADataTable.Name = "GADataTable";
@@ -312,28 +313,28 @@
             // 
             // ItemsListBoxContextMenu
             // 
-            ItemsListBoxContextMenu.Items.AddRange(new ToolStripItem[] { NewItemToolStripMenuItem, EditItemToolStripMenuItem, DeleteItemToolStripMenuItem });
+            ItemsListBoxContextMenu.Items.AddRange(new ToolStripItem[] { NewEmptyItemToolStripMenuItem, NewItemToolStripMenuItem, EditItemToolStripMenuItem, DeleteItemToolStripMenuItem });
             ItemsListBoxContextMenu.Name = "ItemsListBoxContextMenu";
-            ItemsListBoxContextMenu.Size = new Size(131, 70);
+            ItemsListBoxContextMenu.Size = new Size(181, 114);
             // 
             // NewItemToolStripMenuItem
             // 
             NewItemToolStripMenuItem.Name = "NewItemToolStripMenuItem";
-            NewItemToolStripMenuItem.Size = new Size(130, 22);
-            NewItemToolStripMenuItem.Text = "Neu";
+            NewItemToolStripMenuItem.Size = new Size(180, 22);
+            NewItemToolStripMenuItem.Text = "Neu (Template)";
             NewItemToolStripMenuItem.Click += NewItemToolStripMenuItem_Click;
             // 
             // EditItemToolStripMenuItem
             // 
             EditItemToolStripMenuItem.Name = "EditItemToolStripMenuItem";
-            EditItemToolStripMenuItem.Size = new Size(130, 22);
+            EditItemToolStripMenuItem.Size = new Size(180, 22);
             EditItemToolStripMenuItem.Text = "Bearbeiten";
             EditItemToolStripMenuItem.Click += EditItemToolStripMenuItem_Click;
             // 
             // DeleteItemToolStripMenuItem
             // 
             DeleteItemToolStripMenuItem.Name = "DeleteItemToolStripMenuItem";
-            DeleteItemToolStripMenuItem.Size = new Size(130, 22);
+            DeleteItemToolStripMenuItem.Size = new Size(180, 22);
             DeleteItemToolStripMenuItem.Text = "Löschen";
             DeleteItemToolStripMenuItem.Click += DeleteItemToolStripMenuItem_Click;
             // 
@@ -371,6 +372,13 @@
             GADataTableBackPanel.Padding = new Padding(4);
             GADataTableBackPanel.Size = new Size(1056, 717);
             GADataTableBackPanel.TabIndex = 40;
+            // 
+            // NewEmptyItemToolStripMenuItem
+            // 
+            NewEmptyItemToolStripMenuItem.Name = "NewEmptyItemToolStripMenuItem";
+            NewEmptyItemToolStripMenuItem.Size = new Size(180, 22);
+            NewEmptyItemToolStripMenuItem.Text = "Neu (leer)";
+            NewEmptyItemToolStripMenuItem.Click += NewEmptyItemToolStripMenuItem_Click;
             // 
             // MainForm
             // 
@@ -442,5 +450,6 @@
         private ToolStripMenuItem NewItemToolStripMenuItem;
         private ToolStripMenuItem EditItemToolStripMenuItem;
         private ToolStripMenuItem DeleteItemToolStripMenuItem;
+        private ToolStripMenuItem NewEmptyItemToolStripMenuItem;
     }
 }

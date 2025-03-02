@@ -519,7 +519,7 @@ namespace GroupAddress.UI
         {
             GADataTable.FilterByItem(SelectedItems);
 
-            if(SelectedItems != null && SelectedItems.Count > 0)
+            if (SelectedItems != null && SelectedItems.Count > 0)
                 GADataTableBackPanel.BackColor = Color.Red;
             else
                 GADataTableBackPanel.BackColor = Color.Transparent;
@@ -561,13 +561,13 @@ namespace GroupAddress.UI
             if (item == null) return;
 
             //var itemGAs = SelectedMainGroup.GAs.Where(ga => SelectedItems.Select(x => x.Id).Contains(ga.ItemId)).ToList();
-            var itemGAs = SelectedMainGroup.GAs.Where(ga => ga.ItemId==item.Id).ToList();
+            var itemGAs = SelectedMainGroup.GAs.Where(ga => ga.ItemId == item.Id).ToList();
 
             if (itemGAs.Count == 0)
             {
                 var res = MessageBox.Show("Möchten Sie das Item wirklich löschen?", "Item löschen", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                 if (res != DialogResult.OK) return;
-            } 
+            }
             else
             {
                 var delItemDiag = new DeleteItemDialog(itemGAs);
@@ -575,7 +575,7 @@ namespace GroupAddress.UI
 
                 if (res != DialogResult.OK) return;
 
-                if(delItemDiag.IncludeGAs)
+                if (delItemDiag.IncludeGAs)
                 {
                     itemGAs.ForEach(SelectedMainGroup.RemoveGA);
                 }
@@ -603,5 +603,20 @@ namespace GroupAddress.UI
 
         #endregion
 
+        private void NewEmptyItemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            var diag = new TextBoxDialog("Item", "Neues Item");
+            var res = diag.ShowDialog();
+
+            if (res != DialogResult.OK) return;
+
+            var newItem = new Item(diag.Content);
+
+            Project.AddItem(newItem);
+
+            UpdateUI();
+
+        }
     }
 }
