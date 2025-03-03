@@ -45,15 +45,15 @@ namespace GroupAddress.UI
         }
 
         public ListBoxWrapper<MainGroup> MainGroupWrapper { get; set; }
-        public ListBoxWrapper<Item> ItemWrapper { get; set; }
+        public ListBoxWrapper<Group> GroupWrapper { get; set; }
 
         public MainGroup? SelectedMainGroup { get; set; }
         public string? SelectedMainGroupId { get; set; }
 
-        public List<Item> SelectedItems { get; set; } = [];
+        public List<Group> SelectedGroups { get; set; } = [];
 
 
-        public ItemTemplateManagerForm? AddItemForm { get; set; }
+        public GroupTemplateManagerForm? AddGroupForm { get; set; }
 
         public int CurrentGARowScrollIndex { get; set; }
 
@@ -84,12 +84,12 @@ namespace GroupAddress.UI
                 nameof(MainGroup.Id),
                 () => Project.MainGroups);
 
-            ItemWrapper = new ListBoxWrapper<Item>(
-                ItemsListBox,
+            GroupWrapper = new ListBoxWrapper<Group>(
+                GroupsListBox,
                 (a, b) => a.Name.CompareTo(b.Name),
-                nameof(Item.Name),
-                nameof(Item.Id),
-                () => Project.GetItems(SelectedMainGroup),
+                nameof(Group.Name),
+                nameof(Group.Id),
+                () => Project.GetGroups(SelectedMainGroup),
                 false);
 
             RecentFilesJsonPath = "recent.json";
@@ -119,8 +119,8 @@ namespace GroupAddress.UI
             MainGroupWrapper.Update();
             MainGroupsListBox_SelectedIndexChanged(null, null);
 
-            ItemWrapper.Update();
-            ItemsListBox_SelectedIndexChanged(null, null);
+            GroupWrapper.Update();
+            GroupsListBox_SelectedIndexChanged(null, null);
             GADataTable.UpdateTable();
         }
 
@@ -316,7 +316,7 @@ namespace GroupAddress.UI
         {
             CurrentProjectFile = path;
             Project = project;
-            AddItemForm = null;
+            AddGroupForm = null;
             UpdateUI();
         }
 
@@ -365,7 +365,7 @@ namespace GroupAddress.UI
             SelectedMainGroup = (MainGroup?)MainGroupsListBox.SelectedItem;
             SelectedMainGroupId = (string?)MainGroupsListBox.SelectedValue;
 
-            ItemWrapper.Update();
+            GroupWrapper.Update();
             GADataTable.SetTopLevelCollection(SelectedMainGroup);
         }
 
@@ -386,7 +386,7 @@ namespace GroupAddress.UI
         #endregion
 
 
-        private void ItemManagerToolStripMenuItem_Click(object sender, EventArgs e)
+        private void GroupManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (SelectedMainGroup == null)
             {
@@ -395,31 +395,31 @@ namespace GroupAddress.UI
             }
 
 
-            if (AddItemForm == null)
-                AddItemForm = new ItemTemplateManagerForm(Project);
+            if (AddGroupForm == null)
+                AddGroupForm = new GroupTemplateManagerForm(Project);
 
-            AddItemForm.LoadData();
-            AddItemForm.SelectMainGroup(SelectedMainGroup?.Id);
+            AddGroupForm.LoadData();
+            AddGroupForm.SelectMainGroup(SelectedMainGroup?.Id);
 
-            AddItemForm.ShowDialog();
+            AddGroupForm.ShowDialog();
 
-            if (AddItemForm.DialogResult == DialogResult.OK)
+            if (AddGroupForm.DialogResult == DialogResult.OK)
             {
                 UpdateUI();
 
-                if (AddItemForm.SelectedMainGroup != null)
+                if (AddGroupForm.SelectedMainGroup != null)
                 {
-                    var insertMainGroup = AddItemForm.SelectedMainGroup;
-                    MainGroupsListBox.SelectedValue = AddItemForm.SelectedMainGroup?.Id;
+                    var insertMainGroup = AddGroupForm.SelectedMainGroup;
+                    MainGroupsListBox.SelectedValue = AddGroupForm.SelectedMainGroup?.Id;
 
                     GADataTable.SetTopLevelCollection(insertMainGroup);
 
-                    var newItem = AddItemForm.LastInsertedItem;
+                    var newGroup = AddGroupForm.LastInsertedGroup;
 
-                    if (newItem != null)
+                    if (newGroup != null)
                     {
-                        var itemGAs = insertMainGroup.GetItemGAs(newItem);
-                        var minGA = itemGAs.MinBy(x => x.Address.GA);
+                        var groupGAs = insertMainGroup.GetGroupGAs(newGroup);
+                        var minGA = groupGAs.MinBy(x => x.Address.GA);
                         GADataTable.FirstDisplayedScrollingRowIndex = minGA == null ? 0 : GADataTable.GetCell(minGA)?.Row ?? 0;
                     }
                 }
@@ -499,27 +499,27 @@ namespace GroupAddress.UI
         }
 
 
-        private void UnselectItemsButton_Click(object sender, EventArgs e)
+        private void UnselectGroupsButton_Click(object sender, EventArgs e)
         {
-            ItemsListBox.ClearSelected();
+            GroupsListBox.ClearSelected();
         }
 
-        private void ItemsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void GroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var newSelectedItems = ItemsListBox.SelectedItems.Cast<Item>().ToList();
+            var newSelectedGroups = GroupsListBox.SelectedItems.Cast<Group>().ToList();
 
-            if (SelectedItems.All(newSelectedItems.Contains) && SelectedItems.Count == newSelectedItems.Count) return;
+            if (SelectedGroups.All(newSelectedGroups.Contains) && SelectedGroups.Count == newSelectedGroups.Count) return;
 
-            SelectedItems = newSelectedItems;
+            SelectedGroups = newSelectedGroups;
 
-            SetGaItemFilter();
+            SetGroupGaFilter();
         }
 
-        private void SetGaItemFilter()
+        private void SetGroupGaFilter()
         {
-            GADataTable.FilterByItem(SelectedItems);
+            GADataTable.FilterByGroup(SelectedGroups);
 
-            if (SelectedItems != null && SelectedItems.Count > 0)
+            if (SelectedGroups != null && SelectedGroups.Count > 0)
                 GADataTableBackPanel.BackColor = Color.Red;
             else
                 GADataTableBackPanel.BackColor = Color.Transparent;
@@ -527,96 +527,103 @@ namespace GroupAddress.UI
 
         }
 
-        #region Items ListBox
+        #region Groups ListBox
 
-        private void NewItemToolStripMenuItem_Click(object sender, EventArgs e)
+        private void NewGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ItemManagerToolStripMenuItem_Click(sender, e);
+            GroupManagerToolStripMenuItem_Click(sender, e);
         }
 
-        private void EditItemToolStripMenuItem_Click(object sender, EventArgs e)
+        private void EditGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var selectedItem = (Item?)ItemsListBox.SelectedItem;
-            if (selectedItem == null) return;
+            var selectedGroup = (Group?)GroupsListBox.SelectedItem;
+            if (selectedGroup == null) return;
 
 
-            var diag = new TextBoxDialog("Item", ((Item)ItemsListBox.SelectedItem).Name);
+            var diag = new TextBoxDialog("Gruppe", ((Group)GroupsListBox.SelectedItem).Name);
             var res = diag.ShowDialog();
 
             if (res == DialogResult.OK)
             {
-                ((Item)ItemsListBox.SelectedItem).Name = diag.Content;
+                ((Group)GroupsListBox.SelectedItem).Name = diag.Content;
                 UpdateUI();
             }
 
 
         }
 
-        private void DeleteItemToolStripMenuItem_Click(object sender, EventArgs e)
+        private void DeleteroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (SelectedMainGroup == null) return;
-            if (SelectedItems == null || SelectedItems.Count == 0) return;
+            if (SelectedGroups == null || SelectedGroups.Count == 0) return;
 
-            var item = SelectedItems.FirstOrDefault();
-            if (item == null) return;
+            var group = SelectedGroups.FirstOrDefault();
+            if (group == null) return;
 
-            //var itemGAs = SelectedMainGroup.GAs.Where(ga => SelectedItems.Select(x => x.Id).Contains(ga.ItemId)).ToList();
-            var itemGAs = SelectedMainGroup.GAs.Where(ga => ga.ItemId == item.Id).ToList();
+            var groupGAs = SelectedMainGroup.GAs.Where(ga => ga.GroupId == group.Id).ToList();
 
-            if (itemGAs.Count == 0)
+            if (groupGAs.Count == 0)
             {
-                var res = MessageBox.Show("Möchten Sie das Item wirklich löschen?", "Item löschen", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                var res = MessageBox.Show("Möchten Sie die Gruppe wirklich löschen?", "Gruppe löschen", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                 if (res != DialogResult.OK) return;
             }
             else
             {
-                var delItemDiag = new DeleteItemDialog(itemGAs);
-                var res = delItemDiag.ShowDialog();
+                var delGroupDiag = new DeleteGroupDialog(groupGAs);
+                var res = delGroupDiag.ShowDialog();
 
                 if (res != DialogResult.OK) return;
 
-                if (delItemDiag.IncludeGAs)
+                if (delGroupDiag.IncludeGAs)
                 {
-                    itemGAs.ForEach(SelectedMainGroup.RemoveGA);
+                    groupGAs.ForEach(SelectedMainGroup.RemoveGA);
                 }
             }
 
-            SelectedMainGroup.GAs.Where(ga => SelectedItems.Select(x => x.Id).Contains(ga.ItemId)).ToList().ForEach(x => x.ItemId = null);
-            Project.RemoveItem(item);
+            SelectedMainGroup.GAs.Where(ga => SelectedGroups.Select(x => x.Id).Contains(ga.GroupId)).ToList().ForEach(x => x.GroupId = null);
+            Project.RemoveGroup(group);
 
             UpdateUI();
 
         }
-        private void ItemsListBox_MouseDown(object sender, MouseEventArgs e)
+        private void GroupsListBox_MouseDown(object sender, MouseEventArgs e)
         {
 
             if (e.Button == MouseButtons.Right)
             {
-                int index = this.ItemsListBox.IndexFromPoint(e.Location);
+                int index = this.GroupsListBox.IndexFromPoint(e.Location);
                 if (index != ListBox.NoMatches)
                 {
-                    ItemsListBox.ClearSelected();
-                    ItemsListBox.SelectedIndex = index;
+                    GroupsListBox.ClearSelected();
+                    GroupsListBox.SelectedIndex = index;
                 }
             }
         }
 
         #endregion
 
-        private void NewEmptyItemToolStripMenuItem_Click(object sender, EventArgs e)
+        private void NewEmptyGroupToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            var diag = new TextBoxDialog("Item", "Neues Item");
+            var diag = new TextBoxDialog("Gruppe", "Neue Gruppe");
             var res = diag.ShowDialog();
 
             if (res != DialogResult.OK) return;
 
-            var newItem = new Item(diag.Content);
+            var newGroup = new Group(diag.Content);
 
-            Project.AddItem(newItem);
+            Project.AddGroup(newGroup);
 
             UpdateUI();
 
         }
+
+        private void GADataTable_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                GaDataGridContextMenu.Show(Cursor.Position.X, Cursor.Position.Y);
+            }
+        }
+    
     }
 }

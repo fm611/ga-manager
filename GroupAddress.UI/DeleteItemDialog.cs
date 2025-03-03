@@ -11,15 +11,15 @@ using System.Windows.Forms;
 
 namespace GroupAddress.UI
 {
-    public partial class DeleteItemDialog : Form
+    public partial class DeleteGroupDialog : Form
     {
         public bool IncludeGAs { get; set; }
 
-        public DeleteItemDialog(List<GA> gas)
+        public DeleteGroupDialog(List<GA> gas)
         {
             InitializeComponent();
 
-            Text = "Item löschen?";
+            Text = "Gruppe löschen?";
 
             IncludeGAs = false;
 

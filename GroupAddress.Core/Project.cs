@@ -20,15 +20,17 @@ namespace GroupAddress.Core
         [JsonIgnore]
         public IReadOnlyCollection<MainGroup> MainGroups => _mainGroups.AsReadOnly();
         [JsonInclude]
-        [JsonPropertyName("ItemTemplates")]
-        private List<ItemTemplate> _itemTemplates = [];
+        [JsonPropertyName("GroupTemplates")]
+        private List<GroupTemplate> _groupTemplates = [];
         [JsonIgnore]
-        public IReadOnlyCollection<ItemTemplate> ItemTemplates => _itemTemplates.AsReadOnly();
+        public IReadOnlyCollection<GroupTemplate> GroupTemplates => _groupTemplates.AsReadOnly();
+
         [JsonInclude]
-        [JsonPropertyName("Items")]
-        private List<Item> _items = [];
+        [JsonPropertyName("Groups")]
+        private List<Group> _groups = [];
         [JsonIgnore]
-        public IReadOnlyCollection<Item> Items => _items.AsReadOnly();
+        public IReadOnlyCollection<Group> Groups => _groups.AsReadOnly();
+
 
         public Project() {
             Created = DateTime.Now;
@@ -48,7 +50,7 @@ namespace GroupAddress.Core
                 mg.Changed -= (sender, e) => OnChange();
                 mg.Changed += (sender, e) => OnChange();
             }
-            foreach (var it in _itemTemplates)
+            foreach (var it in _groupTemplates)
             {
                 it.Changed -= (sender, e) => OnChange();
                 it.Changed += (sender, e) => OnChange();
@@ -72,49 +74,46 @@ namespace GroupAddress.Core
             return res;
         }
 
-        public void AddItemTemplate(ItemTemplate itemTemplate)
+        public void AddGroupTemplate(GroupTemplate groupTemplate)
         {
-            _itemTemplates.Add(itemTemplate);
-            itemTemplate.Changed += (sender,e) => OnChange();
+            _groupTemplates.Add(groupTemplate);
+            groupTemplate.Changed += (sender,e) => OnChange();
             OnChange();
         }
 
-        public bool RemoveItemTemplate(ItemTemplate itemTemplate)
+        public bool RemoveGroupTemplate(GroupTemplate groupTemplate)
         {
-            var res = _itemTemplates.Remove(itemTemplate);
+            var res = _groupTemplates.Remove(groupTemplate);
             if (res) {
                 OnChange();
-                itemTemplate.Changed -= (sender,e) => OnChange();
+                groupTemplate.Changed -= (sender,e) => OnChange();
             }
             return res;
         }
 
 
-        public void AddItem(Item item)
+        public void AddGroup(Group group)
         {
-            _items.Add(item);
-            item.Changed += (sender, e) => OnChange();
+            _groups.Add(group);
+            group.Changed += (sender, e) => OnChange();
             OnChange();
         }
-        public bool RemoveItem(Item item)
+        public bool RemoveGroup(Group group)
         {
-            var res = _items.Remove(item);
+            var res = _groups.Remove(group);
             if (res)
             {
                 OnChange();
-                item.Changed -= (sender, e) => OnChange();
+                group.Changed -= (sender, e) => OnChange();
             }
             return res;
         }
 
 
-
-        public List<Item> GetItems(MainGroup? mainGroup)
+        public List<Group> GetGroups(MainGroup? mainGroup)
         {
-            if (mainGroup == null) return [];
-            var mgItems = mainGroup.GAs.Where(x => x.ItemId !=null).Select(x => x.ItemId).ToList();
+            return Groups.ToList();
 
-            return Items.Where(x => mgItems.Contains(x.Id)).ToList();
         }
 
         public string GetJson()
@@ -150,26 +149,25 @@ namespace GroupAddress.Core
         {
             var proj = new Project();
 
-            #region Init ItemTemplates
+            #region Init GroupTemplates
 
             string guidBase = "DA6C8DDB-BC59-4805-84C9-E81A3DF7CB";
 
-            var itemTemplates = new List<ItemTemplate>() {
-                DefaultItemTemplates.Light,
-                DefaultItemTemplates.LightDimm,
-                DefaultItemTemplates.LightTW,
-                DefaultItemTemplates.LightRGBW
+            var groupTemplates = new List<GroupTemplate>() {
+                DefaultGroupTemplates.Light,
+                DefaultGroupTemplates.LightDimm,
+                DefaultGroupTemplates.LightTW,
+                DefaultGroupTemplates.LightRGBW
             };
 
-            for (int i = 0; i < itemTemplates.Count; i++)
+            for (int i = 0; i < groupTemplates.Count; i++)
             {
                 var guid = guidBase + i.ToString("D2");
-                if (proj.ItemTemplates.Any(t => t.Id == guid)) continue;
+                if (proj.GroupTemplates.Any(t => t.Id == guid)) continue;
 
-                var template = itemTemplates[i];
+                var template = groupTemplates[i];
                 template.Id = guid;
-                //proj.ItemTemplates.Add(template);
-                proj.AddItemTemplate(template);
+                proj.AddGroupTemplate(template);
 
             }
 
@@ -210,13 +208,13 @@ namespace GroupAddress.Core
 
             #endregion
 
-            #region Init Item
+            #region Init Group
 
             var mGroup1 = proj.MainGroups.First(x => x.SubAddress == 1);
 
-            var item = mGroup1.AddItem(DefaultItemTemplates.Light, "EG_HWR_Licht_Decke");
-            if (item != null)
-                proj.AddItem(item);            
+            var group = mGroup1.AddGroup(DefaultGroupTemplates.Light, "EG_HWR_Licht_Decke");
+            if (group != null)
+                proj.AddGroup(group);            
 
             #endregion
 

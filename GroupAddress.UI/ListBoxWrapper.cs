@@ -48,12 +48,12 @@ namespace GroupAddress.UI
 
         public void Update()
         {
+            var currSelectedItem = ListBox.SelectedItem;
+            var currSelectedItems = ListBox.SelectedItems.Cast<T>().ToList();
 
             var selectionMode = ListBox.SelectionMode;
             ListBox.SelectionMode = SelectionMode.None;
 
-            var currSelectedItem = ListBox.SelectedItem;
-            var currSelectedItems = ListBox.SelectedItems.Cast<T>().ToList();
 
             BindingList.Clear();
             BackingList.AddRange(SourceFunc());

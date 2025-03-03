@@ -1,5 +1,7 @@
 ﻿
 
+using System.Text.Json.Serialization;
+
 namespace GroupAddress.Core
 {
 
@@ -17,9 +19,8 @@ namespace GroupAddress.Core
                 "GET Misc"
                 };
 
-
-
         public int DefaultBlockLength { get; set; } = 1;
+
 
         private MainGroup() : base() { }
 
@@ -46,19 +47,20 @@ namespace GroupAddress.Core
             }
         }
 
-        public Item? AddItem(ItemTemplate template, string gaPrefix, int startIndex = 0)
+        public Group? AddGroup(GroupTemplate template, string gaPrefix, int startIndex = 0)
         {
-            var newItem = new Item(gaPrefix);
+            var newGroup = new Group(gaPrefix);
             var gas = template.GAs.Select(x => x.CloneWithPrefix(gaPrefix)).ToList();
 
-            gas.ForEach(x => x.ItemId = newItem.Id);
+            gas.ForEach(x => x.GroupId = newGroup.Id);
             gas.ForEach(x => x.Shift(startIndex));
 
             if (gas.Any(x => GAs.Any(y => y.Address.EqualsWithoutMainGroup(x.Address))))
                 return null;
 
             AddGARange(gas);
-            return newItem;
+
+            return newGroup;
         }
 
         public int GetNextStartingBlockIndex()
@@ -75,14 +77,14 @@ namespace GroupAddress.Core
             base.RemoveGA(ga);
         }
 
-        public List<GA> GetItemGAs(Item item)
+        public List<GA> GetGroupGAs(Group group)
         {
-            return GetItemGAs(item.Id);
+            return GetGroupGAs(group.Id);
         }
 
-        public List<GA> GetItemGAs(string itemId)
+        public List<GA> GetGroupGAs(string groupId)
         {
-            return GAs.Where(x => x.ItemId == itemId).ToList();
+            return GAs.Where(x => x.GroupId == groupId).ToList();
         }
 
         public string AddressName => SubAddress + " - " + Name;

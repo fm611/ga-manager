@@ -73,9 +73,9 @@ namespace GroupAddress.Core
 
         public void AddGARange(IEnumerable<GA> gas)
         {
-            foreach (var item in gas)
+            foreach (var ga in gas)
             {
-                AddGA(item);
+                AddGA(ga);
             }
         }
         public virtual void RemoveGA(GA ga)

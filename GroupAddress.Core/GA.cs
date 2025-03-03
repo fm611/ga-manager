@@ -36,7 +36,7 @@ namespace GroupAddress.Core
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
-        public string? ItemId { get; set; }
+        public string? GroupId { get; set; }
 
         [JsonConstructor]
         private GA()

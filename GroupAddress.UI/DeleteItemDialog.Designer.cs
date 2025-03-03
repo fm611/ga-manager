@@ -1,6 +1,6 @@
 ﻿namespace GroupAddress.UI
 {
-    partial class DeleteItemDialog
+    partial class DeleteGroupDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,7 @@
             GaListBox = new ListBox();
             IncludeGaPanel = new Panel();
             CancelButton1 = new Button();
-            DeleteOnlyItemButton = new Button();
+            DeleteOnlyGroupButton = new Button();
             DeleteWithGAsButton = new Button();
             label1 = new Label();
             IncludeGaPanel.SuspendLayout();
@@ -50,7 +50,7 @@
             // IncludeGaPanel
             // 
             IncludeGaPanel.Controls.Add(CancelButton1);
-            IncludeGaPanel.Controls.Add(DeleteOnlyItemButton);
+            IncludeGaPanel.Controls.Add(DeleteOnlyGroupButton);
             IncludeGaPanel.Controls.Add(DeleteWithGAsButton);
             IncludeGaPanel.Controls.Add(label1);
             IncludeGaPanel.Controls.Add(GaListBox);
@@ -71,13 +71,13 @@
             // 
             // DeleteOnlyItemButton
             // 
-            DeleteOnlyItemButton.DialogResult = DialogResult.OK;
-            DeleteOnlyItemButton.Location = new Point(179, 173);
-            DeleteOnlyItemButton.Name = "DeleteOnlyItemButton";
-            DeleteOnlyItemButton.Size = new Size(115, 23);
-            DeleteOnlyItemButton.TabIndex = 3;
-            DeleteOnlyItemButton.Text = "Nur Item löschen";
-            DeleteOnlyItemButton.UseVisualStyleBackColor = true;
+            DeleteOnlyGroupButton.DialogResult = DialogResult.OK;
+            DeleteOnlyGroupButton.Location = new Point(179, 173);
+            DeleteOnlyGroupButton.Name = "DeleteOnlyGroupButton";
+            DeleteOnlyGroupButton.Size = new Size(115, 23);
+            DeleteOnlyGroupButton.TabIndex = 3;
+            DeleteOnlyGroupButton.Text = "Nur Gruppe löschen";
+            DeleteOnlyGroupButton.UseVisualStyleBackColor = true;
             // 
             // DeleteWithGAsButton
             // 
@@ -85,7 +85,7 @@
             DeleteWithGAsButton.Name = "DeleteWithGAsButton";
             DeleteWithGAsButton.Size = new Size(141, 23);
             DeleteWithGAsButton.TabIndex = 2;
-            DeleteWithGAsButton.Text = "Item + GA's löschen";
+            DeleteWithGAsButton.Text = "Gruppe + GA's löschen";
             DeleteWithGAsButton.UseVisualStyleBackColor = true;
             DeleteWithGAsButton.Click += DeleteWithGAsButton_Click;
             // 
@@ -96,7 +96,7 @@
             label1.Name = "label1";
             label1.Size = new Size(241, 15);
             label1.TabIndex = 1;
-            label1.Text = "Das Item enthält folgende Gruppenadressen:";
+            label1.Text = "Die Gruppe enthält folgende Gruppenadressen:";
             // 
             // DeleteItemDialog
             // 
@@ -108,8 +108,8 @@
             ClientSize = new Size(449, 226);
             Controls.Add(IncludeGaPanel);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            Name = "DeleteItemDialog";
-            Text = "Item löschen";
+            Name = "DeleteGroupDialog";
+            Text = "Gruppe löschen";
             IncludeGaPanel.ResumeLayout(false);
             IncludeGaPanel.PerformLayout();
             ResumeLayout(false);
@@ -119,7 +119,7 @@
 
         private ListBox GaListBox;
         private Panel IncludeGaPanel;
-        private Button DeleteOnlyItemButton;
+        private Button DeleteOnlyGroupButton;
         private Button DeleteWithGAsButton;
         private Label label1;
         private Button CancelButton1;

@@ -53,26 +53,32 @@
             toolStripSeparator5 = new ToolStripSeparator();
             ExportToolStripMenuItem = new ToolStripMenuItem();
             ImportToolStripMenuItem = new ToolStripMenuItem();
-            ItemManagerToolStripMenuItem = new ToolStripMenuItem();
+            GroupManagerToolStripMenuItem = new ToolStripMenuItem();
             AddCellsNumTextBox = new ToolStripTextBox();
             AddCellsStripMenuItem = new ToolStripMenuItem();
             DeleteCellsStripMenuItem = new ToolStripMenuItem();
             saveFileDialog1 = new SaveFileDialog();
-            ItemsListBox = new ListBox();
-            ItemsListBoxContextMenu = new ContextMenuStrip(components);
-            NewItemToolStripMenuItem = new ToolStripMenuItem();
-            EditItemToolStripMenuItem = new ToolStripMenuItem();
-            DeleteItemToolStripMenuItem = new ToolStripMenuItem();
+            GroupsListBox = new ListBox();
+            GroupsListBoxContextMenu = new ContextMenuStrip(components);
+            NewEmptyGroupToolStripMenuItem = new ToolStripMenuItem();
+            NewGroupToolStripMenuItem = new ToolStripMenuItem();
+            EditGroupToolStripMenuItem = new ToolStripMenuItem();
+            DeleteGroupToolStripMenuItem = new ToolStripMenuItem();
             label3 = new Label();
-            UnselectItemsButton = new Button();
+            UnselectGroupsButton = new Button();
             GADataTableBackPanel = new Panel();
-            NewEmptyItemToolStripMenuItem = new ToolStripMenuItem();
+            GaDataGridContextMenu = new ContextMenuStrip(components);
+            testToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
+            gruppe1ToolStripMenuItem = new ToolStripMenuItem();
+            gruppe2ToolStripMenuItem = new ToolStripMenuItem();
             MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
             menuStrip1.SuspendLayout();
-            ItemsListBoxContextMenu.SuspendLayout();
+            GroupsListBoxContextMenu.SuspendLayout();
             GADataTableBackPanel.SuspendLayout();
+            GaDataGridContextMenu.SuspendLayout();
             SuspendLayout();
             // 
             // MainGroupsListBox
@@ -175,6 +181,7 @@
             GADataTable.Size = new Size(1048, 709);
             GADataTable.TabIndex = 34;
             GADataTable.TopLevelCollection = null;
+            GADataTable.CellMouseDown += GADataTable_CellMouseDown;
             // 
             // label2
             // 
@@ -187,7 +194,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, ItemManagerToolStripMenuItem, AddCellsNumTextBox, AddCellsStripMenuItem, DeleteCellsStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { FileToolStripMenuItem, GroupManagerToolStripMenuItem, AddCellsNumTextBox, AddCellsStripMenuItem, DeleteCellsStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(1324, 27);
@@ -265,12 +272,12 @@
             ImportToolStripMenuItem.Size = new Size(168, 22);
             ImportToolStripMenuItem.Text = "Import";
             // 
-            // ItemManagerToolStripMenuItem
+            // GroupManagerToolStripMenuItem
             // 
-            ItemManagerToolStripMenuItem.Name = "ItemManagerToolStripMenuItem";
-            ItemManagerToolStripMenuItem.Size = new Size(93, 23);
-            ItemManagerToolStripMenuItem.Text = "Item Manager";
-            ItemManagerToolStripMenuItem.Click += ItemManagerToolStripMenuItem_Click;
+            GroupManagerToolStripMenuItem.Name = "GroupManagerToolStripMenuItem";
+            GroupManagerToolStripMenuItem.Size = new Size(115, 23);
+            GroupManagerToolStripMenuItem.Text = "Gruppen Manager";
+            GroupManagerToolStripMenuItem.Click += GroupManagerToolStripMenuItem_Click;
             // 
             // AddCellsNumTextBox
             // 
@@ -297,46 +304,53 @@
             DeleteCellsStripMenuItem.Text = "toolStripMenuItem2";
             DeleteCellsStripMenuItem.Click += DeleteCellsToolStripMenuItem_Click;
             // 
-            // ItemsListBox
+            // GroupsListBox
             // 
-            ItemsListBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            ItemsListBox.ContextMenuStrip = ItemsListBoxContextMenu;
-            ItemsListBox.FormattingEnabled = true;
-            ItemsListBox.ItemHeight = 15;
-            ItemsListBox.Location = new Point(12, 502);
-            ItemsListBox.Name = "ItemsListBox";
-            ItemsListBox.SelectionMode = SelectionMode.MultiExtended;
-            ItemsListBox.Size = new Size(248, 274);
-            ItemsListBox.TabIndex = 37;
-            ItemsListBox.SelectedIndexChanged += ItemsListBox_SelectedIndexChanged;
-            ItemsListBox.MouseDown += ItemsListBox_MouseDown;
+            GroupsListBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            GroupsListBox.ContextMenuStrip = GroupsListBoxContextMenu;
+            GroupsListBox.FormattingEnabled = true;
+            GroupsListBox.ItemHeight = 15;
+            GroupsListBox.Location = new Point(12, 502);
+            GroupsListBox.Name = "GroupsListBox";
+            GroupsListBox.SelectionMode = SelectionMode.MultiExtended;
+            GroupsListBox.Size = new Size(248, 274);
+            GroupsListBox.TabIndex = 37;
+            GroupsListBox.SelectedIndexChanged += GroupsListBox_SelectedIndexChanged;
+            GroupsListBox.MouseDown += GroupsListBox_MouseDown;
             // 
-            // ItemsListBoxContextMenu
+            // GroupsListBoxContextMenu
             // 
-            ItemsListBoxContextMenu.Items.AddRange(new ToolStripItem[] { NewEmptyItemToolStripMenuItem, NewItemToolStripMenuItem, EditItemToolStripMenuItem, DeleteItemToolStripMenuItem });
-            ItemsListBoxContextMenu.Name = "ItemsListBoxContextMenu";
-            ItemsListBoxContextMenu.Size = new Size(181, 114);
+            GroupsListBoxContextMenu.Items.AddRange(new ToolStripItem[] { NewEmptyGroupToolStripMenuItem, NewGroupToolStripMenuItem, EditGroupToolStripMenuItem, DeleteGroupToolStripMenuItem });
+            GroupsListBoxContextMenu.Name = "GroupsListBoxContextMenu";
+            GroupsListBoxContextMenu.Size = new Size(157, 92);
             // 
-            // NewItemToolStripMenuItem
+            // NewEmptyGroupToolStripMenuItem
             // 
-            NewItemToolStripMenuItem.Name = "NewItemToolStripMenuItem";
-            NewItemToolStripMenuItem.Size = new Size(180, 22);
-            NewItemToolStripMenuItem.Text = "Neu (Template)";
-            NewItemToolStripMenuItem.Click += NewItemToolStripMenuItem_Click;
+            NewEmptyGroupToolStripMenuItem.Name = "NewEmptyGroupToolStripMenuItem";
+            NewEmptyGroupToolStripMenuItem.Size = new Size(156, 22);
+            NewEmptyGroupToolStripMenuItem.Text = "Neu (leer)";
+            NewEmptyGroupToolStripMenuItem.Click += NewEmptyGroupToolStripMenuItem_Click;
             // 
-            // EditItemToolStripMenuItem
+            // NewGroupToolStripMenuItem
             // 
-            EditItemToolStripMenuItem.Name = "EditItemToolStripMenuItem";
-            EditItemToolStripMenuItem.Size = new Size(180, 22);
-            EditItemToolStripMenuItem.Text = "Bearbeiten";
-            EditItemToolStripMenuItem.Click += EditItemToolStripMenuItem_Click;
+            NewGroupToolStripMenuItem.Name = "NewGroupToolStripMenuItem";
+            NewGroupToolStripMenuItem.Size = new Size(156, 22);
+            NewGroupToolStripMenuItem.Text = "Neu (Template)";
+            NewGroupToolStripMenuItem.Click += NewGroupToolStripMenuItem_Click;
             // 
-            // DeleteItemToolStripMenuItem
+            // EditGroupToolStripMenuItem
             // 
-            DeleteItemToolStripMenuItem.Name = "DeleteItemToolStripMenuItem";
-            DeleteItemToolStripMenuItem.Size = new Size(180, 22);
-            DeleteItemToolStripMenuItem.Text = "Löschen";
-            DeleteItemToolStripMenuItem.Click += DeleteItemToolStripMenuItem_Click;
+            EditGroupToolStripMenuItem.Name = "EditGroupToolStripMenuItem";
+            EditGroupToolStripMenuItem.Size = new Size(156, 22);
+            EditGroupToolStripMenuItem.Text = "Bearbeiten";
+            EditGroupToolStripMenuItem.Click += EditGroupToolStripMenuItem_Click;
+            // 
+            // DeleteGroupToolStripMenuItem
+            // 
+            DeleteGroupToolStripMenuItem.Name = "DeleteGroupToolStripMenuItem";
+            DeleteGroupToolStripMenuItem.Size = new Size(156, 22);
+            DeleteGroupToolStripMenuItem.Text = "Löschen";
+            DeleteGroupToolStripMenuItem.Click += DeleteroupToolStripMenuItem_Click;
             // 
             // label3
             // 
@@ -344,23 +358,23 @@
             label3.AutoSize = true;
             label3.Location = new Point(12, 475);
             label3.Name = "label3";
-            label3.Size = new Size(36, 15);
+            label3.Size = new Size(53, 15);
             label3.TabIndex = 38;
-            label3.Text = "Items";
+            label3.Text = "Gruppen";
             // 
-            // UnselectItemsButton
+            // UnselectGroupsButton
             // 
-            UnselectItemsButton.BackgroundImageLayout = ImageLayout.Zoom;
-            UnselectItemsButton.FlatStyle = FlatStyle.Flat;
-            UnselectItemsButton.ImageAlign = ContentAlignment.TopCenter;
-            UnselectItemsButton.Location = new Point(178, 467);
-            UnselectItemsButton.Name = "UnselectItemsButton";
-            UnselectItemsButton.Size = new Size(82, 29);
-            UnselectItemsButton.TabIndex = 39;
-            UnselectItemsButton.Text = "Clear Filter";
-            UnselectItemsButton.TextImageRelation = TextImageRelation.ImageBeforeText;
-            UnselectItemsButton.UseVisualStyleBackColor = true;
-            UnselectItemsButton.Click += UnselectItemsButton_Click;
+            UnselectGroupsButton.BackgroundImageLayout = ImageLayout.Zoom;
+            UnselectGroupsButton.FlatStyle = FlatStyle.Flat;
+            UnselectGroupsButton.ImageAlign = ContentAlignment.TopCenter;
+            UnselectGroupsButton.Location = new Point(178, 467);
+            UnselectGroupsButton.Name = "UnselectGroupsButton";
+            UnselectGroupsButton.Size = new Size(82, 29);
+            UnselectGroupsButton.TabIndex = 39;
+            UnselectGroupsButton.Text = "Clear Filter";
+            UnselectGroupsButton.TextImageRelation = TextImageRelation.ImageBeforeText;
+            UnselectGroupsButton.UseVisualStyleBackColor = true;
+            UnselectGroupsButton.Click += UnselectGroupsButton_Click;
             // 
             // GADataTableBackPanel
             // 
@@ -373,12 +387,36 @@
             GADataTableBackPanel.Size = new Size(1056, 717);
             GADataTableBackPanel.TabIndex = 40;
             // 
-            // NewEmptyItemToolStripMenuItem
+            // GaDataGridContextMenu
             // 
-            NewEmptyItemToolStripMenuItem.Name = "NewEmptyItemToolStripMenuItem";
-            NewEmptyItemToolStripMenuItem.Size = new Size(180, 22);
-            NewEmptyItemToolStripMenuItem.Text = "Neu (leer)";
-            NewEmptyItemToolStripMenuItem.Click += NewEmptyItemToolStripMenuItem_Click;
+            GaDataGridContextMenu.Items.AddRange(new ToolStripItem[] { testToolStripMenuItem, toolStripSeparator2, gruppe1ToolStripMenuItem, gruppe2ToolStripMenuItem });
+            GaDataGridContextMenu.Name = "GaDataGridContextMenu";
+            GaDataGridContextMenu.ShowImageMargin = false;
+            GaDataGridContextMenu.Size = new Size(172, 98);
+            // 
+            // testToolStripMenuItem
+            // 
+            testToolStripMenuItem.Enabled = false;
+            testToolStripMenuItem.Name = "testToolStripMenuItem";
+            testToolStripMenuItem.Size = new Size(171, 22);
+            testToolStripMenuItem.Text = "Zu Gruppe hinzufügen:";
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(168, 6);
+            // 
+            // gruppe1ToolStripMenuItem
+            // 
+            gruppe1ToolStripMenuItem.Name = "gruppe1ToolStripMenuItem";
+            gruppe1ToolStripMenuItem.Size = new Size(171, 22);
+            gruppe1ToolStripMenuItem.Text = "Gruppe 1";
+            // 
+            // gruppe2ToolStripMenuItem
+            // 
+            gruppe2ToolStripMenuItem.Name = "gruppe2ToolStripMenuItem";
+            gruppe2ToolStripMenuItem.Size = new Size(171, 22);
+            gruppe2ToolStripMenuItem.Text = "Gruppe 2";
             // 
             // MainForm
             // 
@@ -386,9 +424,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1324, 807);
             Controls.Add(GADataTableBackPanel);
-            Controls.Add(UnselectItemsButton);
+            Controls.Add(UnselectGroupsButton);
             Controls.Add(label3);
-            Controls.Add(ItemsListBox);
+            Controls.Add(GroupsListBox);
             Controls.Add(statusStrip1);
             Controls.Add(menuStrip1);
             Controls.Add(label2);
@@ -396,15 +434,16 @@
             Controls.Add(MainGroupsListBox);
             MainMenuStrip = menuStrip1;
             Name = "MainForm";
-            Text = "Form1";
+            Text = "Gruppenadressen Manager";
             MainGroupsListBoxContextMenu.ResumeLayout(false);
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
-            ItemsListBoxContextMenu.ResumeLayout(false);
+            GroupsListBoxContextMenu.ResumeLayout(false);
             GADataTableBackPanel.ResumeLayout(false);
+            GaDataGridContextMenu.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -432,7 +471,7 @@
         private ToolStripSeparator toolStripSeparator5;
         private ToolStripMenuItem ExportToolStripMenuItem;
         private ToolStripMenuItem ImportToolStripMenuItem;
-        private ToolStripMenuItem ItemManagerToolStripMenuItem;
+        private ToolStripMenuItem GroupManagerToolStripMenuItem;
         private ToolStripMenuItem OpenSampleProjectToolStripMenuItem;
         private ToolStripSeparator OpenRecentToolStripSeparator;
         private ToolStripTextBox AddCellsNumTextBox;
@@ -442,14 +481,19 @@
         private ToolStripMenuItem OpenFileStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem NewProjectMenuItem;
-        private ListBox ItemsListBox;
+        private ListBox GroupsListBox;
         private Label label3;
-        private Button UnselectItemsButton;
+        private Button UnselectGroupsButton;
         private Panel GADataTableBackPanel;
-        private ContextMenuStrip ItemsListBoxContextMenu;
-        private ToolStripMenuItem NewItemToolStripMenuItem;
-        private ToolStripMenuItem EditItemToolStripMenuItem;
-        private ToolStripMenuItem DeleteItemToolStripMenuItem;
-        private ToolStripMenuItem NewEmptyItemToolStripMenuItem;
+        private ContextMenuStrip GroupsListBoxContextMenu;
+        private ToolStripMenuItem NewGroupToolStripMenuItem;
+        private ToolStripMenuItem EditGroupToolStripMenuItem;
+        private ToolStripMenuItem DeleteGroupToolStripMenuItem;
+        private ToolStripMenuItem NewEmptyGroupToolStripMenuItem;
+        private ContextMenuStrip GaDataGridContextMenu;
+        private ToolStripMenuItem testToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem gruppe1ToolStripMenuItem;
+        private ToolStripMenuItem gruppe2ToolStripMenuItem;
     }
 }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace GroupAddress.Core
 {
-    public static class DefaultItemTemplates
+    public static class DefaultGroupTemplates
     {
-        public static ItemTemplate Light = new ItemTemplate("Licht allgemein",
+        public static GroupTemplate Light = new GroupTemplate("Licht allgemein",
             [
                 new(2,0, "Schalten"),           new(3,0, "Schalten_Status"),
 
@@ -17,7 +17,7 @@ namespace GroupAddress.Core
                 new(6,2, "Szene")
             ]);
 
-        public static ItemTemplate LightDimm = new ItemTemplate("Licht Dimm_bar",
+        public static GroupTemplate LightDimm = new GroupTemplate("Licht Dimm_bar",
             [
                 new(2,0, "Schalten"),           new(3,0, "Schalten_Status"),
                 new(2,2, "Sequqenz1_Start"),    new(3,2, "Sequqenz1_Status"),
@@ -37,7 +37,7 @@ namespace GroupAddress.Core
             ]);
 
 
-        public static ItemTemplate LightTW = new ItemTemplate("Licht TW",
+        public static GroupTemplate LightTW = new GroupTemplate("Licht TW",
             [
                 new(2,0, "Schalten"),           new(3,0, "Schalten_Status"),
                 new(2,1, "HCL_Start"),          new(3,1, "HCL_Status"),
@@ -62,7 +62,7 @@ namespace GroupAddress.Core
             ]);
 
 
-        public static ItemTemplate LightRGBW = new ItemTemplate("Licht RGBW",
+        public static GroupTemplate LightRGBW = new GroupTemplate("Licht RGBW",
             [
                 new(2,  0, "Schalten"),             new(3,  0, "Schalten_Status"),
                 new(2,  1, "HCL_Start"),            new(3,  1, "HCL_Status"),

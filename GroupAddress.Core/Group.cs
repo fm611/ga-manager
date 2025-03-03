@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace GroupAddress.Core
 {
 
-    public class Item
+    public class Group
     {
         private string name = "";
 
@@ -17,20 +17,20 @@ namespace GroupAddress.Core
         public string Name { get => name; set
             {
                 name = value;
-                ItemChanged();
+                OnChange();
             }
         }
-        private Item()
+        private Group()
         {
             Id = Guid.NewGuid().ToString();
         }
 
-        public void ItemChanged()
+        public void OnChange()
         {
             Changed?.Invoke(this, EventArgs.Empty);
         }
 
-        public Item(string name) : this() { 
+        public Group(string name) : this() { 
             Name = name;
         }
     }

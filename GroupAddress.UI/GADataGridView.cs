@@ -22,7 +22,7 @@ namespace GroupAddress.UI
         public List<GA> SelectedGAs { get; private set; } = [];
         public List<Address> SelectedAddresses { get; private set; } = [];
 
-        public List<Item>? FilterItems { get; private set; }
+        public List<Group>? FilterGroups { get; private set; }
         public string? FilterString { get; private set; }
 
 
@@ -48,33 +48,33 @@ namespace GroupAddress.UI
 
             if(resetFilter)
             {
-                FilterItems = null;
+                FilterGroups = null;
                 FilterString = null;
             }
 
             SaveSelection();
-            FillTable(FilterItems, FilterString);
+            FillTable(FilterGroups, FilterString);
             ResetSelection();
         }
 
 
-        public void FilterByItem(List<Item>? items)
+        public void FilterByGroup(List<Group>? groups)
         {
-            if (items == null || items.Count == 0)
+            if (groups == null || groups.Count == 0)
             {
                 UpdateTable(true);
                 return;
             }
 
-            FilterItems = items;
+            FilterGroups = groups;
             FilterString = null;
 
             UpdateTable(false);
         }
 
-        private void FillTable(List<Item>? filterItems, string? filterString)
+        private void FillTable(List<Group>? filterGroups, string? filterString)
         {
-            filterItems ??= [];
+            filterGroups ??= [];
 
             if (TopLevelCollection == null)
             {
@@ -99,11 +99,11 @@ namespace GroupAddress.UI
                         .GAs
                         .Where(x => x.Address.GA == i);
 
-                var filterGAs = rowGAs.Where(x => filterItems.Count == 0 || filterItems.Select(x => x.Id).Contains(x.ItemId));
+                var filterGAs = rowGAs.Where(x => filterGroups.Count == 0 || filterGroups.Select(x => x.Id).Contains(x.GroupId));
 
 
                 if (!filterGAs.Any() && 
-                    (!ShowEmptyRows || filterItems.Count>0)) 
+                    (!ShowEmptyRows || filterGroups.Count>0)) 
                     continue;
 
                 var newRow = table.NewRow();

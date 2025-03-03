@@ -12,37 +12,37 @@ using System.Windows.Forms;
 
 namespace GroupAddress.UI
 {
-    public partial class ItemTemplateManagerForm : Form
+    public partial class GroupTemplateManagerForm : Form
     {
         public Project Project { get; set; }
         public ListBoxWrapper<MainGroup> MainGroupsWrapper { get; set; }
-        public ListBoxWrapper<ItemTemplate> ItemTemplatesWrapper { get; set; }
+        public ListBoxWrapper<GroupTemplate> GroupTemplatesWrapper { get; set; }
 
-        public ItemTemplate? SelectedItemTemplate { get; set; }
-        public string? SelectedItemTemplateId { get; set; }
+        public GroupTemplate? SelectedGroupTemplate { get; set; }
+        public string? SelectedGroupTemplateId { get; set; }
         public MainGroup? SelectedMainGroup { get; set; }
         public string? SelectedMainGroupId { get; set; }
 
         private string? _lastInsertTemplateId;
         private string? _lastInsertMainGroupId;
 
-        public Item? LastInsertedItem { get; set; }
+        public Group? LastInsertedGroup { get; set; }
 
         private bool _editMode = false;
 
 
-        public ItemTemplateManagerForm(Project project)
+        public GroupTemplateManagerForm(Project project)
         {
             InitializeComponent();
 
             Project = project;
 
-            ItemTemplatesWrapper = new ListBoxWrapper<ItemTemplate>(
-                ItemTemplatesListBox,
+            GroupTemplatesWrapper = new ListBoxWrapper<GroupTemplate>(
+                GroupTemplatesListBox,
                 (a, b) => a.Name.CompareTo(b.Name),
-                nameof(ItemTemplate.Name),
-                nameof(ItemTemplate.Id),
-                () => Project.ItemTemplates);
+                nameof(GroupTemplate.Name),
+                nameof(GroupTemplate.Id),
+                () => Project.GroupTemplates);
 
             MainGroupsWrapper = new ListBoxWrapper<MainGroup>(
                 MainGroupsListBox,
@@ -51,22 +51,22 @@ namespace GroupAddress.UI
                 nameof(MainGroup.Id),
                 () => Project.MainGroups);
 
-            AddItemButton.Enabled = false;
+            AddGroupButton.Enabled = false;
             LoadData();
         }
 
-        private void AddItemForm_Shown(object sender, EventArgs e)
+        private void AddGroupForm_Shown(object sender, EventArgs e)
         {
             SelectLastInsert();
             GADataTable.UpdateTable();
         }
 
 
-        private void AddItemForm_Load(object sender, EventArgs e)
+        private void AddGroupForm_Load(object sender, EventArgs e)
         {
         }
 
-        private void ItemTemplateManagerForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void GroupTemplateManagerForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SetEditMode(false);
         }
@@ -75,12 +75,12 @@ namespace GroupAddress.UI
         public void LoadData()
         {
 
-            ItemTemplatesWrapper.Update();
+            GroupTemplatesWrapper.Update();
 
-            if (ItemTemplatesListBox.Items.Count > 0 && ItemTemplatesListBox.SelectedItem == null)
-                ItemTemplatesListBox.SelectedIndex = 0;
-            if (ItemTemplatesListBox.SelectedItem == null)
-                AddItemButton.Enabled = false;
+            if (GroupTemplatesListBox.Items.Count > 0 && GroupTemplatesListBox.SelectedItem == null)
+                GroupTemplatesListBox.SelectedIndex = 0;
+            if (GroupTemplatesListBox.SelectedItem == null)
+                AddGroupButton.Enabled = false;
 
 
             MainGroupsWrapper.Update();
@@ -93,9 +93,9 @@ namespace GroupAddress.UI
         public void SelectLastInsert()
         {
             if (!string.IsNullOrEmpty(_lastInsertMainGroupId)) MainGroupsListBox.SelectedValue = _lastInsertMainGroupId;
-            if (!string.IsNullOrEmpty(_lastInsertTemplateId)) ItemTemplatesListBox.SelectedValue = _lastInsertTemplateId;
+            if (!string.IsNullOrEmpty(_lastInsertTemplateId)) GroupTemplatesListBox.SelectedValue = _lastInsertTemplateId;
 
-            NewItemPreStringTextBox.Focus();
+            NewGroupPreStringTextBox.Focus();
         }
 
 
@@ -105,80 +105,78 @@ namespace GroupAddress.UI
                 MainGroupsListBox.SelectedValue = id;
         }
 
-        private void ItemTemplatesListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void GroupTemplatesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
-            SelectedItemTemplate = (ItemTemplate?)ItemTemplatesListBox.SelectedItem;
-            SelectedItemTemplateId = (string?)ItemTemplatesListBox.SelectedValue;
+            SelectedGroupTemplate = (GroupTemplate?)GroupTemplatesListBox.SelectedItem;
+            SelectedGroupTemplateId = (string?)GroupTemplatesListBox.SelectedValue;
 
-            GADataTable.SetTopLevelCollection(SelectedItemTemplate);
+            GADataTable.SetTopLevelCollection(SelectedGroupTemplate);
 
-            if (SelectedItemTemplate != null)
+            if (SelectedGroupTemplate != null)
             {
-                ItemTemplateNameTextBox.Text = SelectedItemTemplate.Name;
+                GroupTemplateNameTextBox.Text = SelectedGroupTemplate.Name;
             }
-            UpdateAddItemButton();
+            UpdateAddGroupButton();
 
         }
 
         #region Add Edit Delete Save Template
 
-        public void AddItemTemplateButton_Click(object sender, EventArgs e)
+        public void AddroupTemplateButton_Click(object sender, EventArgs e)
         {
-            var newTemplate = new ItemTemplate("Neues Template", []);
-            //Project.ItemTemplates.Add(newTemplate);
-            Project.AddItemTemplate(newTemplate);
-            ItemTemplatesWrapper.Update();
+            var newTemplate = new GroupTemplate("Neues Template", []);
+            Project.AddGroupTemplate(newTemplate);
+            GroupTemplatesWrapper.Update();
 
-            ItemTemplatesListBox.SelectedValue = newTemplate.Id;
+            GroupTemplatesListBox.SelectedValue = newTemplate.Id;
             SetEditMode(true);
-            ItemTemplateNameTextBox.Focus();
+            GroupTemplateNameTextBox.Focus();
         }
-        public void EditItemTemplateButton_Click(object sender, EventArgs e)
+        public void EditGroupTemplateButton_Click(object sender, EventArgs e)
         {
-            if (SelectedItemTemplate == null) return;
+            if (SelectedGroupTemplate == null) return;
 
             SetEditMode(true);
         }
 
-        private void DeleteItemTemplateButton_Click(object sender, EventArgs e)
+        private void DeleteGroupTemplateButton_Click(object sender, EventArgs e)
         {
-            if (SelectedItemTemplate == null) return;
+            if (SelectedGroupTemplate == null) return;
 
             var res = MessageBox.Show("Template löschen?", "Template löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res == DialogResult.Yes)
             {
-                //Project.ItemTemplates.Remove(SelectedItemTemplate);
-                Project.RemoveItemTemplate(SelectedItemTemplate);
-                ItemTemplatesWrapper.Update();
+                Project.RemoveGroupTemplate(SelectedGroupTemplate);
+                GroupTemplatesWrapper.Update();
             }
         }
 
 
-        private void SaveItemTemplateButton_Click(object sender, EventArgs e)
+        private void SaveGroupTemplateButton_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(ItemTemplateNameTextBox.Text))
-                SelectedItemTemplate.Name = ItemTemplateNameTextBox.Text;
+            if (!string.IsNullOrEmpty(GroupTemplateNameTextBox.Text))
+                SelectedGroupTemplate.Name = GroupTemplateNameTextBox.Text;
 
             SetEditMode(false);
-            ItemTemplatesWrapper.Update();
+            GroupTemplatesWrapper.Update();
         }
 
 
         private void SetEditMode(bool editMode)
         {
             _editMode = editMode;
-            ItemTemplateNameTextBox.ReadOnly = !editMode;
+            GroupTemplateNameTextBox.ReadOnly = !editMode;
 
-            AddEditDeleteItemTemplatePanel.Visible = !editMode;
+            AddEditDeleteGroupTemplatePanel.Visible = !editMode;
             SaveButtonPanel.Visible = editMode;
             SaveButtonPanel.Enabled = editMode;
 
-            ItemTemplatesListBox.Enabled = !editMode;
+            GroupTemplatesListBox.Enabled = !editMode;
 
             GADataTable.ReadOnly = !editMode;
 
-            AddItemPanel.Enabled = !editMode;
+            AddGroupPanel.Enabled = !editMode;
         }
 
 
@@ -201,21 +199,21 @@ namespace GroupAddress.UI
             return nextFreeIndex;
 
         }
-        private void AddItemButton_Click(object sender, EventArgs e)
+        private void AddGroupButton_Click(object sender, EventArgs e)
         {
-            if (SelectedMainGroup == null || SelectedItemTemplate == null)
+            if (SelectedMainGroup == null || SelectedGroupTemplate == null)
             {
                 DialogResult = DialogResult.Abort;
                 return;
             }
 
-            LastInsertedItem = SelectedMainGroup.AddItem(SelectedItemTemplate, NewItemPreStringTextBox.Text, GetInsertIndex());
-            if(LastInsertedItem !=null)
-                Project.AddItem(LastInsertedItem);
+            LastInsertedGroup = SelectedMainGroup.AddGroup(SelectedGroupTemplate, NewGroupPreStringTextBox.Text, GetInsertIndex());
+            if(LastInsertedGroup !=null)
+                Project.AddGroup(LastInsertedGroup);
 
 
             _lastInsertMainGroupId = SelectedMainGroup.Id;
-            _lastInsertTemplateId = SelectedItemTemplate.Id;
+            _lastInsertTemplateId = SelectedGroupTemplate.Id;
 
             DialogResult = DialogResult.OK;
         }
@@ -244,28 +242,28 @@ namespace GroupAddress.UI
         {
             BeginInvoke(new Action(() => (sender as TextBox).SelectAll()));
         }
-        private void NewItemPreStringTextBox_Enter(object sender, EventArgs e)
+        private void NewGroupPreStringTextBox_Enter(object sender, EventArgs e)
         {
             BeginInvoke(new Action(() => (sender as TextBox).SelectAll()));
 
         }
-        private void NewItemPreStringTextBox_KeyUp(object sender, KeyEventArgs e)
+        private void NewGroupPreStringTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (!UpdateAddItemButton()) return;
+            if (!UpdateAddGroupButton()) return;
             if (e.KeyValue == (char)Keys.Return)
             {
-                AddItemButton_Click(null, null);
+                AddGroupButton_Click(null, null);
             }
         }
 
-        private bool UpdateAddItemButton()
+        private bool UpdateAddGroupButton()
         {
-            AddItemButton.Enabled = false;
+            AddGroupButton.Enabled = false;
 
-            if(!string.IsNullOrEmpty(NewItemPreStringTextBox.Text) && SelectedItemTemplate != null)
-                AddItemButton.Enabled = true;
+            if(!string.IsNullOrEmpty(NewGroupPreStringTextBox.Text) && SelectedGroupTemplate != null)
+                AddGroupButton.Enabled = true;
 
-            return AddItemButton.Enabled;
+            return AddGroupButton.Enabled;
         }
 
         #endregion
