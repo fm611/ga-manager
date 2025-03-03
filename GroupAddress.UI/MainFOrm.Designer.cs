@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             MainGroupsListBox = new ListBox();
             MainGroupsListBoxContextMenu = new ContextMenuStrip(components);
             AddMainGroupToolStripMenuItem = new ToolStripMenuItem();
@@ -70,8 +70,7 @@
             GaDataGridContextMenu = new ContextMenuStrip(components);
             testToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
-            gruppe1ToolStripMenuItem = new ToolStripMenuItem();
-            gruppe2ToolStripMenuItem = new ToolStripMenuItem();
+            FilterWithoutGroupButton = new Button();
             MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
@@ -153,24 +152,24 @@
             GADataTable.AllowUserToDeleteRows = false;
             GADataTable.AllowUserToResizeRows = false;
             GADataTable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.ControlLight;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.Padding = new Padding(0, 5, 0, 5);
-            dataGridViewCellStyle1.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.ControlLight;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.Padding = new Padding(0, 5, 0, 5);
+            dataGridViewCellStyle3.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            GADataTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             GADataTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = Color.YellowGreen;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            GADataTable.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = SystemColors.Window;
+            dataGridViewCellStyle4.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = Color.YellowGreen;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
+            GADataTable.DefaultCellStyle = dataGridViewCellStyle4;
             GADataTable.EnableHeadersVisualStyles = false;
             GADataTable.Location = new Point(4, 4);
             GADataTable.Name = "GADataTable";
@@ -389,10 +388,10 @@
             // 
             // GaDataGridContextMenu
             // 
-            GaDataGridContextMenu.Items.AddRange(new ToolStripItem[] { testToolStripMenuItem, toolStripSeparator2, gruppe1ToolStripMenuItem, gruppe2ToolStripMenuItem });
+            GaDataGridContextMenu.Items.AddRange(new ToolStripItem[] { testToolStripMenuItem, toolStripSeparator2 });
             GaDataGridContextMenu.Name = "GaDataGridContextMenu";
             GaDataGridContextMenu.ShowImageMargin = false;
-            GaDataGridContextMenu.Size = new Size(172, 98);
+            GaDataGridContextMenu.Size = new Size(172, 32);
             // 
             // testToolStripMenuItem
             // 
@@ -406,23 +405,26 @@
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Size = new Size(168, 6);
             // 
-            // gruppe1ToolStripMenuItem
+            // FilterWithoutGroupButton
             // 
-            gruppe1ToolStripMenuItem.Name = "gruppe1ToolStripMenuItem";
-            gruppe1ToolStripMenuItem.Size = new Size(171, 22);
-            gruppe1ToolStripMenuItem.Text = "Gruppe 1";
-            // 
-            // gruppe2ToolStripMenuItem
-            // 
-            gruppe2ToolStripMenuItem.Name = "gruppe2ToolStripMenuItem";
-            gruppe2ToolStripMenuItem.Size = new Size(171, 22);
-            gruppe2ToolStripMenuItem.Text = "Gruppe 2";
+            FilterWithoutGroupButton.BackgroundImageLayout = ImageLayout.Zoom;
+            FilterWithoutGroupButton.FlatStyle = FlatStyle.Flat;
+            FilterWithoutGroupButton.ImageAlign = ContentAlignment.TopCenter;
+            FilterWithoutGroupButton.Location = new Point(837, 29);
+            FilterWithoutGroupButton.Margin = new Padding(2);
+            FilterWithoutGroupButton.Name = "FilterWithoutGroupButton";
+            FilterWithoutGroupButton.Size = new Size(95, 32);
+            FilterWithoutGroupButton.TabIndex = 41;
+            FilterWithoutGroupButton.Text = "Ohne Gruppe";
+            FilterWithoutGroupButton.UseVisualStyleBackColor = true;
+            FilterWithoutGroupButton.Click += FilterWithoutGroupButton_Click;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1324, 807);
+            Controls.Add(FilterWithoutGroupButton);
             Controls.Add(GADataTableBackPanel);
             Controls.Add(UnselectGroupsButton);
             Controls.Add(label3);
@@ -493,7 +495,6 @@
         private ContextMenuStrip GaDataGridContextMenu;
         private ToolStripMenuItem testToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator2;
-        private ToolStripMenuItem gruppe1ToolStripMenuItem;
-        private ToolStripMenuItem gruppe2ToolStripMenuItem;
+        private Button FilterWithoutGroupButton;
     }
 }

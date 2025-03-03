@@ -69,6 +69,7 @@ namespace GroupAddress.UI
         public string RecentFilesJsonPath { get; set; }
         public List<FileInfo> RecentFiles { get; set; }
         public ToolStripItem[] RecentFilesToolStripItems { get; set; } = [];
+        public ToolStripItem[] GroupToolStripItems { get; set; } = [];
 
         public MainForm()
         {
@@ -420,7 +421,7 @@ namespace GroupAddress.UI
                     {
                         var groupGAs = insertMainGroup.GetGroupGAs(newGroup);
                         var minGA = groupGAs.MinBy(x => x.Address.GA);
-                        GADataTable.FirstDisplayedScrollingRowIndex = minGA == null ? 0 : GADataTable.GetCell(minGA)?.Row ?? 0;
+                        GADataTable.FirstDisplayedScrollingRowIndex = minGA == null ? 0 : GADataTable.GetCellPosition(minGA)?.Row ?? 0;
                     }
                 }
             }
@@ -499,10 +500,7 @@ namespace GroupAddress.UI
         }
 
 
-        private void UnselectGroupsButton_Click(object sender, EventArgs e)
-        {
-            GroupsListBox.ClearSelected();
-        }
+
 
         private void GroupsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -512,12 +510,12 @@ namespace GroupAddress.UI
 
             SelectedGroups = newSelectedGroups;
 
-            SetGroupGaFilter();
+            SetGroupGaFilter([.. SelectedGroups.Select(x => x.Id)]);
         }
 
-        private void SetGroupGaFilter()
+        private void SetGroupGaFilter(List<string?> filterGroups)
         {
-            GADataTable.FilterByGroup(SelectedGroups);
+            GADataTable.FilterByGroup(filterGroups);
 
             if (SelectedGroups != null && SelectedGroups.Count > 0)
                 GADataTableBackPanel.BackColor = Color.Red;
@@ -617,13 +615,51 @@ namespace GroupAddress.UI
 
         }
 
+        private void UpdateGroupsContextMenu()
+        {
+            foreach (var item in GroupToolStripItems)
+            {
+                GaDataGridContextMenu.Items.Remove(item);
+            }
+            GroupToolStripItems = [];
+
+            var contextMenuItems = Project.Groups.Select(g => new ToolStripMenuItem(
+                    g.Name,
+                    null,
+                    (sender, e) =>
+                    {
+                        GADataTable.SelectedGAs.ForEach(ga => ga.GroupId = g.Id);
+                    }
+                    )).ToArray();
+            GroupToolStripItems = contextMenuItems;
+            GaDataGridContextMenu.Items.AddRange(contextMenuItems);
+
+        }
+
+
+
         private void GADataTable_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
-                GaDataGridContextMenu.Show(Cursor.Position.X, Cursor.Position.Y);
+                if (GADataTable.SelectedGAs.Count > 0)
+                {
+                    UpdateGroupsContextMenu();
+                    GaDataGridContextMenu.Show(Cursor.Position.X, Cursor.Position.Y);
+                }
             }
         }
-    
+
+        private void FilterWithoutGroupButton_Click(object sender, EventArgs e)
+        {
+            SetGroupGaFilter([null]);
+        }
+
+        private void UnselectGroupsButton_Click(object sender, EventArgs e)
+        {
+            GroupsListBox.ClearSelected();
+
+            SetGroupGaFilter([]);
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace GroupAddress.UI
         public List<GA> SelectedGAs { get; private set; } = [];
         public List<Address> SelectedAddresses { get; private set; } = [];
 
-        public List<Group>? FilterGroups { get; private set; }
+        public List<string?>? FilterGroups { get; private set; }
         public string? FilterString { get; private set; }
 
 
@@ -58,21 +58,21 @@ namespace GroupAddress.UI
         }
 
 
-        public void FilterByGroup(List<Group>? groups)
+        public void FilterByGroup(List<string?>? groupIds)
         {
-            if (groups == null || groups.Count == 0)
+            if (groupIds == null || groupIds.Count == 0)
             {
                 UpdateTable(true);
                 return;
             }
 
-            FilterGroups = groups;
+            FilterGroups = groupIds;
             FilterString = null;
 
             UpdateTable(false);
         }
 
-        private void FillTable(List<Group>? filterGroups, string? filterString)
+        private void FillTable(List<string?>? filterGroups, string? filterString)
         {
             filterGroups ??= [];
 
@@ -92,6 +92,8 @@ namespace GroupAddress.UI
             RowData = new Dictionary<int, List<GA>>();
             var maxRow = ShowAllRows ? 256 : TopLevelCollection.MaxGASubAddress + 1;
 
+            var allFilteredGAs = new List<GA>();
+
             for (int i = 0; i < maxRow; i++)
             {
 
@@ -99,8 +101,8 @@ namespace GroupAddress.UI
                         .GAs
                         .Where(x => x.Address.GA == i);
 
-                var filterGAs = rowGAs.Where(x => filterGroups.Count == 0 || filterGroups.Select(x => x.Id).Contains(x.GroupId));
-
+                var filterGAs = rowGAs.Where(x => filterGroups.Count == 0 || filterGroups.Contains(x.GroupId));
+                allFilteredGAs.AddRange(filterGAs);
 
                 if (!filterGAs.Any() && 
                     (!ShowEmptyRows || filterGroups.Count>0)) 
@@ -117,6 +119,20 @@ namespace GroupAddress.UI
                 RowData.Add(i, rowGAs.ToList());
             }
             DataSource = table;
+
+            if(filterGroups.Count > 0)
+            {
+                foreach(var ga in allFilteredGAs)
+                {
+                    var cellPos = GetCellPosition(ga);
+                    if (cellPos == null) continue;
+                    var dgvCell = GetDataGridViewCell(cellPos.Value);
+
+                    dgvCell.Style.BackColor = Color.LightYellow;
+                }
+            }
+
+
             AutoResizeColumns();
         }
 
@@ -141,12 +157,12 @@ namespace GroupAddress.UI
             return new Address(TopLevelCollection?.SubAddress??-1, pos.Column, RowData.ElementAt(pos.Row).Key); 
         }
 
-        private DataGridViewCell GetCell(CellPosition pos)
+        private DataGridViewCell GetDataGridViewCell(CellPosition pos)
         {
             return Rows[pos.Row].Cells[pos.Column];
         }
 
-        public CellPosition? GetCell(GA ga)
+        public CellPosition? GetCellPosition(GA ga)
         {
             for (int i = 0; i < RowData.Count; i++)
             {
@@ -232,7 +248,7 @@ namespace GroupAddress.UI
             if (TopLevelCollection == null) return;
 
             var pos = new CellPosition(e);
-            var editCell = GetCell(pos);
+            var editCell = GetDataGridViewCell(pos);
             var addr = GetAddress(pos);
 
             if (!string.IsNullOrEmpty(editCell.Value as string))
@@ -252,7 +268,7 @@ namespace GroupAddress.UI
 
 
             var pos = new CellPosition(e);
-            var editCell = GetCell(pos);
+            var editCell = GetDataGridViewCell(pos);
             var addr = GetAddress(pos);
 
             if (string.IsNullOrEmpty(editCell.Value as string)) return;
