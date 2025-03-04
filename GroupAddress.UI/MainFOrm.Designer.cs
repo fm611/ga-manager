@@ -71,6 +71,7 @@
             testToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
             FilterWithoutGroupButton = new Button();
+            FilterTextBox = new TextBox();
             MainGroupsListBoxContextMenu.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)GADataTable).BeginInit();
@@ -363,10 +364,11 @@
             // 
             // UnselectGroupsButton
             // 
+            UnselectGroupsButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             UnselectGroupsButton.BackgroundImageLayout = ImageLayout.Zoom;
             UnselectGroupsButton.FlatStyle = FlatStyle.Flat;
             UnselectGroupsButton.ImageAlign = ContentAlignment.TopCenter;
-            UnselectGroupsButton.Location = new Point(178, 467);
+            UnselectGroupsButton.Location = new Point(1236, 30);
             UnselectGroupsButton.Name = "UnselectGroupsButton";
             UnselectGroupsButton.Size = new Size(82, 29);
             UnselectGroupsButton.TabIndex = 39;
@@ -377,6 +379,7 @@
             // 
             // GADataTableBackPanel
             // 
+            GADataTableBackPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             GADataTableBackPanel.BackColor = Color.Transparent;
             GADataTableBackPanel.Controls.Add(GADataTable);
             GADataTableBackPanel.Location = new Point(266, 63);
@@ -407,23 +410,34 @@
             // 
             // FilterWithoutGroupButton
             // 
+            FilterWithoutGroupButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             FilterWithoutGroupButton.BackgroundImageLayout = ImageLayout.Zoom;
             FilterWithoutGroupButton.FlatStyle = FlatStyle.Flat;
             FilterWithoutGroupButton.ImageAlign = ContentAlignment.TopCenter;
-            FilterWithoutGroupButton.Location = new Point(837, 29);
+            FilterWithoutGroupButton.Location = new Point(1136, 30);
             FilterWithoutGroupButton.Margin = new Padding(2);
             FilterWithoutGroupButton.Name = "FilterWithoutGroupButton";
-            FilterWithoutGroupButton.Size = new Size(95, 32);
+            FilterWithoutGroupButton.Size = new Size(95, 29);
             FilterWithoutGroupButton.TabIndex = 41;
             FilterWithoutGroupButton.Text = "Ohne Gruppe";
             FilterWithoutGroupButton.UseVisualStyleBackColor = true;
             FilterWithoutGroupButton.Click += FilterWithoutGroupButton_Click;
+            // 
+            // FilterTextBox
+            // 
+            FilterTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            FilterTextBox.Location = new Point(829, 34);
+            FilterTextBox.Name = "FilterTextBox";
+            FilterTextBox.Size = new Size(302, 23);
+            FilterTextBox.TabIndex = 42;
+            FilterTextBox.KeyUp += FilterTextBox_KeyUp;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1324, 807);
+            Controls.Add(FilterTextBox);
             Controls.Add(FilterWithoutGroupButton);
             Controls.Add(GADataTableBackPanel);
             Controls.Add(UnselectGroupsButton);
@@ -454,8 +468,6 @@
 
         private ListBox MainGroupsListBox;
         private Label label1;
-        private TextBox textBox1;
-        private Label label4;
 
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel StatusInfoLabel;
@@ -496,5 +508,6 @@
         private ToolStripMenuItem testToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator2;
         private Button FilterWithoutGroupButton;
+        private TextBox FilterTextBox;
     }
 }

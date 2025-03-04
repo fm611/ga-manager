@@ -282,6 +282,11 @@ namespace GroupAddress.UI
 
             TopLevelCollection.AddGA(ga);
 
+            var table = (DataTable)DataSource;
+            table.Rows[2][2] = "blub";
+
+            //UpdateTable(false);
+
             BeginInvoke(new MethodInvoker(UpdateTable));
         }
 
@@ -300,7 +305,7 @@ namespace GroupAddress.UI
                 if (res == DialogResult.Yes)
                 {
                     SelectedGAs.ForEach(TopLevelCollection.RemoveGA);
-                    UpdateTable();
+                    UpdateTable(false);
                 }
             }
 

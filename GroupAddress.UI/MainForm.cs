@@ -16,15 +16,15 @@ namespace GroupAddress.UI
     public partial class MainForm : Form
     {
         private string? currentProjectFile;
-        private Project project;
+        private Project _project;
 
         public Project Project
         {
-            get => project;
+            get => _project;
             set
             {
-                project = value;
-                project.Changed += Project_Changed;
+                _project = value;
+                _project.Changed += Project_Changed;
                 ProjectDirty = false;
             }
         }
@@ -76,7 +76,7 @@ namespace GroupAddress.UI
             InitializeComponent();
 
             CurrentProjectFile = "";
-            Project = new Project();
+            _project = new Project();
 
             MainGroupWrapper = new ListBoxWrapper<MainGroup>(
                 MainGroupsListBox,
@@ -118,11 +118,13 @@ namespace GroupAddress.UI
         private void UpdateUI()
         {
             MainGroupWrapper.Update();
-            MainGroupsListBox_SelectedIndexChanged(null, null);
+            MainGroupsListBox_SelectedIndexChanged(MainGroupsListBox, EventArgs.Empty);
 
             GroupWrapper.Update();
-            GroupsListBox_SelectedIndexChanged(null, null);
+            GroupsListBox_SelectedIndexChanged(MainGroupsListBox, EventArgs.Empty);
             GADataTable.UpdateTable();
+
+            SetGroupGaFilter();
         }
 
 
@@ -513,11 +515,11 @@ namespace GroupAddress.UI
             SetGroupGaFilter([.. SelectedGroups.Select(x => x.Id)]);
         }
 
-        private void SetGroupGaFilter(List<string?> filterGroups)
+        private void SetGroupGaFilter(List<string?>? filterGroups = null)
         {
             GADataTable.FilterByGroup(filterGroups);
 
-            if (SelectedGroups != null && SelectedGroups.Count > 0)
+            if (filterGroups != null && filterGroups.Count > 0)
                 GADataTableBackPanel.BackColor = Color.Red;
             else
                 GADataTableBackPanel.BackColor = Color.Transparent;
@@ -538,16 +540,14 @@ namespace GroupAddress.UI
             if (selectedGroup == null) return;
 
 
-            var diag = new TextBoxDialog("Gruppe", ((Group)GroupsListBox.SelectedItem).Name);
+            var diag = new TextBoxDialog("Gruppe", selectedGroup.Name);
             var res = diag.ShowDialog();
 
             if (res == DialogResult.OK)
             {
-                ((Group)GroupsListBox.SelectedItem).Name = diag.Content;
+                selectedGroup.Name = diag.Content;
                 UpdateUI();
             }
-
-
         }
 
         private void DeleteroupToolStripMenuItem_Click(object sender, EventArgs e)
@@ -596,6 +596,18 @@ namespace GroupAddress.UI
                     GroupsListBox.SelectedIndex = index;
                 }
             }
+
+            if(e.Button == MouseButtons.Left)
+            {
+                Point pt = new Point(e.X, e.Y);
+                int index = GroupsListBox.IndexFromPoint(pt);
+
+                if (index <= -1)
+                {
+                    GroupsListBox.SelectedItems.Clear();
+                }
+
+            }
         }
 
         #endregion
@@ -615,7 +627,7 @@ namespace GroupAddress.UI
 
         }
 
-        private void UpdateGroupsContextMenu()
+        private void UpdateGaTableContextMenu()
         {
             foreach (var item in GroupToolStripItems)
             {
@@ -629,6 +641,7 @@ namespace GroupAddress.UI
                     (sender, e) =>
                     {
                         GADataTable.SelectedGAs.ForEach(ga => ga.GroupId = g.Id);
+                        UpdateUI();
                     }
                     )).ToArray();
             GroupToolStripItems = contextMenuItems;
@@ -644,7 +657,7 @@ namespace GroupAddress.UI
             {
                 if (GADataTable.SelectedGAs.Count > 0)
                 {
-                    UpdateGroupsContextMenu();
+                    UpdateGaTableContextMenu();
                     GaDataGridContextMenu.Show(Cursor.Position.X, Cursor.Position.Y);
                 }
             }
@@ -660,6 +673,11 @@ namespace GroupAddress.UI
             GroupsListBox.ClearSelected();
 
             SetGroupGaFilter([]);
+        }
+
+        private void FilterTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+
         }
     }
 }
