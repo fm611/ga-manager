@@ -5,16 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GroupAddress.UI.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="570" Width="1012">
+        Title="MainWindow" Height="570" Width="1012"
+        d:DataContext="{d:DesignInstance local:MainWindow, IsDesignTimeCreatable=True}">
 
     <DockPanel>
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="Datei" >
-                <MenuItem Header="Neu" InputGestureText="Strg+N"/>
-                <MenuItem Header="Öffnen" />
-                <MenuItem Header="Speichern" />
-            </MenuItem>
-        </Menu>
+        <local:MenuControl DockPanel.Dock="Top" Test="{Binding TestMain}" />
         <Grid >
             <Grid.RowDefinitions>
                 <RowDefinition Height="23*" />
@@ -25,6 +20,7 @@
                 <ColumnDefinition Width="427*"/>
             </Grid.ColumnDefinitions>
             <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="65,78,66,93" Grid.Column="1" Grid.Row="1"/>
+            <Button Content="Button" HorizontalAlignment="Left" Margin="84,40,0,0" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click"/>
 
         </Grid>
 
