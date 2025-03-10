@@ -4,12 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GroupAddress.UI.WPF"
+        xmlns:vm="clr-namespace:GroupAddress.UI.WPF.ViewModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="570" Width="1012"
-        d:DataContext="{d:DesignInstance local:MainWindow, IsDesignTimeCreatable=True}">
+        d:DataContext="{d:DesignInstance vm:MainViewModel, IsDesignTimeCreatable=True}">
 
     <DockPanel>
-        <local:MenuControl DockPanel.Dock="Top" Test="{Binding TestMain}" />
+        <local:MenuControl DockPanel.Dock="Top"  DataContext="{Binding MenuViewModel}"/>
         <Grid >
             <Grid.RowDefinitions>
                 <RowDefinition Height="23*" />
@@ -20,7 +21,6 @@
                 <ColumnDefinition Width="427*"/>
             </Grid.ColumnDefinitions>
             <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="65,78,66,93" Grid.Column="1" Grid.Row="1"/>
-            <Button Content="Button" HorizontalAlignment="Left" Margin="84,40,0,0" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click"/>
 
         </Grid>
 

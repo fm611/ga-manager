@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using GroupAddress.UI.WPF.ViewModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -17,36 +18,16 @@ namespace GroupAddress.UI.WPF;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window, INotifyPropertyChanged
+public partial class MainWindow : Window
 {
-    private string _testMain = "jjj";
-    public string TestMain { get => _testMain;
-        set
-        {
-            _testMain = value;
-            OnPropertyChanged();
-        } 
-    }
+
 
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = this;
+        DataContext = new MainViewModel();
 
-        TestMain = "hhh";
     }
 
-    
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-        TestMain = "ooo";
-    }
 }
