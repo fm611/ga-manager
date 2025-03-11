@@ -45,8 +45,13 @@ namespace GroupAddress.UI.WPF.ViewModel
                     RecentFilePaths = [];
                 }
             }
-            //UpdateRecentFilesMenu();
         }
+
+        private void OpenProjectFile(string path)
+        {
+
+        }
+
 
 
 

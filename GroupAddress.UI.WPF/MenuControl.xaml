@@ -24,11 +24,13 @@
                 </MenuItem.Resources>
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
-                        <Setter Property="MenuItem.Header" Value="{Binding Name}"/>
+                        <Setter Property="MenuItem.Header" Value="{Binding (io:FileInfo.Name)}"/>
                     </Style>
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
+            <Separator />
             <MenuItem Header="Speichern" />
+            <MenuItem Header="Speichern unter" />
             <Separator />
             <MenuItem Header="Export" />
             <MenuItem Header="Import" />
