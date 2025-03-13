@@ -9,22 +9,25 @@
              mc:Ignorable="d"              
             d:DataContext="{d:DesignInstance vm:MenuViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="450" d:DesignWidth="800" x:Name="ThisMenuControl">
-    <UserControl.DataContext>
-        <!-- Setzt das ViewModel für MenuControl -->
+    <!--<UserControl.DataContext>
+        --><!-- Setzt das ViewModel für MenuControl --><!--
         <vm:MenuViewModel />
-    </UserControl.DataContext>
+    </UserControl.DataContext>-->
+
     <Menu>
-        <MenuItem Header="Datei" >
+        <MenuItem Header="Datei">
             <MenuItem Header="Neu" InputGestureText="Strg+N"/>
             <Separator />
             <MenuItem Header="Vorlage" />
-            <MenuItem Header="Datei öffnen" InputGestureText="Strg+O"/>
+            <MenuItem Header="Datei öffnen" InputGestureText="Strg+O"  Command="{Binding OpenFileCommand}"/>
             <MenuItem Header="Zuletzt geöffnet" ItemsSource="{Binding RecentFilePaths}">
-                <MenuItem.Resources>
-                </MenuItem.Resources>
                 <MenuItem.ItemContainerStyle>
                     <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
                         <Setter Property="MenuItem.Header" Value="{Binding (io:FileInfo.Name)}"/>
+                        <Setter Property="MenuItem.Command" Value="{Binding Path=DataContext.ReadProjectFileCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"/>
+                        <Setter Property="MenuItem.CommandParameter" Value="{Binding (io:FileInfo.FullName)}"/>
+                        <Setter Property="MenuItem.ToolTip" Value="{Binding (io:FileInfo.FullName)}"/>
+
                     </Style>
                 </MenuItem.ItemContainerStyle>
             </MenuItem>

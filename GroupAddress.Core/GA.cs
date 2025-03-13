@@ -12,7 +12,7 @@ namespace GroupAddress.Core
     {
         private string name = "";
 
-        public event EventHandler<EventArgs> Changed;
+        public event EventHandler<EventArgs>? Changed;
         public string Id { get; set; }
         public string Name { get => name; 
             set {
