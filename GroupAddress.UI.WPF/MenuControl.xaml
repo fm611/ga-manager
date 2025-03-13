@@ -16,7 +16,7 @@
 
     <Menu>
         <MenuItem Header="Datei">
-            <MenuItem Header="Neu" InputGestureText="Strg+N"/>
+            <MenuItem Header="Neu" InputGestureText="Strg+N" Command="{Binding NewProjectCommand}"/>
             <Separator />
             <MenuItem Header="Beispiel" Command="{Binding OpenSampleProjectCommand}" />
             <MenuItem Header="Datei öffnen" InputGestureText="Strg+O"  Command="{Binding OpenFileCommand}"/>
@@ -32,7 +32,7 @@
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
             <Separator />
-            <MenuItem Header="Speichern" />
+            <MenuItem Header="Speichern" Command="{Binding SaveProjectCommand}" />
             <MenuItem Header="Speichern unter" />
             <Separator />
             <MenuItem Header="Export" />

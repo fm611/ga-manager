@@ -38,17 +38,31 @@ namespace GroupAddress.UI.WPF.ViewModel
         public ICommand OpenFileCommand { get; set; }
         public ICommand ReadProjectFileCommand { get; set; }
         public ICommand OpenSampleProjectCommand { get; set; }
+        public ICommand NewProjectCommand { get; set; }
+        public ICommand SaveProjectCommand { get; set; }
 
 
         public Project Project { get; set; }
 
         public MenuViewModel()
         {
+            SetProject(new Project(), null);
             ReadRecentFilesList();
             OpenFileCommand = new RelayCommand(OpenFile);
             ReadProjectFileCommand = new RelayCommand<string>(ReadProjectFile);
             OpenSampleProjectCommand = new RelayCommand(OpenSampleProject);
+            NewProjectCommand = new RelayCommand(NewProject);
+            SaveProjectCommand = new RelayCommand(() => Save());
+        }
 
+        private bool HandleProjectChanged()
+        {
+            if (!Project.Dirty) return true;
+
+            var res2 = MessageBox.Show("Änderungen am aktuellen Projekt speichern?", "Projekt geändert", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+            if (res2 == MessageBoxResult.Cancel) return false;
+            if (res2 == MessageBoxResult.Yes) return Save();
+            return true;
         }
 
         private void OnProjectRead(Project project, FileInfo? fileInfo = null)
@@ -56,8 +70,16 @@ namespace GroupAddress.UI.WPF.ViewModel
             ProjectOpen?.Invoke(this, new ProjectOpenEventArgs(project, fileInfo));
         }
 
+        private void NewProject()
+        {
+            if (!HandleProjectChanged()) return;
+
+            SetProject(new Project(), null);
+        }
+
         private void OpenFile()
         {
+            if (!HandleProjectChanged()) return;
             var dialog = new OpenFileDialog();
 
             dialog.FileName = "project.gaproj"; // Default file name
@@ -70,7 +92,6 @@ namespace GroupAddress.UI.WPF.ViewModel
 
             ReadProjectFile(dialog.FileName);
         }
-
 
         private void ReadRecentFilesList()
         {
@@ -104,8 +125,16 @@ namespace GroupAddress.UI.WPF.ViewModel
             outputFile.Write(json);
         }
 
+        private void EnqueueRecentFile(string path)
+        {
+            var oldEntries = RecentFilePaths.Where(x => x.FullName != path).Take(9).ToList();
+            RecentFilePaths = new ObservableCollection<FileInfo>([new FileInfo(path), .. oldEntries]);
+            WriteRecentFilesList();
+        }
+
         private void ReadProjectFile(string? path)
         {
+            if (!HandleProjectChanged()) return;
             if (string.IsNullOrEmpty(path)) return;
 
             if (!File.Exists(path))
@@ -115,7 +144,6 @@ namespace GroupAddress.UI.WPF.ViewModel
                     RecentFilePaths.Remove(fi);
                 fi = new FileInfo(path);
                 WriteRecentFilesList();
-                //UpdateRecentFilesMenu();
                 MessageBox.Show("Projektdatei nicht gefunden.", fi.Name, MessageBoxButton.OK);
                 return;
             }
@@ -128,41 +156,60 @@ namespace GroupAddress.UI.WPF.ViewModel
             if (obj != null)
             {
                 EnqueueRecentFile(path);   
-                //CurrentProjectFile = path;
                 SetProject(obj, new FileInfo(path));
             }
         }
 
         private void OpenSampleProject()
         {
+            if (!HandleProjectChanged()) return;
 
+            SetProject(Project.GetSampleProject(),null);
         }
 
-        private bool HandleProjectChanged()
-        {
-            if (!ProjectDirty) return true;
-
-            var res2 = MessageBox.Show("Änderungen am aktuellen Projekt speichern?", "Projekt geändert", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-            if (res2 == DialogResult.Cancel) return false;
-            if (res2 == DialogResult.Yes) return Save();
-            return true;
-        }
-
-
-        private void SetProject(Project project, FileInfo fileInfo)
+        private void SetProject(Project project, FileInfo? fileInfo)
         {
             Project = project;
+            CurrentProjectFile = fileInfo;
             OnProjectRead(project, fileInfo);
-
         }
 
-
-        private void EnqueueRecentFile(string path)
+        private bool Save()
         {
-            var oldEntries = RecentFilePaths.Where(x => x.FullName != path).Take(9).ToList();
-            RecentFilePaths = new ObservableCollection<FileInfo>([new FileInfo(path), .. oldEntries]);
-            WriteRecentFilesList();
+            if (CurrentProjectFile == null)
+            {
+                var saveDialog = new SaveFileDialog();
+                saveDialog.DefaultExt = "gaproj";
+                saveDialog.Filter = "Project files (*.gaproj)|*.gaproj";
+
+                var res = saveDialog.ShowDialog();
+
+                if (res.HasValue && res == true)
+                {
+                    var filePath = saveDialog.FileName;
+                    CurrentProjectFile = new FileInfo(filePath);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if (CurrentProjectFile != null)
+            {
+                using StreamWriter outputFile = new StreamWriter(CurrentProjectFile.FullName, false);
+                var json = Project.GetJson();
+                outputFile.Write(Project.GetJson());
+
+                EnqueueRecentFile(CurrentProjectFile.FullName);
+                Project.SetUndirty();
+
+                return true;
+
+            }
+            return false;
         }
+
 
 
 

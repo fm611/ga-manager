@@ -9,8 +9,10 @@ namespace GroupAddress.Core
 {
     public class Project
     {
-        public event EventHandler<EventArgs>? Changed;
-        
+        public event EventHandler<EventArgs>? ProjectChanged;
+        public event EventHandler<EventArgs>? ProjectSaved;
+        [JsonIgnore]
+        public bool Dirty { get; private set; }
         public DateTime Created { get; set; }
         public DateTime Saved { get; set; }
 
@@ -34,6 +36,7 @@ namespace GroupAddress.Core
 
         public Project() {
             Created = DateTime.Now;
+            Dirty = false;
         }
 
         public void AddMainGroup(MainGroup mainGroup)
@@ -60,9 +63,21 @@ namespace GroupAddress.Core
 
         private void OnChange()
         {
-            Changed?.Invoke(this, EventArgs.Empty);
+            Dirty = true;
+            ProjectChanged?.Invoke(this, EventArgs.Empty);
         }
-        
+
+        private void OnSave()
+        {
+            ProjectSaved?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void SetUndirty()
+        {
+            Dirty = false;
+            OnSave();
+        }
+
         public bool RemoveMainGroup(MainGroup mainGroup)
         {
             var res = _mainGroups.Remove(mainGroup);

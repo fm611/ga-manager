@@ -24,7 +24,7 @@ namespace GroupAddress.UI
             set
             {
                 _project = value;
-                _project.Changed += Project_Changed;
+                _project.ProjectChanged += Project_Changed;
                 ProjectDirty = false;
             }
         }

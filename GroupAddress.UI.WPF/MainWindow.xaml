@@ -6,8 +6,9 @@
         xmlns:local="clr-namespace:GroupAddress.UI.WPF"
         xmlns:vm="clr-namespace:GroupAddress.UI.WPF.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="570" Width="1012"
-        d:DataContext="{d:DesignInstance vm:MainViewModel, IsDesignTimeCreatable=True}">
+        Height="570" Width="1012"
+        d:DataContext="{d:DesignInstance vm:MainViewModel, IsDesignTimeCreatable=True}"
+        Title="{Binding Title}">
     <Window.DataContext>
         <vm:MainViewModel></vm:MainViewModel>
     </Window.DataContext>
