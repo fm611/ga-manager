@@ -18,7 +18,7 @@
         <MenuItem Header="Datei">
             <MenuItem Header="Neu" InputGestureText="Strg+N"/>
             <Separator />
-            <MenuItem Header="Vorlage" />
+            <MenuItem Header="Beispiel" Command="{Binding OpenSampleProjectCommand}" />
             <MenuItem Header="Datei öffnen" InputGestureText="Strg+O"  Command="{Binding OpenFileCommand}"/>
             <MenuItem Header="Zuletzt geöffnet" ItemsSource="{Binding RecentFilePaths}">
                 <MenuItem.ItemContainerStyle>

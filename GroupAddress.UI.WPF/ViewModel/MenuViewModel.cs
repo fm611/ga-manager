@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GroupAddress.Core;
+using GroupAddress.UI.WPF.CustomEventArgs;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,8 @@ namespace GroupAddress.UI.WPF.ViewModel
     public partial class  MenuViewModel : ObservableObject
     {
 
-        public event EventHandler<EventArgs>? ProjectRead;
+
+        public event EventHandler<ProjectOpenEventArgs>? ProjectOpen;
 
         private static string _recentFilesJsonPath = "recent.json";
 
@@ -35,17 +37,23 @@ namespace GroupAddress.UI.WPF.ViewModel
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand ReadProjectFileCommand { get; set; }
+        public ICommand OpenSampleProjectCommand { get; set; }
+
+
+        public Project Project { get; set; }
 
         public MenuViewModel()
         {
             ReadRecentFilesList();
             OpenFileCommand = new RelayCommand(OpenFile);
             ReadProjectFileCommand = new RelayCommand<string>(ReadProjectFile);
+            OpenSampleProjectCommand = new RelayCommand(OpenSampleProject);
+
         }
 
-        private void OnProjectRead()
+        private void OnProjectRead(Project project, FileInfo? fileInfo = null)
         {
-            ProjectRead?.Invoke(this, EventArgs.Empty);
+            ProjectOpen?.Invoke(this, new ProjectOpenEventArgs(project, fileInfo));
         }
 
         private void OpenFile()
@@ -60,9 +68,7 @@ namespace GroupAddress.UI.WPF.ViewModel
 
             if (!res.HasValue || !res.Value) return;
 
-
             ReadProjectFile(dialog.FileName);
-
         }
 
 
@@ -121,25 +127,41 @@ namespace GroupAddress.UI.WPF.ViewModel
 
             if (obj != null)
             {
-                EnqueueRecentFiles(path);
-                OnProjectRead();
-                ////CurrentProjectFile = path;
-                //SetProjectFile(obj, path);
+                EnqueueRecentFile(path);   
+                //CurrentProjectFile = path;
+                SetProject(obj, new FileInfo(path));
             }
         }
 
-        private void EnqueueRecentFiles(string path)
+        private void OpenSampleProject()
+        {
+
+        }
+
+        private bool HandleProjectChanged()
+        {
+            if (!ProjectDirty) return true;
+
+            var res2 = MessageBox.Show("Änderungen am aktuellen Projekt speichern?", "Projekt geändert", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            if (res2 == DialogResult.Cancel) return false;
+            if (res2 == DialogResult.Yes) return Save();
+            return true;
+        }
+
+
+        private void SetProject(Project project, FileInfo fileInfo)
+        {
+            Project = project;
+            OnProjectRead(project, fileInfo);
+
+        }
+
+
+        private void EnqueueRecentFile(string path)
         {
             var oldEntries = RecentFilePaths.Where(x => x.FullName != path).Take(9).ToList();
-            //RecentFiles.Clear();
-
             RecentFilePaths = new ObservableCollection<FileInfo>([new FileInfo(path), .. oldEntries]);
-
-            //RecentFiles.Add(new FileInfo(path));
-            //RecentFiles.AddRange(oldEntries);
-
             WriteRecentFilesList();
-            //UpdateRecentFilesMenu();
         }
 
 
