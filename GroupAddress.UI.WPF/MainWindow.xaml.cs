@@ -1,4 +1,5 @@
 ﻿using GroupAddress.UI.WPF.ViewModel;
+using MahApps.Metro.Controls;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -18,7 +19,7 @@ namespace GroupAddress.UI.WPF;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : MetroWindow
 {
 
 

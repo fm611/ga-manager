@@ -7,16 +7,13 @@
              xmlns:vm="clr-namespace:GroupAddress.UI.WPF.ViewModel"
              xmlns:io="clr-namespace:System.IO;assembly=System.IO.FileSystem"
              mc:Ignorable="d"              
-            d:DataContext="{d:DesignInstance vm:MenuViewModel, IsDesignTimeCreatable=True}"
+             d:DataContext="{d:DesignInstance vm:MenuViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="450" d:DesignWidth="800" x:Name="ThisMenuControl">
-    <!--<UserControl.DataContext>
-        --><!-- Setzt das ViewModel für MenuControl --><!--
-        <vm:MenuViewModel />
-    </UserControl.DataContext>-->
+
 
     <Menu>
         <MenuItem Header="Datei">
-            <MenuItem Header="Neu" InputGestureText="Strg+N" Command="{Binding NewProjectCommand}"/>
+            <MenuItem Header="Neu" InputGestureText="Strg+N" Command="{Binding NewCommand}"/>
             <Separator />
             <MenuItem Header="Beispiel" Command="{Binding OpenSampleProjectCommand}" />
             <MenuItem Header="Datei öffnen" InputGestureText="Strg+O"  Command="{Binding OpenFileCommand}"/>
@@ -32,8 +29,8 @@
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
             <Separator />
-            <MenuItem Header="Speichern" Command="{Binding SaveProjectCommand}" />
-            <MenuItem Header="Speichern unter" />
+            <MenuItem Header="Speichern" Command="{Binding SaveCommand}" />
+            <MenuItem Header="Speichern unter" Command="{Binding SaveAsCommand}" />
             <Separator />
             <MenuItem Header="Export" />
             <MenuItem Header="Import" />

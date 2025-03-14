@@ -20,7 +20,7 @@ using System.Windows.Input;
 
 namespace GroupAddress.UI.WPF.ViewModel
 {
-    public partial class  MenuViewModel : ObservableObject
+    public partial class MenuViewModel : ObservableObject
     {
 
 
@@ -38,8 +38,9 @@ namespace GroupAddress.UI.WPF.ViewModel
         public ICommand OpenFileCommand { get; set; }
         public ICommand ReadProjectFileCommand { get; set; }
         public ICommand OpenSampleProjectCommand { get; set; }
-        public ICommand NewProjectCommand { get; set; }
-        public ICommand SaveProjectCommand { get; set; }
+        public ICommand NewCommand { get; set; }
+        public ICommand SaveCommand { get; set; }
+        public ICommand SaveAsCommand { get; set; }
 
 
         public Project Project { get; set; }
@@ -51,8 +52,9 @@ namespace GroupAddress.UI.WPF.ViewModel
             OpenFileCommand = new RelayCommand(OpenFile);
             ReadProjectFileCommand = new RelayCommand<string>(ReadProjectFile);
             OpenSampleProjectCommand = new RelayCommand(OpenSampleProject);
-            NewProjectCommand = new RelayCommand(NewProject);
-            SaveProjectCommand = new RelayCommand(() => Save());
+            NewCommand = new RelayCommand(NewProject);
+            SaveCommand = new RelayCommand(() => Save());
+            SaveAsCommand = new RelayCommand(() => SaveAs());
         }
 
         private bool HandleProjectChanged()
@@ -65,9 +67,9 @@ namespace GroupAddress.UI.WPF.ViewModel
             return true;
         }
 
-        private void OnProjectRead(Project project, FileInfo? fileInfo = null)
+        private void OnProjectRead()
         {
-            ProjectOpen?.Invoke(this, new ProjectOpenEventArgs(project, fileInfo));
+            ProjectOpen?.Invoke(this, new ProjectOpenEventArgs(Project, CurrentProjectFile));
         }
 
         private void NewProject()
@@ -155,7 +157,7 @@ namespace GroupAddress.UI.WPF.ViewModel
 
             if (obj != null)
             {
-                EnqueueRecentFile(path);   
+                EnqueueRecentFile(path);
                 SetProject(obj, new FileInfo(path));
             }
         }
@@ -164,50 +166,49 @@ namespace GroupAddress.UI.WPF.ViewModel
         {
             if (!HandleProjectChanged()) return;
 
-            SetProject(Project.GetSampleProject(),null);
+            SetProject(Project.GetSampleProject(), null);
         }
 
         private void SetProject(Project project, FileInfo? fileInfo)
         {
             Project = project;
             CurrentProjectFile = fileInfo;
-            OnProjectRead(project, fileInfo);
+            OnProjectRead();
+        }
+
+        private bool SaveAs()
+        {
+            var saveDialog = new SaveFileDialog();
+            saveDialog.DefaultExt = "gaproj";
+            saveDialog.Filter = "Project files (*.gaproj)|*.gaproj";
+
+            var res = saveDialog.ShowDialog();
+
+
+            if (!res.HasValue || res == false) return false;
+
+            var filePath = saveDialog.FileName;
+            CurrentProjectFile = new FileInfo(filePath);
+
+            OnProjectRead();
+
+            return Save();
         }
 
         private bool Save()
         {
             if (CurrentProjectFile == null)
-            {
-                var saveDialog = new SaveFileDialog();
-                saveDialog.DefaultExt = "gaproj";
-                saveDialog.Filter = "Project files (*.gaproj)|*.gaproj";
+                return SaveAs();
 
-                var res = saveDialog.ShowDialog();
+            using StreamWriter outputFile = new StreamWriter(CurrentProjectFile.FullName, false);
+            var json = Project.GetJson();
+            outputFile.Write(Project.GetJson());
 
-                if (res.HasValue && res == true)
-                {
-                    var filePath = saveDialog.FileName;
-                    CurrentProjectFile = new FileInfo(filePath);
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            EnqueueRecentFile(CurrentProjectFile.FullName);
+            Project.SetUndirty();
 
-            if (CurrentProjectFile != null)
-            {
-                using StreamWriter outputFile = new StreamWriter(CurrentProjectFile.FullName, false);
-                var json = Project.GetJson();
-                outputFile.Write(Project.GetJson());
+            return true;
 
-                EnqueueRecentFile(CurrentProjectFile.FullName);
-                Project.SetUndirty();
-
-                return true;
-
-            }
-            return false;
         }
 
 
