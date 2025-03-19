@@ -1,4 +1,4 @@
-﻿<mah:MetroWindow x:Class="GroupAddress.UI.WPF.MainWindow"
+﻿<mah:MetroWindow
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,23 +6,92 @@
         xmlns:local="clr-namespace:GroupAddress.UI.WPF"
         xmlns:vm="clr-namespace:GroupAddress.UI.WPF.ViewModel"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:controlzex="urn:controlzex" x:Class="GroupAddress.UI.WPF.MainWindow"
         mc:Ignorable="d"
-        Height="570" Width="1012"
-        d:DataContext="{d:DesignInstance vm:MainViewModel, IsDesignTimeCreatable=True}"
-        Title="{Binding Title}">
+        Height="928" Width="1471"
+        d:DataContext="{d:DesignInstance {x:Type vm:MainViewModel}, IsDesignTimeCreatable=True}"
+        Title="{Binding Title}"
+    >
 
     <DockPanel>
         <local:MenuControl DockPanel.Dock="Top"  DataContext="{Binding MenuViewModel}"/>
         <Grid >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="23*" />
-                <RowDefinition Height="254*"/>
-            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="79*"/>
-                <ColumnDefinition Width="427*"/>
+                <ColumnDefinition Width="25*" MinWidth="300"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="100*"/>
             </Grid.ColumnDefinitions>
-            <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="65,78,66,93" Grid.Column="1" Grid.Row="1"/>
+
+
+            <GridSplitter 
+                Grid.Column="1"  
+                Grid.RowSpan="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Stretch"
+                Background="Black" 
+                ShowsPreview="True"
+                Width="3"
+              />
+
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="50*"/>
+                </Grid.RowDefinitions>
+
+                <GridSplitter 
+                Grid.Row="1"  
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Background="Black" 
+                ShowsPreview="True"
+                Width="3"
+              />
+
+
+                <Border 
+                    BorderBrush="{DynamicResource MahApps.Brushes.WindowTitle.NonActive}" 
+                    BorderThickness="1">
+                    <ListView 
+                        x:Name="MainGroupsListView" 
+                        ItemsSource="{Binding ProjectViewModel.Project.MainGroups}" 
+                        SelectionMode="Single" 
+                        Margin="5" 
+                        
+                        >
+                        <ListView.View>
+                            <GridView>
+
+                                <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Hauptgruppe" Width="150"/>
+                                <GridViewColumn DisplayMemberBinding="{Binding DefaultBlockLength}" Header="Block" Width="50"/>
+                                <GridViewColumn Header="Max GA"  Width="60">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                        <Setter Property="Text" Value="{Binding MaxGASubAddress}"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding MaxGASubAddress}" Value="-1">
+                                                                <Setter Property="Text" Value="-"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Border>
+
+            </Grid>
+            <Button Grid.Column="2" Content="Button" HorizontalAlignment="Left" Margin="337,154,0,0" VerticalAlignment="Top" Command="{Binding TestCommand}"/>
+
+
 
         </Grid>
 

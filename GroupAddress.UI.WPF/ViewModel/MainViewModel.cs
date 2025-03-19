@@ -4,6 +4,7 @@ using GroupAddress.Core;
 using GroupAddress.UI.WPF.CustomEventArgs;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,30 +18,49 @@ namespace GroupAddress.UI.WPF.ViewModel
 {
     public class MainViewModel : ObservableObject
     {
-        private Project? _project;
-        public Project? Project { get => _project; set => SetProperty(ref _project, value); }
+        public MenuViewModel MenuViewModel { get; set; }
+        public ProjectViewModel ProjectViewModel { get; set; }
+
 
         private string _title;
         public string Title { get => _title; set => SetProperty(ref _title, value); }
 
+        public ICommand LoadedCommand { get; set; }
+        public ICommand TestCommand { get; set; }
 
-
-        private MenuViewModel _menuViewModel;
-        public MenuViewModel MenuViewModel { get => _menuViewModel; set => SetProperty(ref _menuViewModel, value); }
 
 
         public MainViewModel()
         {
-            MenuViewModel = new MenuViewModel();
-            Project = MenuViewModel.Project;
+            ProjectViewModel = new ProjectViewModel();
+            ProjectViewModel.PropertyChanged += ProjectViewModel_PropertyChanged;
+
+            MenuViewModel = new MenuViewModel(ProjectViewModel);
+            LoadedCommand = new RelayCommand(Loaded);
+            TestCommand = new RelayCommand(Test);
+
             SetTitle();
-            MenuViewModel.ProjectOpen += (sender, e) => OnProjectOpen(sender,e);
         }
 
-        private void OnProjectOpen(object? sender, ProjectOpenEventArgs e)
+        private void Loaded()
         {
-            Project = e.Project;
+            ProjectViewModel.Project = new Project();
+        }
+
+        private void ProjectViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
             SetTitle();
+        }
+
+        private void MenuViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+        }
+
+        private void Test()
+        {
+            ProjectViewModel.Project.AddMainGroup(new MainGroup(44, "Testgruppe", MainGroup.DefaultSubGroupNames));
+
+
         }
 
         private void SetTitle()
@@ -50,7 +70,7 @@ namespace GroupAddress.UI.WPF.ViewModel
             else            
                 Title = MenuViewModel.CurrentProjectFile.Name;
             
-            if (Project?.Dirty ?? false) Title += "*";
+            if (ProjectViewModel.Project?.Dirty ?? false) Title += "*";
         }
 
     }

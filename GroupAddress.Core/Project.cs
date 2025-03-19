@@ -1,4 +1,6 @@
 ﻿
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -7,7 +9,7 @@ using System.Text.Unicode;
 
 namespace GroupAddress.Core
 {
-    public class Project
+    public class Project : ObservableObject
     {
         public event EventHandler<EventArgs>? ProjectChanged;
         public event EventHandler<EventArgs>? ProjectSaved;
@@ -18,9 +20,13 @@ namespace GroupAddress.Core
 
         [JsonInclude]
         [JsonPropertyName("MainGroups")]
-        private List<MainGroup> _mainGroups = [];
+        //private List<MainGroup> _mainGroups = [];
+        private ObservableCollection<MainGroup> _mainGroups = [];
         [JsonIgnore]
-        public IReadOnlyCollection<MainGroup> MainGroups => _mainGroups.AsReadOnly();
+        public ReadOnlyObservableCollection<MainGroup> MainGroups => new ReadOnlyObservableCollection<MainGroup>(_mainGroups);
+        //public IReadOnlyCollection<MainGroup> MainGroups => _mainGroups.AsReadOnly();
+
+
         [JsonInclude]
         [JsonPropertyName("GroupTemplates")]
         private List<GroupTemplate> _groupTemplates = [];
@@ -34,9 +40,15 @@ namespace GroupAddress.Core
         public IReadOnlyCollection<Group> Groups => _groups.AsReadOnly();
 
 
-        public Project() {
+        public Project()
+        {
             Created = DateTime.Now;
             Dirty = false;
+            _mainGroups.CollectionChanged += _mainGroups_CollectionChanged;
+        }
+        private void _mainGroups_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged();
         }
 
         public void AddMainGroup(MainGroup mainGroup)

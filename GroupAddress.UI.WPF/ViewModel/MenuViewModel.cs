@@ -24,16 +24,14 @@ namespace GroupAddress.UI.WPF.ViewModel
     {
 
 
-        public event EventHandler<ProjectOpenEventArgs>? ProjectOpen;
-
         private static string _recentFilesJsonPath = "recent.json";
 
         private ObservableCollection<FileInfo> _recentFilePaths = [];
         public ObservableCollection<FileInfo> RecentFilePaths { get => _recentFilePaths; set => SetProperty(ref _recentFilePaths, value); }
 
 
-        private FileInfo? _currentProjectFile;
-        public FileInfo? CurrentProjectFile { get => _currentProjectFile; set => SetProperty(ref _currentProjectFile, value); }
+        //private FileInfo? _currentProjectFile;
+        //public FileInfo? CurrentProjectFile { get => _currentProjectFile; set => SetProperty(ref _currentProjectFile, value); }
 
         public ICommand OpenFileCommand { get; set; }
         public ICommand ReadProjectFileCommand { get; set; }
@@ -42,12 +40,18 @@ namespace GroupAddress.UI.WPF.ViewModel
         public ICommand SaveCommand { get; set; }
         public ICommand SaveAsCommand { get; set; }
 
+        //private Project _project;
+        //public Project Project { get => _project; set => SetProperty(ref _project, value); }
 
-        public Project Project { get; set; }
+        public ProjectViewModel ProjectViewModel { get; set; }
 
-        public MenuViewModel()
+        public Project Project { get => ProjectViewModel.Project; set => ProjectViewModel.Project = value; }
+        public FileInfo? CurrentProjectFile { get => ProjectViewModel.CurrentProjectFile; set => ProjectViewModel.CurrentProjectFile = value; }
+
+        public MenuViewModel(ProjectViewModel projectViewModel)
         {
-            SetProject(new Project(), null);
+            ProjectViewModel = projectViewModel;
+
             ReadRecentFilesList();
             OpenFileCommand = new RelayCommand(OpenFile);
             ReadProjectFileCommand = new RelayCommand<string>(ReadProjectFile);
@@ -65,11 +69,6 @@ namespace GroupAddress.UI.WPF.ViewModel
             if (res2 == MessageBoxResult.Cancel) return false;
             if (res2 == MessageBoxResult.Yes) return Save();
             return true;
-        }
-
-        private void OnProjectRead()
-        {
-            ProjectOpen?.Invoke(this, new ProjectOpenEventArgs(Project, CurrentProjectFile));
         }
 
         private void NewProject()
@@ -169,11 +168,10 @@ namespace GroupAddress.UI.WPF.ViewModel
             SetProject(Project.GetSampleProject(), null);
         }
 
-        private void SetProject(Project project, FileInfo? fileInfo)
+        public void SetProject(Project project, FileInfo? fileInfo)
         {
             Project = project;
             CurrentProjectFile = fileInfo;
-            OnProjectRead();
         }
 
         private bool SaveAs()
@@ -189,8 +187,6 @@ namespace GroupAddress.UI.WPF.ViewModel
 
             var filePath = saveDialog.FileName;
             CurrentProjectFile = new FileInfo(filePath);
-
-            OnProjectRead();
 
             return Save();
         }
