@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace GroupAddress.UI.WPF.ViewModel
 {
-    public class ProjectViewModel : NestedObservableObject
+    public class ProjectViewModel : ObservableObject
     {
         private Project _project;
-        public Project Project { get => _project; set => SetAndSubscribeProperty(ref _project, value); }
+        public Project Project { get => _project; set => SetProperty(ref _project, value); }
 
         private FileInfo? _currentProjectFile;
         public FileInfo? CurrentProjectFile { get => _currentProjectFile; set => SetProperty(ref _currentProjectFile, value); }

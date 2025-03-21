@@ -20,24 +20,21 @@ namespace GroupAddress.Core
 
         [JsonInclude]
         [JsonPropertyName("MainGroups")]
-        //private List<MainGroup> _mainGroups = [];
         private ObservableCollection<MainGroup> _mainGroups = [];
         [JsonIgnore]
         public ReadOnlyObservableCollection<MainGroup> MainGroups => new ReadOnlyObservableCollection<MainGroup>(_mainGroups);
-        //public IReadOnlyCollection<MainGroup> MainGroups => _mainGroups.AsReadOnly();
-
-
+        
         [JsonInclude]
         [JsonPropertyName("GroupTemplates")]
-        private List<GroupTemplate> _groupTemplates = [];
+        private ObservableCollection<GroupTemplate> _groupTemplates = [];
         [JsonIgnore]
-        public IReadOnlyCollection<GroupTemplate> GroupTemplates => _groupTemplates.AsReadOnly();
+        public ReadOnlyObservableCollection<GroupTemplate> GroupTemplates => new ReadOnlyObservableCollection<GroupTemplate>(_groupTemplates);
 
         [JsonInclude]
         [JsonPropertyName("Groups")]
-        private List<Group> _groups = [];
+        private ObservableCollection<Group> _groups = [];
         [JsonIgnore]
-        public IReadOnlyCollection<Group> Groups => _groups.AsReadOnly();
+        public ReadOnlyObservableCollection<Group> Groups => new ReadOnlyObservableCollection<Group>(_groups);
 
 
         public Project()
@@ -48,15 +45,10 @@ namespace GroupAddress.Core
         }
         private void _mainGroups_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            OnPropertyChanged();
+            Console.WriteLine("Test");
         }
 
-        public void AddMainGroup(MainGroup mainGroup)
-        {
-            _mainGroups.Add(mainGroup);
-            mainGroup.Changed += (sender,e) => OnChange();
-            OnChange();
-        }
+
 
         public void ResetEventBindings()
         {
@@ -88,6 +80,12 @@ namespace GroupAddress.Core
         {
             Dirty = false;
             OnSave();
+        }
+        public void AddMainGroup(MainGroup mainGroup)
+        {
+            _mainGroups.Add(mainGroup);
+            mainGroup.Changed += (sender, e) => OnChange();
+            OnChange();
         }
 
         public bool RemoveMainGroup(MainGroup mainGroup)

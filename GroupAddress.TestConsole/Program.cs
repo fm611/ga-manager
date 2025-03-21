@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace GroupAddress.TestConsole
 {
@@ -12,48 +15,28 @@ namespace GroupAddress.TestConsole
         static void Main(string[] args)
         {
 
-            var f = new Foo();
+            var coll = new ObservableCollection<Bar>();
 
-            f.FooBar = new Bar() { Content = "999" };
+            coll.CollectionChanged += (sender, e) => Debug.WriteLine("Collection changed");
 
+            var b = new Bar() { Content = "1234" };
 
-        }
-    }
+            coll.Add(b);
 
-    public class Foo
-    {
-        
-        public FooFoo FooFoo { get; set; }
-
-        private Bar _fooBar;
-        public Bar FooBar { get => _fooBar; set => _fooBar = value; }
-
-
-        public Foo()
-        {
-
-            FooBar = new Bar() { Content = "3456" };
-            FooFoo = new FooFoo(ref _fooBar);
+            b.Content = "56678";
 
 
         }
     }
 
-    public class FooFoo
+
+
+    public class Bar : ObservableObject
     {
-        private Bar _fooFooBar;
-        public Bar FooFooBar { get => _fooFooBar; set => _fooFooBar = value; }
-
-        public FooFoo(ref Bar bar)
-        {
-            _fooFooBar = bar;
-        }
-    }
+        private string _content;
+        public string Content { get => _content; set => SetProperty(ref _content, value); }
 
 
-    public class Bar
-    {
-        public string Content { get; set; }
     }
 
 }
