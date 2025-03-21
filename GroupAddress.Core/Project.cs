@@ -1,6 +1,7 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,10 +10,12 @@ using System.Text.Unicode;
 
 namespace GroupAddress.Core
 {
-    public class Project : ObservableObject
+    public class Project : ObservableObject, INotifyDeepChange
     {
-        public event EventHandler<EventArgs>? ProjectChanged;
+        public event DeepChangeEventHandler? DeepChange;
+
         public event EventHandler<EventArgs>? ProjectSaved;
+
         [JsonIgnore]
         public bool Dirty { get; private set; }
         public DateTime Created { get; set; }
@@ -20,63 +23,86 @@ namespace GroupAddress.Core
 
         [JsonInclude]
         [JsonPropertyName("MainGroups")]
-        //private List<MainGroup> _mainGroups = [];
         private ObservableCollection<MainGroup> _mainGroups = [];
         [JsonIgnore]
         public ReadOnlyObservableCollection<MainGroup> MainGroups => new ReadOnlyObservableCollection<MainGroup>(_mainGroups);
-        //public IReadOnlyCollection<MainGroup> MainGroups => _mainGroups.AsReadOnly();
 
 
         [JsonInclude]
         [JsonPropertyName("GroupTemplates")]
-        private List<GroupTemplate> _groupTemplates = [];
+        private ObservableCollection<GroupTemplate> _groupTemplates = [];
         [JsonIgnore]
-        public IReadOnlyCollection<GroupTemplate> GroupTemplates => _groupTemplates.AsReadOnly();
+        public ReadOnlyObservableCollection<GroupTemplate> GroupTemplates => new ReadOnlyObservableCollection<GroupTemplate>(_groupTemplates);
 
         [JsonInclude]
         [JsonPropertyName("Groups")]
-        private List<Group> _groups = [];
+        private ObservableCollection<Group> _groups = [];
         [JsonIgnore]
-        public IReadOnlyCollection<Group> Groups => _groups.AsReadOnly();
+        public ReadOnlyObservableCollection<Group> Groups => new ReadOnlyObservableCollection<Group>(_groups);
 
 
         public Project()
         {
             Created = DateTime.Now;
             Dirty = false;
-            _mainGroups.CollectionChanged += _mainGroups_CollectionChanged;
+            _mainGroups.CollectionChanged += (sender, e) => OnChange();
+            _groupTemplates.CollectionChanged += (sender, e) => OnChange();
+            _groups.CollectionChanged += (sender, e) => OnChange();
         }
-        private void _mainGroups_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            OnPropertyChanged();
-        }
+
 
         public void AddMainGroup(MainGroup mainGroup)
         {
             _mainGroups.Add(mainGroup);
             mainGroup.Changed += (sender,e) => OnChange();
-            OnChange();
         }
 
         public void ResetEventBindings()
         {
-            foreach (var mg in _mainGroups)
+            if (_mainGroups != null)
             {
-                mg.Changed -= (sender, e) => OnChange();
-                mg.Changed += (sender, e) => OnChange();
+                _mainGroups.CollectionChanged -= (sender, e) => OnChange();
+                _mainGroups.CollectionChanged += (sender, e) => OnChange();
+
+                foreach (var mg in _mainGroups)
+                {
+                    mg.Changed -= (sender, e) => OnChange();
+                    mg.Changed += (sender, e) => OnChange();
+                }
             }
-            foreach (var it in _groupTemplates)
+
+            if (_groupTemplates != null)
             {
-                it.Changed -= (sender, e) => OnChange();
-                it.Changed += (sender, e) => OnChange();
+                _groupTemplates.CollectionChanged -= (sender, e) => OnChange();
+                _groupTemplates.CollectionChanged += (sender, e) => OnChange();
+
+                foreach (var it in _groupTemplates)
+                {
+                    it.Changed -= (sender, e) => OnChange();
+                    it.Changed += (sender, e) => OnChange();
+                }
             }
+
+            if (_groups != null)
+            {
+                _groups.CollectionChanged -= (sender, e) => OnChange();
+                _groups.CollectionChanged += (sender, e) => OnChange();
+
+                foreach (var it in _groups)
+                {
+                    it.Changed -= (sender, e) => OnChange();
+                    it.Changed += (sender, e) => OnChange();
+                }
+            }
+
+
         }
 
 
-        private void OnChange()
+        private void OnChange([CallerMemberName] string? callerName = null)
         {
             Dirty = true;
-            ProjectChanged?.Invoke(this, EventArgs.Empty);
+            DeepChange?.Invoke(this, new DeepChangeEventArgs(callerName));
         }
 
         private void OnSave()

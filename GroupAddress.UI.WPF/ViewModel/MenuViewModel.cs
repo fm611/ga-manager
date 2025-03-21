@@ -29,19 +29,12 @@ namespace GroupAddress.UI.WPF.ViewModel
         private ObservableCollection<FileInfo> _recentFilePaths = [];
         public ObservableCollection<FileInfo> RecentFilePaths { get => _recentFilePaths; set => SetProperty(ref _recentFilePaths, value); }
 
-
-        //private FileInfo? _currentProjectFile;
-        //public FileInfo? CurrentProjectFile { get => _currentProjectFile; set => SetProperty(ref _currentProjectFile, value); }
-
         public ICommand OpenFileCommand { get; set; }
         public ICommand ReadProjectFileCommand { get; set; }
         public ICommand OpenSampleProjectCommand { get; set; }
         public ICommand NewCommand { get; set; }
         public ICommand SaveCommand { get; set; }
         public ICommand SaveAsCommand { get; set; }
-
-        //private Project _project;
-        //public Project Project { get => _project; set => SetProperty(ref _project, value); }
 
         public ProjectViewModel ProjectViewModel { get; set; }
 
