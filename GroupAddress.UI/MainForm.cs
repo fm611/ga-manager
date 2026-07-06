@@ -24,7 +24,7 @@ namespace GroupAddress.UI
             set
             {
                 _project = value;
-                _project.ProjectChanged += Project_Changed;
+                _project.DeepChange += Project_Changed;
                 ProjectDirty = false;
             }
         }
@@ -134,7 +134,7 @@ namespace GroupAddress.UI
         {
             if (!ProjectDirty) return true;
 
-            var res2 = MessageBox.Show("Änderungen am aktuellen Projekt speichern?", "Projekt geändert", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            var res2 = MessageBox.Show("ï¿½nderungen am aktuellen Projekt speichern?", "Projekt geï¿½ndert", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
             if (res2 == DialogResult.Cancel) return false;
             if (res2 == DialogResult.Yes) return Save();
             return true;
@@ -352,7 +352,7 @@ namespace GroupAddress.UI
         {
             if (SelectedMainGroup == null) return;
 
-            if (MessageBox.Show("Haupgruppe löschen?", "Hauptgruppe löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if (MessageBox.Show("Haupgruppe lï¿½schen?", "Hauptgruppe lï¿½schen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 //Project.MainGroups.Remove(SelectedMainGroup);
                 Project.RemoveMainGroup(SelectedMainGroup);
@@ -393,7 +393,7 @@ namespace GroupAddress.UI
         {
             if (SelectedMainGroup == null)
             {
-                MessageBox.Show("Bitte erst eine Hauptgruppe erstellen/auswählen.", "Keine Hauptgruppe", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Bitte erst eine Hauptgruppe erstellen/auswï¿½hlen.", "Keine Hauptgruppe", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -467,7 +467,7 @@ namespace GroupAddress.UI
             var gasDelete = GADataTable.SelectedGAs;
             if (gasDelete.Count > 0)
             {
-                var res = MessageBox.Show("Gruppenadressen löschen?", "Gruppenadressen löschen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                var res = MessageBox.Show("Gruppenadressen lï¿½schen?", "Gruppenadressen lï¿½schen", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (res == DialogResult.Yes)
                 {
                     gasDelete.ForEach(x => SelectedMainGroup.RemoveGA(x));
@@ -562,7 +562,7 @@ namespace GroupAddress.UI
 
             if (groupGAs.Count == 0)
             {
-                var res = MessageBox.Show("Möchten Sie die Gruppe wirklich löschen?", "Gruppe löschen", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                var res = MessageBox.Show("Mï¿½chten Sie die Gruppe wirklich lï¿½schen?", "Gruppe lï¿½schen", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                 if (res != DialogResult.OK) return;
             }
             else

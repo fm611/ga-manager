@@ -26,11 +26,7 @@ namespace GroupAddress.Core
         private ObservableCollection<MainGroup> _mainGroups = [];
         [JsonIgnore]
         public ReadOnlyObservableCollection<MainGroup> MainGroups => new ReadOnlyObservableCollection<MainGroup>(_mainGroups);
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> c00e77ca1cf5c422779a88b24963e96a1bbc3289
         [JsonInclude]
         [JsonPropertyName("GroupTemplates")]
         private ObservableCollection<GroupTemplate> _groupTemplates = [];
@@ -48,39 +44,14 @@ namespace GroupAddress.Core
         {
             Created = DateTime.Now;
             Dirty = false;
-<<<<<<< HEAD
-<<<<<<< HEAD
             _mainGroups.CollectionChanged += (sender, e) => OnChange();
             _groupTemplates.CollectionChanged += (sender, e) => OnChange();
             _groups.CollectionChanged += (sender, e) => OnChange();
         }
 
 
-        public void AddMainGroup(MainGroup mainGroup)
-        {
-            _mainGroups.Add(mainGroup);
-            mainGroup.Changed += (sender,e) => OnChange();
-        }
-=======
-            _mainGroups.CollectionChanged += _mainGroups_CollectionChanged;
-        }
-        private void _mainGroups_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            Console.WriteLine("Test");
-        }
 
 
->>>>>>> c00e77ca1cf5c422779a88b24963e96a1bbc3289
-=======
-            _mainGroups.CollectionChanged += _mainGroups_CollectionChanged;
-        }
-        private void _mainGroups_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            Console.WriteLine("Test");
-        }
-
-
->>>>>>> c00e77ca1cf5c422779a88b24963e96a1bbc3289
 
         public void ResetEventBindings()
         {

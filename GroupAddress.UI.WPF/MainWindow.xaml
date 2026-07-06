@@ -89,7 +89,7 @@
                 </Border>
 
             </Grid>
-            <Button Grid.Column="2" Content="Button" HorizontalAlignment="Left" Margin="337,154,0,0" VerticalAlignment="Top" Command="{Binding TestCommand}"/>
+            <Button Grid.Column="2" Content="Button" HorizontalAlignment="Left" Margin="337,154,0,0" VerticalAlignment="Top" Command="{Binding TestCommand}" />
 
 
 

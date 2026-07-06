@@ -13,6 +13,12 @@ namespace GroupAddress.UI
     public class GADataGridView : DataGridView
     {
 
+        public GADataGridView()
+        {
+            SelectionMode = DataGridViewSelectionMode.CellSelect;
+            MultiSelect = true;
+        }
+
         public TopLevelCollection? TopLevelCollection { get; set; }
         public bool ShowEmptyRows { get; set; } = true;
         public bool ShowAllRows { get; set; } = true;
