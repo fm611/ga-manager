@@ -1,4 +1,4 @@
-﻿using GroupAddress.UI.WPF.ViewModel;
+﻿
 using MahApps.Metro.Controls;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -26,7 +26,6 @@ public partial class MainWindow : MetroWindow
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = new MainViewModel();
 
     }
 
