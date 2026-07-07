@@ -23,6 +23,7 @@ import {
   ArrowUndoRegular,
   ArrowRedoRegular,
   SaveRegular,
+  ChevronDownRegular,
 } from '@fluentui/react-icons'
 import type { Address, GA, MainGroup, Project } from './domain/schema'
 import { ProjectSchema } from './domain/schema'
@@ -282,7 +283,9 @@ function MainContent() {
       <div className={styles.menuBar}>
         <Menu>
           <MenuTrigger disableButtonEnhancement>
-            <Button appearance="subtle">Datei</Button>
+            <Button appearance="outline" icon={<ChevronDownRegular />} iconPosition="after">
+              Datei
+            </Button>
           </MenuTrigger>
           <MenuPopover>
             <MenuList>
@@ -313,7 +316,7 @@ function MainContent() {
           </MenuPopover>
         </Menu>
 
-        <Button appearance="subtle" onClick={handleOpenTemplateManager}>
+        <Button appearance="outline" onClick={handleOpenTemplateManager}>
           Template Manager
         </Button>
 
@@ -390,7 +393,7 @@ function MainContent() {
 
         <div className={styles.rightColumn}>
           <div className={styles.gridToolbar}>
-            <Text weight="semibold">{selectedMainGroup ? `Gruppenadressen – ${selectedMainGroup.subAddress} - ${selectedMainGroup.name}` : 'Gruppenadressen'}</Text>
+            <Text weight="semibold">{selectedMainGroup ? `Hauptgruppe: ${selectedMainGroup.subAddress} - ${selectedMainGroup.name}` : 'Gruppenadressen'}</Text>
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
               <Input
                 size="small"
