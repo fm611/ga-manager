@@ -125,7 +125,7 @@ export function GroupTemplateManagerDialog({ open, initialMainGroupId, onClose, 
     <Dialog open={open} onOpenChange={(_, data) => !data.open && onClose()}>
       <DialogSurface style={{ maxWidth: '1400px', width: '95vw' }}>
         <DialogBody>
-          <DialogTitle>Gruppen Manager</DialogTitle>
+          <DialogTitle>Template Manager</DialogTitle>
           <DialogContent>
             <div className={styles.body}>
               <div className={styles.leftPane}>

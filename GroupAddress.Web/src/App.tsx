@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   FluentProvider,
   Button,
@@ -13,8 +13,16 @@ import {
   tokens,
   makeStyles,
 } from '@fluentui/react-components'
-import { TableInsertRowRegular, TableDeleteRowRegular, SearchRegular, DismissRegular } from '@fluentui/react-icons'
-import type { Address, GA, MainGroup } from './domain/schema'
+import {
+  TableInsertRowRegular,
+  TableDeleteRowRegular,
+  SearchRegular,
+  DismissRegular,
+  ArrowUndoRegular,
+  ArrowRedoRegular,
+  SaveRegular,
+} from '@fluentui/react-icons'
+import type { Address, GA, MainGroup, Project } from './domain/schema'
 import { ProjectProvider, useProject } from './state/ProjectContext'
 import { createEmptyProject, buildSampleProject, createMainGroup } from './domain/operations'
 import { MainGroupPanel } from './components/MainGroupPanel'
@@ -47,8 +55,23 @@ const useStyles = makeStyles({
 
 function MainContent() {
   const styles = useStyles()
-  const { project, resetProject, addMainGroup, updateMainGroup, removeMainGroup, assignGAsToGroup, setCellGA, removeGAsFromCollection, renameSubGroupColumn, insertCells, deleteCellsAndShift } =
-    useProject()
+  const {
+    project,
+    canUndo,
+    canRedo,
+    undo,
+    redo,
+    resetProject,
+    addMainGroup,
+    updateMainGroup,
+    removeMainGroup,
+    assignGAsToGroup,
+    setCellGA,
+    removeGAsFromCollection,
+    renameSubGroupColumn,
+    insertCells,
+    deleteCellsAndShift,
+  } = useProject()
 
   const [selectedMainGroupId, setSelectedMainGroupId] = useState<string | null>(null)
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>([])
@@ -58,12 +81,33 @@ function MainContent() {
   const [mainGroupDialog, setMainGroupDialog] = useState<{ open: boolean; editing: MainGroup | null }>({ open: false, editing: null })
   const [pendingDeleteMainGroup, setPendingDeleteMainGroup] = useState<MainGroup | null>(null)
   const [templateManagerOpen, setTemplateManagerOpen] = useState(false)
+  const [pendingReset, setPendingReset] = useState<Project | null>(null)
 
   const [gridSelection, setGridSelection] = useState<{ gas: GA[]; addresses: Address[] }>({ gas: [], addresses: [] })
   const [addCellsCount, setAddCellsCount] = useState('1')
   const [confirmDeleteCellsOpen, setConfirmDeleteCellsOpen] = useState(false)
 
   const gridRef = useRef<GaGridHandle>(null)
+
+  useEffect(() => {
+    function isTextEntryTarget(el: EventTarget | null): boolean {
+      if (!(el instanceof HTMLElement)) return false
+      return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable
+    }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (!(e.ctrlKey || e.metaKey) || isTextEntryTarget(document.activeElement)) return
+      const key = e.key.toLowerCase()
+      if (key === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        undo()
+      } else if (key === 'y' || (key === 'z' && e.shiftKey)) {
+        e.preventDefault()
+        redo()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [undo, redo])
 
   const selectedMainGroup = project.mainGroups.find((m) => m.id === selectedMainGroupId) ?? null
 
@@ -99,6 +143,17 @@ function MainContent() {
   const handleAddMainGroup = useCallback(() => setMainGroupDialog({ open: true, editing: null }), [])
   const handleEditMainGroup = useCallback((mg: MainGroup) => setMainGroupDialog({ open: true, editing: mg }), [])
 
+  const handleResetRequest = useCallback(
+    (newProject: Project) => {
+      if (canUndo) {
+        setPendingReset(newProject)
+      } else {
+        resetProject(newProject)
+      }
+    },
+    [canUndo, resetProject],
+  )
+
   function handleAddCells() {
     if (!selectedMainGroup) return
     const numRows = Number(addCellsCount)
@@ -131,15 +186,25 @@ function MainContent() {
           </MenuTrigger>
           <MenuPopover>
             <MenuList>
-              <MenuItem onClick={() => resetProject(createEmptyProject())}>Neu</MenuItem>
-              <MenuItem onClick={() => resetProject(buildSampleProject())}>Beispiel laden</MenuItem>
+              <MenuItem onClick={() => handleResetRequest(createEmptyProject())}>Neu</MenuItem>
+              <MenuItem onClick={() => handleResetRequest(buildSampleProject())}>Beispiel laden</MenuItem>
             </MenuList>
           </MenuPopover>
         </Menu>
 
         <Button appearance="subtle" onClick={handleOpenTemplateManager}>
-          Gruppen Manager
+          Template Manager
         </Button>
+
+        <Button appearance="subtle" icon={<ArrowUndoRegular />} title="Rückgängig (Strg+Z)" disabled={!canUndo} onClick={undo} />
+        <Button appearance="subtle" icon={<ArrowRedoRegular />} title="Wiederholen (Strg+Y)" disabled={!canRedo} onClick={redo} />
+        <Button
+          appearance="subtle"
+          icon={<SaveRegular />}
+          title="Speichern"
+          style={canUndo ? undefined : { opacity: 0.5 }}
+          onClick={() => console.log(project)}
+        />
 
         <div style={{ flex: 1 }} />
 
@@ -288,6 +353,19 @@ function MainContent() {
           setConfirmDeleteCellsOpen(false)
         }}
         onCancel={() => setConfirmDeleteCellsOpen(false)}
+      />
+
+      <ConfirmDialog
+        open={pendingReset !== null}
+        title="Änderungen verwerfen?"
+        message="Es gibt nicht gespeicherte Änderungen. Möchten Sie diese verwerfen?"
+        confirmText="Verwerfen"
+        danger
+        onConfirm={() => {
+          if (pendingReset) resetProject(pendingReset)
+          setPendingReset(null)
+        }}
+        onCancel={() => setPendingReset(null)}
       />
 
       <GroupTemplateManagerDialog

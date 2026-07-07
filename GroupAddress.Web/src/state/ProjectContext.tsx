@@ -74,8 +74,49 @@ function reducer(project: Project, action: Action): Project {
   }
 }
 
+type HistoryAction = Action | { type: 'undo' } | { type: 'redo' }
+
+interface HistoryState {
+  past: Project[]
+  present: Project
+  future: Project[]
+}
+
+const MAX_HISTORY = 200
+
+function pushCapped(past: Project[], entry: Project): Project[] {
+  const next = [...past, entry]
+  return next.length > MAX_HISTORY ? next.slice(next.length - MAX_HISTORY) : next
+}
+
+function historyReducer(state: HistoryState, action: HistoryAction): HistoryState {
+  if (action.type === 'undo') {
+    if (state.past.length === 0) return state
+    const previous = state.past[state.past.length - 1]
+    return { past: state.past.slice(0, -1), present: previous, future: [state.present, ...state.future] }
+  }
+  if (action.type === 'redo') {
+    if (state.future.length === 0) return state
+    const next = state.future[0]
+    return { past: pushCapped(state.past, state.present), present: next, future: state.future.slice(1) }
+  }
+
+  const newPresent = reducer(state.present, action)
+  if (newPresent === state.present) return state
+
+  if (action.type === 'reset') {
+    return { past: [], present: newPresent, future: [] }
+  }
+
+  return { past: pushCapped(state.past, state.present), present: newPresent, future: [] }
+}
+
 interface ProjectContextValue {
   project: Project
+  canUndo: boolean
+  canRedo: boolean
+  undo: () => void
+  redo: () => void
   resetProject: (project: Project) => void
   addMainGroup: (mainGroup: MainGroup) => void
   removeMainGroup: (mainGroupId: string) => void
@@ -98,11 +139,18 @@ interface ProjectContextValue {
 const ProjectContext = createContext<ProjectContextValue | null>(null)
 
 export function ProjectProvider({ project: initialProject, children }: { project: Project; children: ReactNode }) {
-  const [project, dispatch] = useReducer(reducer, initialProject)
+  const [state, dispatch] = useReducer(historyReducer, { past: [], present: initialProject, future: [] })
+  const project = state.present
+  const canUndo = state.past.length > 0
+  const canRedo = state.future.length > 0
 
   const value = useMemo<ProjectContextValue>(
     () => ({
       project,
+      canUndo,
+      canRedo,
+      undo: () => dispatch({ type: 'undo' }),
+      redo: () => dispatch({ type: 'redo' }),
       resetProject: (p) => dispatch({ type: 'reset', project: p }),
       addMainGroup: (mainGroup) => dispatch({ type: 'addMainGroup', mainGroup }),
       removeMainGroup: (mainGroupId) => dispatch({ type: 'removeMainGroup', mainGroupId }),
@@ -127,7 +175,7 @@ export function ProjectProvider({ project: initialProject, children }: { project
           dispatch({ type: 'addGroupFromTemplate', mainGroupId, template, gaPrefix, startIndex, onResult: resolve })
         }),
     }),
-    [project],
+    [project, canUndo, canRedo],
   )
 
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>
