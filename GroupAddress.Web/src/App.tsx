@@ -11,7 +11,6 @@ import {
   MenuItem,
   MenuDivider,
   Text,
-  Title3,
   tokens,
   makeStyles,
 } from '@fluentui/react-components'
@@ -29,7 +28,19 @@ import type { Address, GA, MainGroup, Project } from './domain/schema'
 import { ProjectSchema } from './domain/schema'
 import { ProjectProvider, useProject } from './state/ProjectContext'
 import { createEmptyProject, buildSampleProject, createMainGroup } from './domain/operations'
-import { initHostBridge, notifyNewProject, reportDirty, requestOpenFile, requestOpenRecentFile, requestSaveFile, type RecentFile } from './host/wpfBridge'
+import { buildGaExportCsv } from './domain/csvExport'
+import { parseGaImportCsv } from './domain/csvImport'
+import {
+  initHostBridge,
+  notifyNewProject,
+  reportDirty,
+  requestOpenFile,
+  requestOpenRecentFile,
+  requestSaveFile,
+  requestExportFile,
+  requestImportFile,
+  type RecentFile,
+} from './host/wpfBridge'
 import { MainGroupPanel } from './components/MainGroupPanel'
 import { GroupPanel } from './components/GroupPanel'
 import { GaGrid, type GaGridHandle } from './components/GaGrid'
@@ -37,26 +48,23 @@ import { AddEditMainGroupDialog } from './components/dialogs/AddEditMainGroupDia
 import { ConfirmDialog } from './components/dialogs/ConfirmDialog'
 import { GroupTemplateManagerDialog } from './components/GroupTemplateManagerDialog'
 import { knxDarkTheme } from './theme'
+import logo from './assets/logo.svg'
 
 const useStyles = makeStyles({
   root: { display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' },
+  header: {
+    display: 'flex',
+    flexDirection: 'column',
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    flexShrink: 0,
+  },
   menuBar: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
+    gap: '12px',
     padding: '6px 10px',
-    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
-    flexShrink: 0,
   },
-  toolbar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    gap: '4px',
-    padding: '3px 10px',
-    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
-    flexShrink: 0,
-  },
+  logo: { height: '48px', width: 'auto', padding: "2px"},
   body: { display: 'flex', flex: 1, minHeight: 0, gap: '10px', padding: '10px' },
   leftColumn: { width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0 },
   leftTop: { flex: '1 1 55%', minHeight: 0 },
@@ -226,6 +234,21 @@ function MainContent() {
     if (result) markClean()
   }, [project, markClean])
 
+  const handleExport = useCallback(async () => {
+    await requestExportFile(buildGaExportCsv(project), 'Gruppenadressen.csv')
+  }, [project])
+
+  const handleImport = useCallback(async () => {
+    const result = await requestImportFile()
+    if (!result) return
+    const parsed = parseGaImportCsv(result.content)
+    if (!parsed) {
+      alert(`Datei ist keine gültige Gruppenadressen-CSV:\n${result.path}`)
+      return
+    }
+    handleResetRequest(parsed, { clearHostFile: true })
+  }, [handleResetRequest])
+
   function handleAddCells() {
     if (!selectedMainGroup) return
     const numRows = Number(addCellsCount)
@@ -280,90 +303,64 @@ function MainContent() {
 
   return (
     <div className={styles.root}>
-      <div className={styles.menuBar}>
-        <Menu>
-          <MenuTrigger disableButtonEnhancement>
-            <Button appearance="outline" icon={<ChevronDownRegular />} iconPosition="after">
-              Datei
-            </Button>
-          </MenuTrigger>
-          <MenuPopover>
-            <MenuList>
-              <MenuItem onClick={() => handleResetRequest(createEmptyProject(), { clearHostFile: true })}>Neu</MenuItem>
-              <Menu>
-                <MenuTrigger disableButtonEnhancement>
-                  <MenuItem>Öffnen</MenuItem>
-                </MenuTrigger>
-                <MenuPopover>
-                  <MenuList>
-                    <MenuItem onClick={handleOpenFile}>Datei…</MenuItem>
-                    <MenuDivider />
-                    <MenuItem onClick={() => handleResetRequest(buildSampleProject(), { clearHostFile: true })}>Beispiel</MenuItem>
-                    {recentFiles.length > 0 && <MenuDivider />}
-                    {recentFiles.map((file) => (
-                      <MenuItem key={file.path} onClick={() => handleOpenRecent(file.path)} title={file.path}>
-                        {file.name}
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </MenuPopover>
-              </Menu>
-              <MenuItem onClick={handleSave}>Speichern</MenuItem>
-              <MenuDivider />
-              <MenuItem>Export</MenuItem>
-              <MenuItem>Import</MenuItem>
-            </MenuList>
-          </MenuPopover>
-        </Menu>
+      <div className={styles.header}>
+        <div className={styles.menuBar}>
+          <img src={logo} alt="Gruppenadressen Manager" className={styles.logo} />
 
-        <Button appearance="outline" onClick={handleOpenTemplateManager}>
-          Template Manager
-        </Button>
+          <Divider vertical style={{ height: '28px', flexGrow: 0 }} />
 
-        <div style={{ flex: 1 }} />
+          <Menu>
+            <MenuTrigger disableButtonEnhancement>
+              <Button appearance="outline" icon={<ChevronDownRegular />} iconPosition="after">
+                Datei
+              </Button>
+            </MenuTrigger>
+            <MenuPopover>
+              <MenuList>
+                <MenuItem onClick={() => handleResetRequest(createEmptyProject(), { clearHostFile: true })}>Neu</MenuItem>
+                <Menu>
+                  <MenuTrigger disableButtonEnhancement>
+                    <MenuItem>Öffnen</MenuItem>
+                  </MenuTrigger>
+                  <MenuPopover>
+                    <MenuList>
+                      <MenuItem onClick={handleOpenFile}>Datei…</MenuItem>
+                      <MenuDivider />
+                      <MenuItem onClick={() => handleResetRequest(buildSampleProject(), { clearHostFile: true })}>Beispiel</MenuItem>
+                      {recentFiles.length > 0 && <MenuDivider />}
+                      {recentFiles.map((file) => (
+                        <MenuItem key={file.path} onClick={() => handleOpenRecent(file.path)} title={file.path}>
+                          {file.name}
+                        </MenuItem>
+                      ))}
+                    </MenuList>
+                  </MenuPopover>
+                </Menu>
+                <MenuItem onClick={handleSave}>Speichern</MenuItem>
+                <MenuDivider />
+                <MenuItem onClick={handleExport}>Export</MenuItem>
+                <MenuItem onClick={handleImport}>Import</MenuItem>
+              </MenuList>
+            </MenuPopover>
+          </Menu>
 
-        <Title3>Gruppenadressen Manager</Title3>
-      </div>
+          <Button appearance="outline" onClick={handleOpenTemplateManager}>
+            Template Manager
+          </Button>
 
-      <div className={styles.toolbar}>
-        <Button size="small" appearance="subtle" icon={<ArrowUndoRegular />} title="Rückgängig (Strg+Z)" disabled={!canUndo} onClick={undo} />
-        <Button size="small" appearance="subtle" icon={<ArrowRedoRegular />} title="Wiederholen (Strg+Y)" disabled={!canRedo} onClick={redo} />
-        <Button
-          size="small"
-          appearance="subtle"
-          icon={<SaveRegular />}
-          title="Speichern (Strg+S)"
-          style={dirty ? undefined : { opacity: 0.5 }}
-          onClick={handleSave}
-        />
+          {/* <Divider vertical style={{ height: '28px', flexGrow: 0 }} /> */}
 
-        <Divider vertical style={{ height: '16px', flexGrow: 0 }} />
-
-        <Input
-          size="small"
-          style={{ width: '50px', margin:'2px' }} 
-          input={{ style: { textAlign: 'right' } }}
-          value={addCellsCount}          
-          onChange={(_, data) => {
-            if (/^\d*$/.test(data.value)) setAddCellsCount(data.value)
-          }}
-        />
-        <Button
-          size="small"
-          appearance="subtle"
-          icon={<TableInsertRowRegular />}
-          title="Zellen einfügen"
-          disabled={!selectedMainGroup || gridSelection.addresses.length === 0}
-          onClick={handleAddCells}
-        />
-        <Button
-          size="small"
-          appearance="subtle"
-          icon={<TableDeleteRowRegular />}
-          title="Zellen löschen (Strg+Entf)"
-          disabled={!selectedMainGroup || gridSelection.addresses.length === 0}
-          onClick={handleDeleteCellsClick}
-        />
+          <Button size="small" appearance="subtle" icon={<ArrowUndoRegular />} title="Rückgängig (Strg+Z)" disabled={!canUndo} onClick={undo} />
+          <Button size="small" appearance="subtle" icon={<ArrowRedoRegular />} title="Wiederholen (Strg+Y)" disabled={!canRedo} onClick={redo} />
+          <Button
+            size="small"
+            appearance="subtle"
+            icon={<SaveRegular />}
+            title="Speichern (Strg+S)"
+            style={dirty ? undefined : { opacity: 0.5 }}
+            onClick={handleSave}
+          />
+        </div>
       </div>
 
       <div className={styles.body}>
@@ -394,7 +391,36 @@ function MainContent() {
         <div className={styles.rightColumn}>
           <div className={styles.gridToolbar}>
             <Text weight="semibold">{selectedMainGroup ? `Hauptgruppe: ${selectedMainGroup.subAddress} - ${selectedMainGroup.name}` : 'Gruppenadressen'}</Text>
-            <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Input
+                size="small"
+                style={{ width: '50px', margin: '2px' }}
+                input={{ style: { textAlign: 'right' } }}
+                value={addCellsCount}
+                onChange={(_, data) => {
+                  if (/^\d*$/.test(data.value)) setAddCellsCount(data.value)
+                }}
+              />
+              <Button
+                size="small"
+                appearance="subtle"
+                icon={<TableInsertRowRegular />}
+                title="Zellen einfügen"
+                disabled={!selectedMainGroup || gridSelection.addresses.length === 0}
+                onClick={handleAddCells}
+              />
+              <Button
+                size="small"
+                appearance="subtle"
+                icon={<TableDeleteRowRegular />}
+                title="Zellen löschen (Strg+Entf)"
+                disabled={!selectedMainGroup || gridSelection.addresses.length === 0}
+                onClick={handleDeleteCellsClick}
+              />
+
+              {/* <Divider vertical style={{ height: '16px', flexGrow: 0 }} /> */}
+
               <Input
                 size="small"
                 contentBefore={<SearchRegular />}

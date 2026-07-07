@@ -7,6 +7,8 @@
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         x:Class="GroupAddress.UI.WPF.MainWindow"
         mc:Ignorable="d"
+        Title="Gruppenadressen Manager"
+        Icon="Assets/app.ico"
         Height="928" Width="1471"
         Background="#FF292929"
         Foreground="White"

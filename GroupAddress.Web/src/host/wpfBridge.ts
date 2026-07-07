@@ -8,6 +8,10 @@
 //   { type: 'openRecent', id, path }
 //   { type: 'saveFile', id, content }
 //   { type: 'saveFileAs', id, content }
+//   { type: 'exportFile', id, content, fileName }    // save-as for a one-off export (e.g. CSV); doesn't touch the
+//                                                    // host's notion of the currently open/saved project file
+//   { type: 'importFile', id }                       // open-file-picker for a one-off import (e.g. CSV); doesn't touch the
+//                                                    // host's notion of the currently open/saved project file
 //   { type: 'setDirty', dirty }
 //   { type: 'contentResponse', id, content }        // reply to host's requestContent
 //   { type: 'newProject' }                          // React replaced the project with one that has no file (Neu / Beispiel) -
@@ -16,6 +20,8 @@
 // Host -> React (CoreWebView2.PostWebMessageAsJson):
 //   { type: 'openResult', id, ok, path?, content?, error? }
 //   { type: 'saveResult', id, ok, path? }
+//   { type: 'exportResult', id, ok, path? }
+//   { type: 'importResult', id, ok, path?, content?, error? }
 //   { type: 'fileOpened', path, content }            // pushed e.g. when launched with a .gaproj file
 //   { type: 'requestContent', id }                   // host asks for the current project JSON (e.g. before closing)
 //   { type: 'recentFiles', files }                   // pushed whenever the host's recent-files list (recent.json) changes
@@ -64,6 +70,22 @@ interface SaveResultMessage {
   path?: string
 }
 
+interface ExportResultMessage {
+  type: 'exportResult'
+  id: string
+  ok: boolean
+  path?: string
+}
+
+interface ImportResultMessage {
+  type: 'importResult'
+  id: string
+  ok: boolean
+  path?: string
+  content?: string
+  error?: string
+}
+
 interface FileOpenedMessage {
   type: 'fileOpened'
   path: string
@@ -80,9 +102,16 @@ interface RecentFilesMessage {
   files: RecentFile[]
 }
 
-type HostMessage = OpenResultMessage | SaveResultMessage | FileOpenedMessage | RequestContentMessage | RecentFilesMessage
+type HostMessage =
+  | OpenResultMessage
+  | SaveResultMessage
+  | ExportResultMessage
+  | ImportResultMessage
+  | FileOpenedMessage
+  | RequestContentMessage
+  | RecentFilesMessage
 
-type PendingResolver = (message: OpenResultMessage | SaveResultMessage) => void
+type PendingResolver = (message: OpenResultMessage | SaveResultMessage | ExportResultMessage | ImportResultMessage) => void
 
 const pendingRequests = new Map<string, PendingResolver>()
 
@@ -105,7 +134,9 @@ function postToHost(message: unknown): void {
 function handleHostMessage(message: HostMessage): void {
   switch (message.type) {
     case 'openResult':
-    case 'saveResult': {
+    case 'saveResult':
+    case 'exportResult':
+    case 'importResult': {
       const resolve = pendingRequests.get(message.id)
       if (resolve) {
         pendingRequests.delete(message.id)
@@ -191,6 +222,36 @@ export function requestSaveFileAs(content: string): Promise<SaveFileResult | nul
   return sendSaveRequest('saveFileAs', content)
 }
 
+/** Exports arbitrary content (e.g. a CSV) to a file the user picks, without affecting the
+ *  host's notion of the currently open/saved project file. */
+export function requestExportFile(content: string, suggestedFileName: string): Promise<SaveFileResult | null> {
+  if (!isHosted()) return exportFallback(content, suggestedFileName)
+
+  return new Promise((resolve) => {
+    const id = createId()
+    pendingRequests.set(id, (message) => {
+      const result = message as ExportResultMessage
+      resolve(result.ok && result.path ? { path: result.path } : null)
+    })
+    postToHost({ type: 'exportFile', id, content, fileName: suggestedFileName })
+  })
+}
+
+/** Imports arbitrary content (e.g. a CSV) from a file the user picks, without affecting the
+ *  host's notion of the currently open/saved project file. */
+export function requestImportFile(): Promise<OpenFileResult | null> {
+  if (!isHosted()) return importFileFallback()
+
+  return new Promise((resolve) => {
+    const id = createId()
+    pendingRequests.set(id, (message) => {
+      const result = message as ImportResultMessage
+      resolve(result.ok && result.path && result.content !== undefined ? { path: result.path, content: result.content } : null)
+    })
+    postToHost({ type: 'importFile', id })
+  })
+}
+
 function sendSaveRequest(type: 'saveFile' | 'saveFileAs', content: string): Promise<SaveFileResult | null> {
   if (!isHosted()) return saveFallback(content)
 
@@ -229,6 +290,37 @@ function openFileFallback(): Promise<OpenFileResult | null> {
 function saveFallback(content: string): Promise<SaveFileResult | null> {
   const fileName = 'Projekt.gaproj'
   const blob = new Blob([content], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = fileName
+  anchor.click()
+  URL.revokeObjectURL(url)
+  return Promise.resolve({ path: fileName })
+}
+
+function importFileFallback(): Promise<OpenFileResult | null> {
+  return new Promise((resolve) => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.csv'
+    input.onchange = () => {
+      const file = input.files?.[0]
+      if (!file) {
+        resolve(null)
+        return
+      }
+      const reader = new FileReader()
+      reader.onload = () => resolve({ path: file.name, content: String(reader.result ?? '') })
+      reader.onerror = () => resolve(null)
+      reader.readAsText(file)
+    }
+    input.click()
+  })
+}
+
+function exportFallback(content: string, fileName: string): Promise<SaveFileResult | null> {
+  const blob = new Blob([content], { type: 'text/csv;charset=utf-8' })
   const url = URL.createObjectURL(blob)
   const anchor = document.createElement('a')
   anchor.href = url

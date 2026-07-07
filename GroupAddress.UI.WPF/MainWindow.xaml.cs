@@ -41,6 +41,7 @@ public partial class MainWindow : Window
         public string? Content { get; set; }
         public bool? Dirty { get; set; }
         public string? Path { get; set; }
+        public string? FileName { get; set; }
     }
 
     private readonly ConcurrentDictionary<string, TaskCompletionSource<string?>> _pendingHostRequests = new();
@@ -51,6 +52,11 @@ public partial class MainWindow : Window
     private bool _dirty;
     private bool _forceClose;
     private string? _pendingOpenPath;
+
+    static MainWindow()
+    {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+    }
 
     public MainWindow()
     {
@@ -158,6 +164,12 @@ public partial class MainWindow : Window
                 break;
             case "saveFileAs":
                 HandleSave(msg.Id, msg.Content ?? "", forceSaveAs: true);
+                break;
+            case "exportFile":
+                HandleExport(msg.Id, msg.Content ?? "", msg.FileName ?? "Export.csv");
+                break;
+            case "importFile":
+                HandleImport(msg.Id);
                 break;
             case "setDirty":
                 _dirty = msg.Dirty ?? false;
@@ -344,6 +356,88 @@ public partial class MainWindow : Window
         UpdateTitle();
         EnqueueRecentFile(target.FullName);
         return true;
+    }
+
+    private void HandleExport(string? id, string content, string fileName)
+    {
+        var dialog = new SaveFileDialog
+        {
+            DefaultExt = Path.GetExtension(fileName) is { Length: > 0 } ext ? ext : ".csv",
+            Filter = "CSV Dateien (*.csv)|*.csv|Alle Dateien (*.*)|*.*",
+            FileName = fileName,
+        };
+        if (_currentFile?.DirectoryName != null)
+            dialog.InitialDirectory = _currentFile.DirectoryName;
+
+        if (dialog.ShowDialog(this) != true)
+        {
+            SendMessage(new { type = "exportResult", id, ok = false });
+            return;
+        }
+
+        try
+        {
+            File.WriteAllText(dialog.FileName, content, new UTF8Encoding(true));
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, $"Datei konnte nicht exportiert werden:\n{ex.Message}", "Fehler",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            SendMessage(new { type = "exportResult", id, ok = false });
+            return;
+        }
+
+        SendMessage(new { type = "exportResult", id, ok = true, path = dialog.FileName });
+    }
+
+    private void HandleImport(string? id)
+    {
+        var dialog = new OpenFileDialog
+        {
+            DefaultExt = ".csv",
+            Filter = "CSV Dateien (*.csv)|*.csv|Alle Dateien (*.*)|*.*",
+        };
+
+        if (dialog.ShowDialog(this) != true)
+        {
+            SendMessage(new { type = "importResult", id, ok = false });
+            return;
+        }
+
+        try
+        {
+            var content = ReadTextAutoDetect(dialog.FileName);
+            SendMessage(new { type = "importResult", id, ok = true, path = dialog.FileName, content });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, $"Datei konnte nicht importiert werden:\n{ex.Message}", "Fehler",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            SendMessage(new { type = "importResult", id, ok = false, error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Reads a text file, auto-detecting its encoding: a UTF-8 BOM is honored, otherwise the
+    /// bytes are decoded as UTF-8 if valid, and as Windows-1252 otherwise. CSVs exported from
+    /// ETS/Excel on German Windows are typically ANSI (Windows-1252) without a BOM, which
+    /// File.ReadAllText's UTF-8 default would otherwise mangle for umlauts (ä/ö/ü/ß).
+    /// </summary>
+    private static string ReadTextAutoDetect(string path)
+    {
+        var bytes = File.ReadAllBytes(path);
+
+        if (bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF)
+            return new UTF8Encoding(false).GetString(bytes, 3, bytes.Length - 3);
+
+        try
+        {
+            return new UTF8Encoding(false, throwOnInvalidBytes: true).GetString(bytes);
+        }
+        catch (DecoderFallbackException)
+        {
+            return Encoding.GetEncoding(1252).GetString(bytes);
+        }
     }
 
     private Task<string?> RequestCurrentContentAsync()
