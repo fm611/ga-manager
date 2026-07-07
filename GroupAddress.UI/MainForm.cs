@@ -597,7 +597,7 @@ namespace GroupAddress.UI
                 }
             }
 
-            if(e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left)
             {
                 Point pt = new Point(e.X, e.Y);
                 int index = GroupsListBox.IndexFromPoint(pt);
@@ -676,6 +676,11 @@ namespace GroupAddress.UI
         }
 
         private void FilterTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
         }

@@ -74,12 +74,13 @@ function reducer(project: Project, action: Action): Project {
   }
 }
 
-type HistoryAction = Action | { type: 'undo' } | { type: 'redo' }
+type HistoryAction = Action | { type: 'undo' } | { type: 'redo' } | { type: 'markClean' }
 
 interface HistoryState {
   past: Project[]
   present: Project
   future: Project[]
+  dirty: boolean
 }
 
 const MAX_HISTORY = 200
@@ -90,34 +91,39 @@ function pushCapped(past: Project[], entry: Project): Project[] {
 }
 
 function historyReducer(state: HistoryState, action: HistoryAction): HistoryState {
+  if (action.type === 'markClean') {
+    return state.dirty ? { ...state, dirty: false } : state
+  }
   if (action.type === 'undo') {
     if (state.past.length === 0) return state
     const previous = state.past[state.past.length - 1]
-    return { past: state.past.slice(0, -1), present: previous, future: [state.present, ...state.future] }
+    return { past: state.past.slice(0, -1), present: previous, future: [state.present, ...state.future], dirty: true }
   }
   if (action.type === 'redo') {
     if (state.future.length === 0) return state
     const next = state.future[0]
-    return { past: pushCapped(state.past, state.present), present: next, future: state.future.slice(1) }
+    return { past: pushCapped(state.past, state.present), present: next, future: state.future.slice(1), dirty: true }
   }
 
   const newPresent = reducer(state.present, action)
   if (newPresent === state.present) return state
 
   if (action.type === 'reset') {
-    return { past: [], present: newPresent, future: [] }
+    return { past: [], present: newPresent, future: [], dirty: false }
   }
 
-  return { past: pushCapped(state.past, state.present), present: newPresent, future: [] }
+  return { past: pushCapped(state.past, state.present), present: newPresent, future: [], dirty: true }
 }
 
 interface ProjectContextValue {
   project: Project
   canUndo: boolean
   canRedo: boolean
+  dirty: boolean
   undo: () => void
   redo: () => void
   resetProject: (project: Project) => void
+  markClean: () => void
   addMainGroup: (mainGroup: MainGroup) => void
   removeMainGroup: (mainGroupId: string) => void
   updateMainGroup: (mainGroupId: string, patch: { name?: string; subAddress?: number; defaultBlockLength?: number }) => void
@@ -139,19 +145,22 @@ interface ProjectContextValue {
 const ProjectContext = createContext<ProjectContextValue | null>(null)
 
 export function ProjectProvider({ project: initialProject, children }: { project: Project; children: ReactNode }) {
-  const [state, dispatch] = useReducer(historyReducer, { past: [], present: initialProject, future: [] })
+  const [state, dispatch] = useReducer(historyReducer, { past: [], present: initialProject, future: [], dirty: false })
   const project = state.present
   const canUndo = state.past.length > 0
   const canRedo = state.future.length > 0
+  const dirty = state.dirty
 
   const value = useMemo<ProjectContextValue>(
     () => ({
       project,
       canUndo,
       canRedo,
+      dirty,
       undo: () => dispatch({ type: 'undo' }),
       redo: () => dispatch({ type: 'redo' }),
       resetProject: (p) => dispatch({ type: 'reset', project: p }),
+      markClean: () => dispatch({ type: 'markClean' }),
       addMainGroup: (mainGroup) => dispatch({ type: 'addMainGroup', mainGroup }),
       removeMainGroup: (mainGroupId) => dispatch({ type: 'removeMainGroup', mainGroupId }),
       updateMainGroup: (mainGroupId, patch) => dispatch({ type: 'updateMainGroup', mainGroupId, patch }),
@@ -175,7 +184,7 @@ export function ProjectProvider({ project: initialProject, children }: { project
           dispatch({ type: 'addGroupFromTemplate', mainGroupId, template, gaPrefix, startIndex, onResult: resolve })
         }),
     }),
-    [project, canUndo, canRedo],
+    [project, canUndo, canRedo, dirty],
   )
 
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>

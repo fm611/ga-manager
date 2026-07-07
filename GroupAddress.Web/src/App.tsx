@@ -2,12 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   FluentProvider,
   Button,
+  Divider,
   Input,
   Menu,
   MenuTrigger,
   MenuPopover,
   MenuList,
   MenuItem,
+  MenuDivider,
   Text,
   Title3,
   tokens,
@@ -23,8 +25,10 @@ import {
   SaveRegular,
 } from '@fluentui/react-icons'
 import type { Address, GA, MainGroup, Project } from './domain/schema'
+import { ProjectSchema } from './domain/schema'
 import { ProjectProvider, useProject } from './state/ProjectContext'
 import { createEmptyProject, buildSampleProject, createMainGroup } from './domain/operations'
+import { initHostBridge, notifyNewProject, reportDirty, requestOpenFile, requestOpenRecentFile, requestSaveFile, type RecentFile } from './host/wpfBridge'
 import { MainGroupPanel } from './components/MainGroupPanel'
 import { GroupPanel } from './components/GroupPanel'
 import { GaGrid, type GaGridHandle } from './components/GaGrid'
@@ -43,6 +47,15 @@ const useStyles = makeStyles({
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
     flexShrink: 0,
   },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: '4px',
+    padding: '3px 10px',
+    borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
+    flexShrink: 0,
+  },
   body: { display: 'flex', flex: 1, minHeight: 0, gap: '10px', padding: '10px' },
   leftColumn: { width: '300px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '10px', minHeight: 0 },
   leftTop: { flex: '1 1 55%', minHeight: 0 },
@@ -53,15 +66,26 @@ const useStyles = makeStyles({
   gridWrapperFiltered: { boxShadow: `0 0 0 2px ${tokens.colorPaletteRedBorder2}` },
 })
 
+function parseProjectJson(json: string): Project | null {
+  try {
+    const parsed = ProjectSchema.safeParse(JSON.parse(json))
+    return parsed.success ? parsed.data : null
+  } catch {
+    return null
+  }
+}
+
 function MainContent() {
   const styles = useStyles()
   const {
     project,
     canUndo,
     canRedo,
+    dirty,
     undo,
     redo,
     resetProject,
+    markClean,
     addMainGroup,
     updateMainGroup,
     removeMainGroup,
@@ -81,33 +105,14 @@ function MainContent() {
   const [mainGroupDialog, setMainGroupDialog] = useState<{ open: boolean; editing: MainGroup | null }>({ open: false, editing: null })
   const [pendingDeleteMainGroup, setPendingDeleteMainGroup] = useState<MainGroup | null>(null)
   const [templateManagerOpen, setTemplateManagerOpen] = useState(false)
-  const [pendingReset, setPendingReset] = useState<Project | null>(null)
+  const [pendingReset, setPendingReset] = useState<{ project: Project; clearHostFile: boolean } | null>(null)
 
   const [gridSelection, setGridSelection] = useState<{ gas: GA[]; addresses: Address[] }>({ gas: [], addresses: [] })
   const [addCellsCount, setAddCellsCount] = useState('1')
   const [confirmDeleteCellsOpen, setConfirmDeleteCellsOpen] = useState(false)
+  const [recentFiles, setRecentFiles] = useState<RecentFile[]>([])
 
   const gridRef = useRef<GaGridHandle>(null)
-
-  useEffect(() => {
-    function isTextEntryTarget(el: EventTarget | null): boolean {
-      if (!(el instanceof HTMLElement)) return false
-      return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable
-    }
-    function handleKeyDown(e: KeyboardEvent) {
-      if (!(e.ctrlKey || e.metaKey) || isTextEntryTarget(document.activeElement)) return
-      const key = e.key.toLowerCase()
-      if (key === 'z' && !e.shiftKey) {
-        e.preventDefault()
-        undo()
-      } else if (key === 'y' || (key === 'z' && e.shiftKey)) {
-        e.preventDefault()
-        redo()
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [undo, redo])
 
   const selectedMainGroup = project.mainGroups.find((m) => m.id === selectedMainGroupId) ?? null
 
@@ -143,16 +148,82 @@ function MainContent() {
   const handleAddMainGroup = useCallback(() => setMainGroupDialog({ open: true, editing: null }), [])
   const handleEditMainGroup = useCallback((mg: MainGroup) => setMainGroupDialog({ open: true, editing: mg }), [])
 
-  const handleResetRequest = useCallback(
+  const applyProjectReset = useCallback(
     (newProject: Project) => {
-      if (canUndo) {
-        setPendingReset(newProject)
+      resetProject(newProject)
+      const firstMainGroup = [...newProject.mainGroups].sort((a, b) => a.subAddress - b.subAddress)[0]
+      setSelectedMainGroupId(firstMainGroup?.id ?? null)
+    },
+    [resetProject],
+  )
+
+  const handleResetRequest = useCallback(
+    (newProject: Project, options?: { clearHostFile?: boolean }) => {
+      const clearHostFile = options?.clearHostFile ?? false
+      if (dirty) {
+        setPendingReset({ project: newProject, clearHostFile })
       } else {
-        resetProject(newProject)
+        if (clearHostFile) notifyNewProject()
+        applyProjectReset(newProject)
       }
     },
-    [canUndo, resetProject],
+    [dirty, applyProjectReset],
   )
+
+  const projectRef = useRef(project)
+  useEffect(() => {
+    projectRef.current = project
+  }, [project])
+
+  useEffect(() => {
+    initHostBridge({
+      getProjectJson: () => JSON.stringify(projectRef.current),
+      onFileOpened: (result) => {
+        const parsed = parseProjectJson(result.content)
+        if (!parsed) {
+          alert(`Datei ist kein gültiges Projekt:\n${result.path}`)
+          return
+        }
+        handleResetRequest(parsed)
+      },
+      onRecentFilesChanged: setRecentFiles,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    reportDirty(dirty)
+  }, [dirty])
+
+  const handleOpenFile = useCallback(async () => {
+    const result = await requestOpenFile()
+    if (!result) return
+    const parsed = parseProjectJson(result.content)
+    if (!parsed) {
+      alert(`Datei ist kein gültiges Projekt:\n${result.path}`)
+      return
+    }
+    handleResetRequest(parsed)
+  }, [handleResetRequest])
+
+  const handleOpenRecent = useCallback(
+    async (path: string) => {
+      const result = await requestOpenRecentFile(path)
+      if (!result) return
+      const parsed = parseProjectJson(result.content)
+      if (!parsed) {
+        alert(`Datei ist kein gültiges Projekt:\n${result.path}`)
+        return
+      }
+      handleResetRequest(parsed)
+    },
+    [handleResetRequest],
+  )
+
+  const handleSave = useCallback(async () => {
+    const result = await requestSaveFile(JSON.stringify(project, null, 2))
+    if (result) markClean()
+  }, [project, markClean])
 
   function handleAddCells() {
     if (!selectedMainGroup) return
@@ -168,14 +239,43 @@ function MainContent() {
     }
   }
 
-  function handleDeleteCellsClick() {
+  const handleDeleteCellsClick = useCallback(() => {
     if (!selectedMainGroup || gridSelection.addresses.length === 0) return
     if (gridSelection.gas.length > 0) {
       setConfirmDeleteCellsOpen(true)
     } else {
       deleteCellsAndShift('mainGroup', selectedMainGroup.id, gridSelection.addresses)
     }
-  }
+  }, [selectedMainGroup, gridSelection, deleteCellsAndShift])
+
+  useEffect(() => {
+    function isTextEntryTarget(el: EventTarget | null): boolean {
+      if (!(el instanceof HTMLElement)) return false
+      return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable
+    }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (!(e.ctrlKey || e.metaKey) || isTextEntryTarget(document.activeElement)) return
+      const key = e.key.toLowerCase()
+      if (key === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        undo()
+      } else if (key === 'y' || (key === 'z' && e.shiftKey)) {
+        e.preventDefault()
+        redo()
+      } else if (key === 's') {
+        e.preventDefault()
+        void handleSave()
+      } else if (key === 'o') {
+        e.preventDefault()
+        void handleOpenFile()
+      } else if (key === 'delete') {
+        e.preventDefault()
+        handleDeleteCellsClick()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [undo, redo, handleSave, handleOpenFile, handleDeleteCellsClick])
 
   return (
     <div className={styles.root}>
@@ -186,8 +286,29 @@ function MainContent() {
           </MenuTrigger>
           <MenuPopover>
             <MenuList>
-              <MenuItem onClick={() => handleResetRequest(createEmptyProject())}>Neu</MenuItem>
-              <MenuItem onClick={() => handleResetRequest(buildSampleProject())}>Beispiel laden</MenuItem>
+              <MenuItem onClick={() => handleResetRequest(createEmptyProject(), { clearHostFile: true })}>Neu</MenuItem>
+              <Menu>
+                <MenuTrigger disableButtonEnhancement>
+                  <MenuItem>Öffnen</MenuItem>
+                </MenuTrigger>
+                <MenuPopover>
+                  <MenuList>
+                    <MenuItem onClick={handleOpenFile}>Datei…</MenuItem>
+                    <MenuDivider />
+                    <MenuItem onClick={() => handleResetRequest(buildSampleProject(), { clearHostFile: true })}>Beispiel</MenuItem>
+                    {recentFiles.length > 0 && <MenuDivider />}
+                    {recentFiles.map((file) => (
+                      <MenuItem key={file.path} onClick={() => handleOpenRecent(file.path)} title={file.path}>
+                        {file.name}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </MenuPopover>
+              </Menu>
+              <MenuItem onClick={handleSave}>Speichern</MenuItem>
+              <MenuDivider />
+              <MenuItem>Export</MenuItem>
+              <MenuItem>Import</MenuItem>
             </MenuList>
           </MenuPopover>
         </Menu>
@@ -196,27 +317,36 @@ function MainContent() {
           Template Manager
         </Button>
 
-        <Button appearance="subtle" icon={<ArrowUndoRegular />} title="Rückgängig (Strg+Z)" disabled={!canUndo} onClick={undo} />
-        <Button appearance="subtle" icon={<ArrowRedoRegular />} title="Wiederholen (Strg+Y)" disabled={!canRedo} onClick={redo} />
+        <div style={{ flex: 1 }} />
+
+        <Title3>Gruppenadressen Manager</Title3>
+      </div>
+
+      <div className={styles.toolbar}>
+        <Button size="small" appearance="subtle" icon={<ArrowUndoRegular />} title="Rückgängig (Strg+Z)" disabled={!canUndo} onClick={undo} />
+        <Button size="small" appearance="subtle" icon={<ArrowRedoRegular />} title="Wiederholen (Strg+Y)" disabled={!canRedo} onClick={redo} />
         <Button
+          size="small"
           appearance="subtle"
           icon={<SaveRegular />}
-          title="Speichern"
-          style={canUndo ? undefined : { opacity: 0.5 }}
-          onClick={() => console.log(project)}
+          title="Speichern (Strg+S)"
+          style={dirty ? undefined : { opacity: 0.5 }}
+          onClick={handleSave}
         />
 
-        <div style={{ flex: 1 }} />
+        <Divider vertical style={{ height: '16px', flexGrow: 0 }} />
 
         <Input
           size="small"
-          style={{ width: '60px' }}
-          value={addCellsCount}
+          style={{ width: '50px', margin:'2px' }} 
+          input={{ style: { textAlign: 'right' } }}
+          value={addCellsCount}          
           onChange={(_, data) => {
             if (/^\d*$/.test(data.value)) setAddCellsCount(data.value)
           }}
         />
         <Button
+          size="small"
           appearance="subtle"
           icon={<TableInsertRowRegular />}
           title="Zellen einfügen"
@@ -224,14 +354,13 @@ function MainContent() {
           onClick={handleAddCells}
         />
         <Button
+          size="small"
           appearance="subtle"
           icon={<TableDeleteRowRegular />}
-          title="Zellen löschen"
+          title="Zellen löschen (Strg+Entf)"
           disabled={!selectedMainGroup || gridSelection.addresses.length === 0}
           onClick={handleDeleteCellsClick}
         />
-
-        <Title3 style={{ marginLeft: '16px' }}>Gruppenadressen Manager</Title3>
       </div>
 
       <div className={styles.body}>
@@ -362,7 +491,10 @@ function MainContent() {
         confirmText="Verwerfen"
         danger
         onConfirm={() => {
-          if (pendingReset) resetProject(pendingReset)
+          if (pendingReset) {
+            if (pendingReset.clearHostFile) notifyNewProject()
+            applyProjectReset(pendingReset.project)
+          }
           setPendingReset(null)
         }}
         onCancel={() => setPendingReset(null)}

@@ -256,6 +256,13 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
     },
   }))
 
+  // The confirm dialog isn't opened via a Fluent DialogTrigger (it's driven by state), so
+  // Fluent has no trigger element to return focus to when it closes and focus falls back to
+  // the document body — reclaim it once the dialog has finished unmounting/animating out.
+  function focusContainerAfterDialogClose() {
+    requestAnimationFrame(() => containerRef.current?.focus())
+  }
+
   function handleResizeMouseDown(c: number, e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
@@ -411,12 +418,12 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
     setSelected(rangeSelection({ r: anchor.r, c: 0 }, { r: row, c: COLUMNS.length - 1 }))
   }
 
-  function beginEdit(r: number, c: number) {
+  function beginEdit(r: number, c: number, initialValue?: string) {
     if (readOnly) return
     setSelection(new Set([cellKey(r, c)]))
     setAnchor({ r, c })
     const ga = gaByCell.get(`${c}:${r}`)
-    setEditValue(ga?.name ?? '')
+    setEditValue(initialValue ?? ga?.name ?? '')
     setEditingCell({ r, c })
   }
 
@@ -443,6 +450,71 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
     return ids
   }
 
+  function selectionBounds(): { rMin: number; rMax: number; cMin: number; cMax: number } | null {
+    if (selected.size === 0) return null
+    let rMin = Infinity
+    let rMax = -Infinity
+    let cMin = Infinity
+    let cMax = -Infinity
+    for (const key of selected) {
+      const [rStr, cStr] = key.split(':')
+      const r = Number(rStr)
+      const c = Number(cStr)
+      if (r < rMin) rMin = r
+      if (r > rMax) rMax = r
+      if (c < cMin) cMin = c
+      if (c > cMax) cMax = c
+    }
+    return { rMin, rMax, cMin, cMax }
+  }
+
+  function buildClipboardText(): string | null {
+    const bounds = selectionBounds()
+    if (!bounds) return null
+    const lines: string[] = []
+    for (let r = bounds.rMin; r <= bounds.rMax; r++) {
+      const cells: string[] = []
+      for (let c = bounds.cMin; c <= bounds.cMax; c++) {
+        cells.push(gaByCell.get(`${c}:${r}`)?.name ?? '')
+      }
+      lines.push(cells.join('\t'))
+    }
+    return lines.join('\n')
+  }
+
+  function pasteClipboardText(text: string) {
+    const bounds = selectionBounds()
+    if (!bounds) return
+
+    const rows = text.replace(/\r/g, '').split('\n')
+    if (rows.length > 1 && rows[rows.length - 1] === '') rows.pop()
+    const grid = rows.map((line) => line.split('\t'))
+
+    // A single copied value fills every selected cell (like a spreadsheet fill-paste);
+    // a multi-cell block pastes starting at the selection's top-left corner.
+    if (grid.length === 1 && grid[0].length === 1) {
+      const value = grid[0][0].trim()
+      if (value.length === 0) return
+      for (const key of selected) {
+        const [rStr, cStr] = key.split(':')
+        onCommitCell(Number(cStr), Number(rStr), value)
+      }
+      return
+    }
+
+    for (let r = 0; r < grid.length; r++) {
+      const targetRow = bounds.rMin + r
+      if (targetRow < 0 || targetRow >= TOTAL_ROWS) continue
+      for (let c = 0; c < grid[r].length; c++) {
+        const targetCol = bounds.cMin + c
+        if (targetCol < 0 || targetCol >= COLUMNS.length) continue
+        const value = grid[r][c].trim()
+        if (value.length === 0) continue
+        onCommitCell(targetCol, targetRow, value)
+      }
+    }
+  }
+
   async function handleKeyDown(e: React.KeyboardEvent) {
     if (editingCell) return
 
@@ -452,11 +524,10 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
     }
 
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
-      const ids = selectedGAIds()
-      const first = gas.find((g) => g.id === ids[0])
-      if (first) {
+      const text = buildClipboardText()
+      if (text !== null) {
         try {
-          await navigator.clipboard.writeText(first.name)
+          await navigator.clipboard.writeText(text)
         } catch {
           /* clipboard unavailable — ignore */
         }
@@ -464,16 +535,24 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
       return
     }
 
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v' && selected.size === 1 && !readOnly) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v' && selected.size > 0 && !readOnly) {
       try {
         const text = await navigator.clipboard.readText()
-        if (text.trim().length === 0) return
-        const [key] = selected
-        const [rStr, cStr] = key.split(':')
-        onCommitCell(Number(cStr), Number(rStr), text.trim())
+        if (text.length === 0) return
+        pasteClipboardText(text)
       } catch {
         /* clipboard unavailable — ignore */
       }
+      return
+    }
+
+    // Typing over a single selected cell starts editing it with the typed character,
+    // replacing its content — same as double-clicking, but without the extra click.
+    if (!readOnly && selected.size === 1 && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      const [key] = selected
+      const [rStr, cStr] = key.split(':')
+      e.preventDefault()
+      beginEdit(Number(rStr), Number(cStr), e.key)
     }
   }
 
@@ -627,8 +706,12 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
         onConfirm={() => {
           onDeleteGAs(selectedGAIds())
           setConfirmDelete(false)
+          focusContainerAfterDialogClose()
         }}
-        onCancel={() => setConfirmDelete(false)}
+        onCancel={() => {
+          setConfirmDelete(false)
+          focusContainerAfterDialogClose()
+        }}
       />
 
       {contextMenu && groups && onAssignToGroup && (

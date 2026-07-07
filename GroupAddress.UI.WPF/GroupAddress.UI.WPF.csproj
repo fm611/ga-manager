@@ -2,19 +2,49 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <DefaultItemExcludes>$(DefaultItemExcludes);wwwroot\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="MahApps.Metro" Version="2.4.10" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4022.49" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GroupAddress.Core\GroupAddress.Core.csproj" />
   </ItemGroup>
+
+  <!-- Build the React app (GroupAddress.Web) and embed its output as static content, -->
+  <!-- so the WPF app can serve it directly via WebView2 without a separate dev server. -->
+  <PropertyGroup>
+    <WebAppDir>$(MSBuildProjectDirectory)\..\GroupAddress.Web</WebAppDir>
+    <WebAppDist>$(WebAppDir)\dist</WebAppDist>
+    <WwwrootDir>$(MSBuildProjectDirectory)\wwwroot</WwwrootDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ReactAppSourceFiles Include="$(WebAppDir)\src\**\*.*;$(WebAppDir)\public\**\*.*;$(WebAppDir)\index.html;$(WebAppDir)\package.json;$(WebAppDir)\package-lock.json;$(WebAppDir)\vite.config.ts;$(WebAppDir)\tsconfig*.json" />
+  </ItemGroup>
+
+  <Target Name="BuildReactApp" BeforeTargets="BeforeBuild" Inputs="@(ReactAppSourceFiles)" Outputs="$(WwwrootDir)\index.html">
+    <Exec Command="npm install" WorkingDirectory="$(WebAppDir)" Condition="!Exists('$(WebAppDir)\node_modules')" />
+    <Exec Command="npm run build" WorkingDirectory="$(WebAppDir)" />
+
+    <ItemGroup>
+      <ReactDistFiles Include="$(WebAppDist)\**\*.*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(WwwrootDir)" Condition="Exists('$(WwwrootDir)')" />
+    <Copy SourceFiles="@(ReactDistFiles)" DestinationFiles="@(ReactDistFiles->'$(WwwrootDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <ItemGroup>
+      <Content Include="wwwroot\**\*.*">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+  </Target>
 
 </Project>
