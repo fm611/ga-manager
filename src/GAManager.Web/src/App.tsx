@@ -14,11 +14,13 @@ import { AppFooter } from './components/layout/AppFooter'
 import { useProjectFileOperations } from './hooks/useProjectFileOperations'
 import { useGridCellActions } from './hooks/useGridCellActions'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
+import { I18nProvider, useI18n } from './i18n/I18nContext'
 import { knxDarkTheme } from './theme'
 import { useStyles } from './App.styles'
 
 function MainContent() {
   const styles = useStyles()
+  const { t, locale } = useI18n()
   const {
     project,
     canUndo,
@@ -75,11 +77,11 @@ function MainContent() {
 
   const handleOpenTemplateManager = useCallback(() => {
     if (!selectedMainGroup) {
-      alert('Bitte erst eine Hauptgruppe erstellen/auswählen.')
+      alert(t('app.selectMainGroupFirst'))
       return
     }
     setTemplateManagerOpen(true)
-  }, [selectedMainGroup])
+  }, [selectedMainGroup, t])
 
   const handleAddMainGroup = useCallback(() => setMainGroupDialog({ open: true, editing: null }), [])
   const handleEditMainGroup = useCallback((mg: MainGroup) => setMainGroupDialog({ open: true, editing: mg }), [])
@@ -100,6 +102,7 @@ function MainContent() {
     undo,
     redo,
     onSave: fileOps.handleSave,
+    onSaveAs: fileOps.handleSaveAs,
     onOpen: fileOps.handleOpenFile,
     onDeleteCells: gridActions.handleDeleteCellsClick,
   })
@@ -113,9 +116,10 @@ function MainContent() {
         onUndo={undo}
         onRedo={redo}
         onSave={fileOps.handleSave}
+        onSaveAs={fileOps.handleSaveAs}
         onNew={() => fileOps.handleResetRequest(createEmptyProject(), { clearHostFile: true })}
         onOpenFile={fileOps.handleOpenFile}
-        onOpenSample={() => fileOps.handleResetRequest(buildSampleProject(), { clearHostFile: true })}
+        onOpenSample={() => fileOps.handleResetRequest(buildSampleProject(locale), { clearHostFile: true })}
         recentFiles={fileOps.recentFiles}
         onOpenRecent={fileOps.handleOpenRecent}
         onExport={fileOps.handleExport}
@@ -183,8 +187,8 @@ function MainContent() {
 
       <ConfirmDialog
         open={pendingDeleteMainGroup !== null}
-        title="Hauptgruppe löschen"
-        message="Haupgruppe löschen?"
+        title={t('mainGroupPanel.confirmDeleteTitle')}
+        message={t('mainGroupPanel.confirmDeleteMessage')}
         onConfirm={() => {
           if (pendingDeleteMainGroup) {
             removeMainGroup(pendingDeleteMainGroup.id)
@@ -197,17 +201,17 @@ function MainContent() {
 
       <ConfirmDialog
         open={gridActions.confirmDeleteCellsOpen}
-        title="Gruppenadressen löschen"
-        message="Gruppenadressen löschen?"
+        title={t('grid.confirmDeleteTitle')}
+        message={t('grid.confirmDeleteMessage')}
         onConfirm={gridActions.confirmDeleteCells}
         onCancel={gridActions.cancelDeleteCells}
       />
 
       <ConfirmDialog
         open={fileOps.pendingReset !== null}
-        title="Änderungen verwerfen?"
-        message="Es gibt nicht gespeicherte Änderungen. Möchten Sie diese verwerfen?"
-        confirmText="Verwerfen"
+        title={t('fileOps.confirmDiscardTitle')}
+        message={t('fileOps.confirmDiscardMessage')}
+        confirmText={t('fileOps.confirmDiscardButton')}
         danger
         onConfirm={fileOps.confirmPendingReset}
         onCancel={fileOps.cancelPendingReset}
@@ -229,9 +233,11 @@ function MainContent() {
 function App() {
   return (
     <FluentProvider theme={knxDarkTheme} style={{ height: '100vh', width: '100vw' }}>
-      <ProjectProvider project={createEmptyProject()}>
-        <MainContent />
-      </ProjectProvider>
+      <I18nProvider>
+        <ProjectProvider project={createEmptyProject()}>
+          <MainContent />
+        </ProjectProvider>
+      </I18nProvider>
     </FluentProvider>
   )
 }

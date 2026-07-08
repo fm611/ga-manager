@@ -1,0 +1,124 @@
+{
+  "common": {
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "new": "Neu",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "name": "Name",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "header": {
+    "file": "Datei",
+    "new": "Neu",
+    "open": "Öffnen",
+    "openFile": "Datei…",
+    "sample": "Beispiel",
+    "save": "Speichern",
+    "saveAs": "Speichern unter…",
+    "export": "Export",
+    "import": "Import",
+    "templateManager": "Template Manager",
+    "undo": "Rückgängig (Strg+Z)",
+    "redo": "Wiederholen (Strg+Y)",
+    "saveTitle": "Speichern (Strg+S)",
+    "language": "Sprache"
+  },
+  "mainGroupPanel": {
+    "title": "Hauptgruppen",
+    "add": "Neu",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "confirmDeleteTitle": "Hauptgruppe löschen",
+    "confirmDeleteMessage": "Hauptgruppe löschen?"
+  },
+  "groupPanel": {
+    "title": "Gruppen",
+    "newEmpty": "Neu (leer)",
+    "newTemplate": "Neu (Template)",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "noGroupFilter": "Ohne Gruppe",
+    "clearFilter": "Filter löschen",
+    "newGroupDialogTitle": "Gruppe",
+    "newGroupDefaultName": "Neue Gruppe",
+    "confirmDeleteTitle": "Gruppe löschen",
+    "confirmDeleteMessage": "Möchten Sie die Gruppe wirklich löschen?"
+  },
+  "grid": {
+    "emptyTitle": "Gruppenadressen",
+    "mainGroupTitle": "Hauptgruppe: {{subAddress}} - {{name}}",
+    "insertCells": "Zellen einfügen",
+    "deleteCells": "Zellen löschen (Strg+Entf)",
+    "clearSearch": "Filter löschen",
+    "searchPlaceholder": "Suche nach Name oder Adresse",
+    "noMainGroupSelected": "Bitte eine Hauptgruppe erstellen oder auswählen.",
+    "renameColumnTitle": "Doppelklick zum Umbenennen",
+    "renameColumnDialogTitle": "Mittelgruppe",
+    "newColumnDefaultName": "Neue Mittelgruppe",
+    "confirmDeleteTitle": "Gruppenadressen löschen",
+    "confirmDeleteMessage": "Gruppenadressen löschen?",
+    "assignToGroup": "Zu Gruppe hinzufügen:",
+    "noGroupsAvailable": "(keine Gruppen vorhanden)"
+  },
+  "deleteGroupDialog": {
+    "title": "Gruppe löschen",
+    "intro": "Die Gruppe enthält folgende Gruppenadressen:",
+    "deleteGroupOnly": "Nur Gruppe löschen",
+    "deleteWithGAs": "Gruppe + GA's löschen"
+  },
+  "addEditMainGroupDialog": {
+    "editTitle": "Hauptgruppe bearbeiten",
+    "addTitle": "Hauptgruppe hinzufügen",
+    "addressLabel": "Adresse",
+    "nameLabel": "Name",
+    "blockLengthLabel": "Block Länge",
+    "defaultName": "Neue Hauptgruppe",
+    "addressConflict": "Adresse bereits belegt."
+  },
+  "templateManager": {
+    "title": "Template Manager",
+    "selectTemplate": "Template wählen",
+    "new": "Neu",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "groupNamePrefixLabel": "Gruppen Name (PreString)",
+    "mainGroupLabel": "Hauptgruppe",
+    "selectMainGroup": "Hauptgruppe wählen",
+    "insertPosition": "Einfüge Position",
+    "nextBlock": "Nächster Block:",
+    "atPosition": "An Position:",
+    "nextFree": "Nächste Freie:",
+    "addButton": "Hinzufügen",
+    "close": "Schließen",
+    "addressOccupiedError": "Adressbereich bereits belegt – Gruppe konnte nicht platziert werden.",
+    "noTemplateSelected": "Kein Template ausgewählt.",
+    "confirmDeleteTemplateTitle": "Template löschen",
+    "confirmDeleteTemplateMessage": "Template löschen?",
+    "newTemplateDialogTitle": "Neues Template",
+    "renameTemplateDialogTitle": "Template umbenennen",
+    "defaultTemplateName": "Neues Template"
+  },
+  "fileOps": {
+    "invalidProjectFile": "Datei ist kein gültiges Projekt:\n{{path}}",
+    "invalidCsvFile": "Datei ist keine gültige Gruppenadressen-CSV:\n{{path}}",
+    "confirmDiscardTitle": "Änderungen verwerfen?",
+    "confirmDiscardMessage": "Es gibt nicht gespeicherte Änderungen. Möchten Sie diese verwerfen?",
+    "confirmDiscardButton": "Verwerfen"
+  },
+  "app": {
+    "selectMainGroupFirst": "Bitte erst eine Hauptgruppe erstellen/auswählen."
+  },
+  "footer": {
+    "version": "Version",
+    "githubRepo": "GitHub Repository"
+  },
+  "validation": {
+    "addressMustBeNumber": "Adresse muss eine Zahl sein",
+    "addressInvalid": "Adresse ungültig ({{min}}-{{max}})",
+    "nameRequired": "Name kann nicht leer sein",
+    "lengthMustBeNumber": "Länge muss eine Zahl sein",
+    "lengthMustBePositive": "Länge muss >0 sein"
+  }
+}

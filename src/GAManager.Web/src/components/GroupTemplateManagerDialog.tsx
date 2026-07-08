@@ -15,6 +15,7 @@ import {
 import type { Group, GroupTemplate } from '../domain/schema'
 import { useProject } from '../state/ProjectContext'
 import { createGroupTemplate, getNextStartingBlockIndex, maxGaSubAddress, minGaSubAddress } from '../domain/operations'
+import { useI18n } from '../i18n/I18nContext'
 import { GaGrid } from './GaGrid'
 import { ConfirmDialog } from './dialogs/ConfirmDialog'
 import { TextPromptDialog } from './dialogs/TextPromptDialog'
@@ -32,6 +33,7 @@ interface GroupTemplateManagerDialogProps {
 
 export function GroupTemplateManagerDialog({ open, initialMainGroupId, onClose, onGroupInserted }: GroupTemplateManagerDialogProps) {
   const styles = useStyles()
+  const { t } = useI18n()
   const {
     project,
     addGroupTemplate,
@@ -91,7 +93,7 @@ export function GroupTemplateManagerDialog({ open, initialMainGroupId, onClose, 
       onGroupInserted(mainGroup.id, group, firstRow)
       onClose()
     } else {
-      setErrorMessage('Adressbereich bereits belegt – Gruppe konnte nicht platziert werden.')
+      setErrorMessage(t('templateManager.addressOccupiedError'))
     }
   }
 
@@ -110,12 +112,12 @@ export function GroupTemplateManagerDialog({ open, initialMainGroupId, onClose, 
     <>
       <DialogShell
         open={open}
-        title="Template Manager"
+        title={t('templateManager.title')}
         onCancel={onClose}
         surfaceStyle={{ maxWidth: '1400px', width: '95vw' }}
         actions={
           <Button appearance="secondary" onClick={onClose}>
-            Schließen
+            {t('templateManager.close')}
           </Button>
         }
       >
@@ -123,44 +125,44 @@ export function GroupTemplateManagerDialog({ open, initialMainGroupId, onClose, 
           <div className={styles.leftPane}>
             <Dropdown
               style={{ width: '100%' }}
-              placeholder="Template wählen"
+              placeholder={t('templateManager.selectTemplate')}
               value={selectedTemplate?.name ?? ''}
               selectedOptions={selectedTemplateId ? [selectedTemplateId] : []}
               onOptionSelect={(_, data) => data.optionValue && setSelectedTemplateId(data.optionValue)}
             >
               {[...project.groupTemplates]
                 .sort((a, b) => a.name.localeCompare(b.name))
-                .map((t) => (
-                  <Option key={t.id} value={t.id} text={t.name}>
-                    {t.name}
+                .map((template) => (
+                  <Option key={template.id} value={template.id} text={template.name}>
+                    {template.name}
                   </Option>
                 ))}
             </Dropdown>
             <div className={styles.buttonRow}>
               <Button size="small" onClick={() => setTemplateDialogMode('new')}>
-                Neu
+                {t('templateManager.new')}
               </Button>
               <Button size="small" disabled={!selectedTemplate} onClick={() => setTemplateDialogMode('edit')}>
-                Bearbeiten
+                {t('templateManager.edit')}
               </Button>
               <Button
                 size="small"
                 disabled={!selectedTemplate}
                 onClick={() => selectedTemplate && setPendingDeleteTemplate(selectedTemplate)}
               >
-                Löschen
+                {t('templateManager.delete')}
               </Button>
             </div>
 
             <div style={{ borderTop: `1px solid ${tokens.colorNeutralStroke2}`, paddingTop: '10px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <Field label="Gruppen Name (PreString)">
+                <Field label={t('templateManager.groupNamePrefixLabel')}>
                   <Input value={prefix} onChange={(_, data) => setPrefix(data.value)} />
                 </Field>
-                <Field label="Hauptgruppe">
+                <Field label={t('templateManager.mainGroupLabel')}>
                   <Dropdown
                     style={{ width: '100%' }}
-                    placeholder="Hauptgruppe wählen"
+                    placeholder={t('templateManager.selectMainGroup')}
                     value={mainGroup ? `${mainGroup.subAddress} - ${mainGroup.name}` : ''}
                     selectedOptions={selectedMainGroupId ? [selectedMainGroupId] : []}
                     onOptionSelect={(_, data) => data.optionValue && setSelectedMainGroupId(data.optionValue)}
@@ -175,18 +177,18 @@ export function GroupTemplateManagerDialog({ open, initialMainGroupId, onClose, 
                   </Dropdown>
                 </Field>
 
-                <Text weight="semibold">Einfüge Position</Text>
+                <Text weight="semibold">{t('templateManager.insertPosition')}</Text>
                 <RadioGroup
                   className={styles.positionGroup}
                   value={insertMode}
                   onChange={(_, data) => setInsertMode(data.value as InsertMode)}
                 >
                   <div className={styles.positionRow}>
-                    <Radio value="nextBlock" label="Nächster Block:" />
+                    <Radio value="nextBlock" label={t('templateManager.nextBlock')} />
                     <Input readOnly value={String(nextBlockIndex)} style={{ width: '70px' }} />
                   </div>
                   <div className={styles.positionRow}>
-                    <Radio value="atPosition" label="An Position:" />
+                    <Radio value="atPosition" label={t('templateManager.atPosition')} />
                     <Input
                       value={atPositionText}
                       readOnly={insertMode !== 'atPosition'}
@@ -195,13 +197,13 @@ export function GroupTemplateManagerDialog({ open, initialMainGroupId, onClose, 
                     />
                   </div>
                   <div className={styles.positionRow}>
-                    <Radio value="nextFree" label="Nächste Freie:" />
+                    <Radio value="nextFree" label={t('templateManager.nextFree')} />
                     <Input readOnly value={String(nextFreeIndex)} style={{ width: '70px' }} />
                   </div>
                 </RadioGroup>
 
                 <Button appearance="primary" disabled={!canAdd} onClick={() => void handleAdd()}>
-                  Hinzufügen
+                  {t('templateManager.addButton')}
                 </Button>
               </div>
             </div>
@@ -226,7 +228,7 @@ export function GroupTemplateManagerDialog({ open, initialMainGroupId, onClose, 
                 onRenameColumn={(columnIndex, name) => renameSubGroupColumn('template', selectedTemplate.id, columnIndex, name)}
               />
             ) : (
-              <Text>Kein Template ausgewählt.</Text>
+              <Text>{t('templateManager.noTemplateSelected')}</Text>
             )}
           </div>
         </div>
@@ -234,8 +236,8 @@ export function GroupTemplateManagerDialog({ open, initialMainGroupId, onClose, 
 
       <ConfirmDialog
         open={pendingDeleteTemplate !== null}
-        title="Template löschen"
-        message="Template löschen?"
+        title={t('templateManager.confirmDeleteTemplateTitle')}
+        message={t('templateManager.confirmDeleteTemplateMessage')}
         onConfirm={() => {
           if (pendingDeleteTemplate) {
             removeGroupTemplate(pendingDeleteTemplate.id)
@@ -248,9 +250,9 @@ export function GroupTemplateManagerDialog({ open, initialMainGroupId, onClose, 
 
       <TextPromptDialog
         open={templateDialogMode !== null}
-        title={templateDialogMode === 'new' ? 'Neues Template' : 'Template umbenennen'}
-        label="Name"
-        initialValue={templateDialogMode === 'edit' ? (selectedTemplate?.name ?? '') : 'Neues Template'}
+        title={templateDialogMode === 'new' ? t('templateManager.newTemplateDialogTitle') : t('templateManager.renameTemplateDialogTitle')}
+        label={t('common.name')}
+        initialValue={templateDialogMode === 'edit' ? (selectedTemplate?.name ?? '') : t('templateManager.defaultTemplateName')}
         onSubmit={handleTemplateDialogSubmit}
         onCancel={() => setTemplateDialogMode(null)}
       />

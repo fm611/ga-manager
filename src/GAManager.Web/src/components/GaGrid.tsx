@@ -2,6 +2,7 @@ import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useS
 import { mergeClasses, MenuList, MenuItem, MenuDivider } from '@fluentui/react-components'
 import type { Address, GA, Group } from '../domain/schema'
 import { addressToString, gaAddressName } from '../domain/operations'
+import { useI18n } from '../i18n/I18nContext'
 import { TextPromptDialog } from './dialogs/TextPromptDialog'
 import { ConfirmDialog } from './dialogs/ConfirmDialog'
 import { useStyles } from './GaGrid.styles'
@@ -157,6 +158,7 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
   ref,
 ) {
   const styles = useStyles()
+  const { t } = useI18n()
   const rowRefs = useRef<Map<number, HTMLTableRowElement>>(new Map())
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -525,7 +527,7 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
                 className={styles.th}
                 style={columnWidths[c] !== undefined ? { minWidth: 0 } : undefined}
                 onDoubleClick={() => !readOnly && setRenameColumn(c)}
-                title={readOnly ? undefined : 'Doppelklick zum Umbenennen'}
+                title={readOnly ? undefined : t('grid.renameColumnTitle')}
               >
                 {c} - {subGroupNames[c] || ''}
                 <div className={styles.colResizer} onMouseDown={(e) => handleResizeMouseDown(c, e)} onDoubleClick={(e) => e.stopPropagation()} />
@@ -580,8 +582,8 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
       {renameColumn !== null && (
         <TextPromptDialog
           open
-          title="Mittelgruppe"
-          initialValue={subGroupNames[renameColumn] || 'Neue Mittelgruppe'}
+          title={t('grid.renameColumnDialogTitle')}
+          initialValue={subGroupNames[renameColumn] || t('grid.newColumnDefaultName')}
           onSubmit={(value) => {
             onRenameColumn(renameColumn, value)
             setRenameColumn(null)
@@ -592,8 +594,8 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
 
       <ConfirmDialog
         open={confirmDelete}
-        title="Gruppenadressen löschen"
-        message="Gruppenadressen löschen?"
+        title={t('grid.confirmDeleteTitle')}
+        message={t('grid.confirmDeleteMessage')}
         onConfirm={() => {
           onDeleteGAs(selectedGAIds())
           setConfirmDelete(false)
@@ -610,9 +612,9 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
           <div className={styles.contextOverlay} onClick={() => setContextMenu(null)} onContextMenu={(e) => e.preventDefault()} />
           <div className={styles.contextMenu} style={{ left: contextMenu.x, top: contextMenu.y }}>
             <MenuList>
-              <MenuItem disabled>Zu Gruppe hinzufügen:</MenuItem>
+              <MenuItem disabled>{t('grid.assignToGroup')}</MenuItem>
               <MenuDivider />
-              {groups.length === 0 && <MenuItem disabled>(keine Gruppen vorhanden)</MenuItem>}
+              {groups.length === 0 && <MenuItem disabled>{t('grid.noGroupsAvailable')}</MenuItem>}
               {groups.map((g) => (
                 <MenuItem
                   key={g.id}

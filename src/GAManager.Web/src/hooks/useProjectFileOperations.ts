@@ -3,6 +3,7 @@ import type { Project } from '../domain/schema'
 import { ProjectSchema } from '../domain/schema'
 import { buildGaExportCsv } from '../domain/csvExport'
 import { parseGaImportCsv } from '../domain/csvImport'
+import { useI18n } from '../i18n/I18nContext'
 import {
   initHostBridge,
   notifyNewProject,
@@ -10,6 +11,7 @@ import {
   requestOpenFile,
   requestOpenRecentFile,
   requestSaveFile,
+  requestSaveFileAs,
   requestExportFile,
   requestImportFile,
   type RecentFile,
@@ -38,6 +40,7 @@ export interface PendingReset {
 }
 
 export function useProjectFileOperations({ project, dirty, markClean, applyReset }: UseProjectFileOperationsArgs) {
+  const { t } = useI18n()
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>([])
   const [pendingReset, setPendingReset] = useState<PendingReset | null>(null)
 
@@ -64,12 +67,12 @@ export function useProjectFileOperations({ project, dirty, markClean, applyReset
       if (!result) return
       const parsed = parseProjectJson(result.content)
       if (!parsed) {
-        alert(`Datei ist kein gültiges Projekt:\n${result.path}`)
+        alert(t('fileOps.invalidProjectFile', { path: result.path }))
         return
       }
       handleResetRequest(parsed)
     },
-    [handleResetRequest],
+    [handleResetRequest, t],
   )
 
   useEffect(() => {
@@ -101,6 +104,11 @@ export function useProjectFileOperations({ project, dirty, markClean, applyReset
     if (result) markClean()
   }, [project, markClean])
 
+  const handleSaveAs = useCallback(async () => {
+    const result = await requestSaveFileAs(JSON.stringify(project, null, 2))
+    if (result) markClean()
+  }, [project, markClean])
+
   const handleExport = useCallback(async () => {
     await requestExportFile(buildGaExportCsv(project), 'Gruppenadressen.csv')
   }, [project])
@@ -110,11 +118,11 @@ export function useProjectFileOperations({ project, dirty, markClean, applyReset
     if (!result) return
     const parsed = parseGaImportCsv(result.content)
     if (!parsed) {
-      alert(`Datei ist keine gültige Gruppenadressen-CSV:\n${result.path}`)
+      alert(t('fileOps.invalidCsvFile', { path: result.path }))
       return
     }
     handleResetRequest(parsed, { clearHostFile: true })
-  }, [handleResetRequest])
+  }, [handleResetRequest, t])
 
   const confirmPendingReset = useCallback(() => {
     if (pendingReset) {
@@ -132,6 +140,7 @@ export function useProjectFileOperations({ project, dirty, markClean, applyReset
     handleOpenFile,
     handleOpenRecent,
     handleSave,
+    handleSaveAs,
     handleExport,
     handleImport,
     pendingReset,

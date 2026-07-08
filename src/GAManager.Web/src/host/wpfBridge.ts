@@ -16,6 +16,7 @@
 //   { type: 'contentResponse', id, content }        // reply to host's requestContent
 //   { type: 'newProject' }                          // React replaced the project with one that has no file (Neu / Beispiel) -
 //                                                    // tells the host to forget the previously open/saved file
+//   { type: 'setLanguage', language }                // persists the selected UI language into config.json
 //
 // Host -> React (CoreWebView2.PostWebMessageAsJson):
 //   { type: 'openResult', id, ok, path?, content?, error? }
@@ -24,7 +25,7 @@
 //   { type: 'importResult', id, ok, path?, content?, error? }
 //   { type: 'fileOpened', path, content }            // pushed e.g. when launched with a .gaproj file
 //   { type: 'requestContent', id }                   // host asks for the current project JSON (e.g. before closing)
-//   { type: 'recentFiles', files }                   // pushed whenever the host's recent-files list (recent.json) changes
+//   { type: 'recentFiles', files, language }         // pushed whenever the host's config.json (recent files / language) changes
 //
 // When not running inside the WPF WebView2 host (e.g. `npm run dev` in a normal browser),
 // Open/Save fall back to a native file picker / download so the app stays usable standalone.
@@ -100,6 +101,7 @@ interface RequestContentMessage {
 interface RecentFilesMessage {
   type: 'recentFiles'
   files: RecentFile[]
+  language?: string | null
 }
 
 type HostMessage =
@@ -118,6 +120,7 @@ const pendingRequests = new Map<string, PendingResolver>()
 let getContent: (() => string) | null = null
 let fileOpenedListener: ((result: OpenFileResult) => void) | null = null
 let recentFilesListener: ((files: RecentFile[]) => void) | null = null
+let languageListener: ((language: string) => void) | null = null
 
 function isHosted(): boolean {
   return typeof window !== 'undefined' && !!window.chrome?.webview
@@ -152,6 +155,7 @@ function handleHostMessage(message: HostMessage): void {
       break
     case 'recentFiles':
       recentFilesListener?.(message.files)
+      if (message.language) languageListener?.(message.language)
       break
   }
 }
@@ -165,7 +169,7 @@ if (isHosted()) {
  * current project content (e.g. before closing the window), `onFileOpened` is invoked
  * when the host pushes a project it opened on its own (e.g. a .gaproj file passed on the
  * command line at startup), and `onRecentFilesChanged` is invoked whenever the host's
- * recent-files list (recent.json) changes.
+ * recent-files list (config.json) changes.
  */
 export function initHostBridge(handlers: {
   getProjectJson: () => string
@@ -186,6 +190,17 @@ export function reportDirty(dirty: boolean): void {
  *  so it stops treating the previously open/saved file as the current one. */
 export function notifyNewProject(): void {
   if (isHosted()) postToHost({ type: 'newProject' })
+}
+
+/** Registers a listener invoked when the host reports the language stored in config.json
+ *  (initially on startup, and again after any change made from another window). */
+export function onHostLanguageChanged(listener: (language: string) => void): void {
+  languageListener = listener
+}
+
+/** Persists the selected UI language into the host's config.json, so it's restored on next launch. */
+export function requestSetLanguage(language: string): void {
+  if (isHosted()) postToHost({ type: 'setLanguage', language })
 }
 
 export function requestOpenFile(): Promise<OpenFileResult | null> {

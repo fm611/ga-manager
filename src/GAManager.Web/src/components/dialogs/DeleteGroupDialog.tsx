@@ -1,6 +1,7 @@
 import { Button } from '@fluentui/react-components'
 import type { GA } from '../../domain/schema'
 import { gaAddressName } from '../../domain/operations'
+import { useI18n } from '../../i18n/I18nContext'
 import { DialogShell } from './DialogShell'
 
 export interface DeleteGroupDialogProps {
@@ -12,6 +13,7 @@ export interface DeleteGroupDialogProps {
 }
 
 export function DeleteGroupDialog({ open, gas, onDeleteWithGAs, onDeleteGroupOnly, onCancel }: DeleteGroupDialogProps) {
+  const { t } = useI18n()
   const sorted = [...gas].sort((a, b) => {
     if (a.address.middleGroup !== b.address.middleGroup) return a.address.middleGroup - b.address.middleGroup
     return a.address.ga - b.address.ga
@@ -20,23 +22,23 @@ export function DeleteGroupDialog({ open, gas, onDeleteWithGAs, onDeleteGroupOnl
   return (
     <DialogShell
       open={open}
-      title="Gruppe löschen"
+      title={t('deleteGroupDialog.title')}
       onCancel={onCancel}
       actions={
         <>
           <Button appearance="secondary" onClick={onCancel}>
-            Abbrechen
+            {t('common.cancel')}
           </Button>
           <Button appearance="secondary" onClick={onDeleteGroupOnly}>
-            Nur Gruppe löschen
+            {t('deleteGroupDialog.deleteGroupOnly')}
           </Button>
           <Button appearance="primary" onClick={onDeleteWithGAs}>
-            Gruppe + GA's löschen
+            {t('deleteGroupDialog.deleteWithGAs')}
           </Button>
         </>
       }
     >
-      <p>Die Gruppe enthält folgende Gruppenadressen:</p>
+      <p>{t('deleteGroupDialog.intro')}</p>
       <div
         style={{
           maxHeight: 200,

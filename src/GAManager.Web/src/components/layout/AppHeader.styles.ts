@@ -14,4 +14,5 @@ export const useStyles = makeStyles({
     padding: '6px 10px',
   },
   logo: { height: '48px', width: 'auto', padding: '2px' },
+  languageSelector: { marginLeft: 'auto' },
 })

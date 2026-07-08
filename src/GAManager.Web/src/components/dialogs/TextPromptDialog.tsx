@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button, Field, Input } from '@fluentui/react-components'
+import { useI18n } from '../../i18n/I18nContext'
 import { DialogShell } from './DialogShell'
 
 export interface TextPromptDialogProps {
@@ -12,6 +13,7 @@ export interface TextPromptDialogProps {
 }
 
 export function TextPromptDialog({ open, title, label, initialValue, onSubmit, onCancel }: TextPromptDialogProps) {
+  const { t } = useI18n()
   const [value, setValue] = useState(initialValue)
 
   useEffect(() => {
@@ -34,10 +36,10 @@ export function TextPromptDialog({ open, title, label, initialValue, onSubmit, o
       actions={
         <>
           <Button appearance="secondary" onClick={onCancel}>
-            Abbrechen
+            {t('common.cancel')}
           </Button>
           <Button appearance="primary" disabled={!canSave} onClick={submit}>
-            Speichern
+            {t('common.save')}
           </Button>
         </>
       }

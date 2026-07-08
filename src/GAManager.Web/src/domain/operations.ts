@@ -1,6 +1,14 @@
 import type { Address, GA, Group, GroupTemplate, MainGroup, Project } from './schema'
 import { MIDDLE_GROUP_COUNT } from './schema'
-import { DEFAULT_GROUP_TEMPLATES, DEFAULT_SUB_GROUP_NAMES } from './defaultTemplates'
+import { DEFAULT_GROUP_TEMPLATES, DEFAULT_SUB_GROUP_NAMES } from './defaultTemplates.de'
+import { DEFAULT_GROUP_TEMPLATES as DEFAULT_GROUP_TEMPLATES_EN } from './defaultTemplates.en'
+
+export type TemplateLocale = 'de' | 'en'
+
+const DEFAULT_GROUP_TEMPLATES_BY_LOCALE: Record<TemplateLocale, typeof DEFAULT_GROUP_TEMPLATES> = {
+  de: DEFAULT_GROUP_TEMPLATES,
+  en: DEFAULT_GROUP_TEMPLATES_EN,
+}
 
 export function createId(): string {
   return crypto.randomUUID()
@@ -333,34 +341,48 @@ export function addGroupFromTemplate(
 
 // ---- Sample project ----------------------------------------------------------
 
-export function buildDefaultGroupTemplates(): GroupTemplate[] {
-  return DEFAULT_GROUP_TEMPLATES.map((t) => createGroupTemplate(t.name, t.gas.map((g) => ({ ...g, id: createId() }))))
+export function buildDefaultGroupTemplates(locale: TemplateLocale = 'de'): GroupTemplate[] {
+  return DEFAULT_GROUP_TEMPLATES_BY_LOCALE[locale].map((t) => createGroupTemplate(t.name, t.gas.map((g) => ({ ...g, id: createId() }))))
 }
 
 export function createEmptyProject(): Project {
   return { created: new Date().toISOString(), mainGroups: [], groupTemplates: [], groups: [] }
 }
 
-export function buildSampleProject(): Project {
-  let project = createEmptyProject()
-
-  const templates = buildDefaultGroupTemplates()
-  for (const t of templates) project = addGroupTemplate(project, t)
-
-  const mainGroupDefs: Array<[number, string, number]> = [
+const SAMPLE_MAIN_GROUP_DEFS: Record<TemplateLocale, Array<[number, string, number]>> = {
+  de: [
     [1, 'Licht allgemein', 10],
     [2, 'Licht dimmbar', 10],
     [3, 'Licht TW', 10],
     [4, 'Licht RGBW #1', 50],
-  ]
-  for (const [subAddress, name, blockLength] of mainGroupDefs) {
+  ],
+  en: [
+    [1, 'Light General', 10],
+    [2, 'Light Dimmable', 10],
+    [3, 'Light TW', 10],
+    [4, 'Light RGBW #1', 50],
+  ],
+}
+
+const SAMPLE_GROUP_PREFIX: Record<TemplateLocale, string> = {
+  de: 'EG_HWR_Licht_Decke',
+  en: 'GF_Utility_Light_Ceiling',
+}
+
+export function buildSampleProject(locale: TemplateLocale = 'de'): Project {
+  let project = createEmptyProject()
+
+  const templates = buildDefaultGroupTemplates(locale)
+  for (const t of templates) project = addGroupTemplate(project, t)
+
+  for (const [subAddress, name, blockLength] of SAMPLE_MAIN_GROUP_DEFS[locale]) {
     project = addMainGroup(project, createMainGroup(subAddress, name, blockLength))
   }
 
   const firstMainGroup = project.mainGroups.find((m) => m.subAddress === 1)
   const lightTemplate = templates[0]
   if (firstMainGroup && lightTemplate) {
-    const result = addGroupFromTemplate(project, firstMainGroup.id, lightTemplate, 'EG_HWR_Licht_Decke', 0)
+    const result = addGroupFromTemplate(project, firstMainGroup.id, lightTemplate, SAMPLE_GROUP_PREFIX[locale], 0)
     project = result.project
   }
 

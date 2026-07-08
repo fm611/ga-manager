@@ -1,0 +1,124 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "new": "New",
+    "edit": "Edit",
+    "delete": "Delete",
+    "name": "Name",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "header": {
+    "file": "File",
+    "new": "New",
+    "open": "Open",
+    "openFile": "File…",
+    "sample": "Sample",
+    "save": "Save",
+    "saveAs": "Save As…",
+    "export": "Export",
+    "import": "Import",
+    "templateManager": "Template Manager",
+    "undo": "Undo (Ctrl+Z)",
+    "redo": "Redo (Ctrl+Y)",
+    "saveTitle": "Save (Ctrl+S)",
+    "language": "Language"
+  },
+  "mainGroupPanel": {
+    "title": "Main Groups",
+    "add": "New",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDeleteTitle": "Delete Main Group",
+    "confirmDeleteMessage": "Delete main group?"
+  },
+  "groupPanel": {
+    "title": "Groups",
+    "newEmpty": "New (empty)",
+    "newTemplate": "New (template)",
+    "edit": "Edit",
+    "delete": "Delete",
+    "noGroupFilter": "No group",
+    "clearFilter": "Clear filter",
+    "newGroupDialogTitle": "Group",
+    "newGroupDefaultName": "New group",
+    "confirmDeleteTitle": "Delete group",
+    "confirmDeleteMessage": "Do you really want to delete the group?"
+  },
+  "grid": {
+    "emptyTitle": "Group addresses",
+    "mainGroupTitle": "Main group: {{subAddress}} - {{name}}",
+    "insertCells": "Insert cells",
+    "deleteCells": "Delete cells (Ctrl+Del)",
+    "clearSearch": "Clear filter",
+    "searchPlaceholder": "Search by name or address",
+    "noMainGroupSelected": "Please create or select a main group.",
+    "renameColumnTitle": "Double-click to rename",
+    "renameColumnDialogTitle": "Middle group",
+    "newColumnDefaultName": "New middle group",
+    "confirmDeleteTitle": "Delete group addresses",
+    "confirmDeleteMessage": "Delete group addresses?",
+    "assignToGroup": "Add to group:",
+    "noGroupsAvailable": "(no groups available)"
+  },
+  "deleteGroupDialog": {
+    "title": "Delete group",
+    "intro": "The group contains the following group addresses:",
+    "deleteGroupOnly": "Delete group only",
+    "deleteWithGAs": "Delete group + addresses"
+  },
+  "addEditMainGroupDialog": {
+    "editTitle": "Edit main group",
+    "addTitle": "Add main group",
+    "addressLabel": "Address",
+    "nameLabel": "Name",
+    "blockLengthLabel": "Block length",
+    "defaultName": "New main group",
+    "addressConflict": "Address already in use."
+  },
+  "templateManager": {
+    "title": "Template Manager",
+    "selectTemplate": "Select template",
+    "new": "New",
+    "edit": "Edit",
+    "delete": "Delete",
+    "groupNamePrefixLabel": "Group name (prefix)",
+    "mainGroupLabel": "Main group",
+    "selectMainGroup": "Select main group",
+    "insertPosition": "Insert position",
+    "nextBlock": "Next block:",
+    "atPosition": "At position:",
+    "nextFree": "Next free:",
+    "addButton": "Add",
+    "close": "Close",
+    "addressOccupiedError": "Address range already occupied – group could not be placed.",
+    "noTemplateSelected": "No template selected.",
+    "confirmDeleteTemplateTitle": "Delete template",
+    "confirmDeleteTemplateMessage": "Delete template?",
+    "newTemplateDialogTitle": "New template",
+    "renameTemplateDialogTitle": "Rename template",
+    "defaultTemplateName": "New template"
+  },
+  "fileOps": {
+    "invalidProjectFile": "File is not a valid project:\n{{path}}",
+    "invalidCsvFile": "File is not a valid group-address CSV:\n{{path}}",
+    "confirmDiscardTitle": "Discard changes?",
+    "confirmDiscardMessage": "There are unsaved changes. Do you want to discard them?",
+    "confirmDiscardButton": "Discard"
+  },
+  "app": {
+    "selectMainGroupFirst": "Please create/select a main group first."
+  },
+  "footer": {
+    "version": "Version",
+    "githubRepo": "GitHub Repository"
+  },
+  "validation": {
+    "addressMustBeNumber": "Address must be a number",
+    "addressInvalid": "Address invalid ({{min}}-{{max}})",
+    "nameRequired": "Name cannot be empty",
+    "lengthMustBeNumber": "Length must be a number",
+    "lengthMustBePositive": "Length must be >0"
+  }
+}

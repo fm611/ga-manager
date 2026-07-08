@@ -2,6 +2,7 @@ import { forwardRef } from 'react'
 import { Button, Input, Text } from '@fluentui/react-components'
 import { TableInsertRowRegular, TableDeleteRowRegular, SearchRegular, DismissRegular } from '@fluentui/react-icons'
 import type { Address, GA, Group, MainGroup } from '../../domain/schema'
+import { useI18n } from '../../i18n/I18nContext'
 import { GaGrid, type GaGridHandle } from '../GaGrid'
 import { useStyles } from './MainGridPanel.styles'
 
@@ -44,11 +45,16 @@ export const MainGridPanel = forwardRef<GaGridHandle, MainGridPanelProps>(functi
   ref,
 ) {
   const styles = useStyles()
+  const { t } = useI18n()
 
   return (
     <div className={styles.rightColumn}>
       <div className={styles.gridToolbar}>
-        <Text weight="semibold">{selectedMainGroup ? `Hauptgruppe: ${selectedMainGroup.subAddress} - ${selectedMainGroup.name}` : 'Gruppenadressen'}</Text>
+        <Text weight="semibold">
+          {selectedMainGroup
+            ? t('grid.mainGroupTitle', { subAddress: selectedMainGroup.subAddress, name: selectedMainGroup.name })
+            : t('grid.emptyTitle')}
+        </Text>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <Input
@@ -64,7 +70,7 @@ export const MainGridPanel = forwardRef<GaGridHandle, MainGridPanelProps>(functi
             size="small"
             appearance="subtle"
             icon={<TableInsertRowRegular />}
-            title="Zellen einfügen"
+            title={t('grid.insertCells')}
             disabled={!selectedMainGroup || gridSelection.addresses.length === 0}
             onClick={onAddCells}
           />
@@ -72,7 +78,7 @@ export const MainGridPanel = forwardRef<GaGridHandle, MainGridPanelProps>(functi
             size="small"
             appearance="subtle"
             icon={<TableDeleteRowRegular />}
-            title="Zellen löschen (Strg+Entf)"
+            title={t('grid.deleteCells')}
             disabled={!selectedMainGroup || gridSelection.addresses.length === 0}
             onClick={onDeleteCellsClick}
           />
@@ -86,12 +92,12 @@ export const MainGridPanel = forwardRef<GaGridHandle, MainGridPanelProps>(functi
                   appearance="transparent"
                   size="small"
                   icon={<DismissRegular />}
-                  title="Filter löschen"
+                  title={t('grid.clearSearch')}
                   onClick={() => onSearchQueryChange('')}
                 />
               ) : undefined
             }
-            placeholder="Suche nach Name oder Adresse"
+            placeholder={t('grid.searchPlaceholder')}
             value={searchQuery}
             onChange={(_, data) => onSearchQueryChange(data.value)}
             style={{ width: '220px' }}
@@ -120,7 +126,7 @@ export const MainGridPanel = forwardRef<GaGridHandle, MainGridPanelProps>(functi
           />
         ) : (
           <div style={{ padding: '24px' }}>
-            <Text>Bitte eine Hauptgruppe erstellen oder auswählen.</Text>
+            <Text>{t('grid.noMainGroupSelected')}</Text>
           </div>
         )}
       </div>

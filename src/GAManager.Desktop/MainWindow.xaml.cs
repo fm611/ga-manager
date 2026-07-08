@@ -27,8 +27,9 @@ public partial class MainWindow : Window
         PropertyNameCaseInsensitive = true,
     };
 
-    private static readonly JsonSerializerOptions RecentFilesJsonOptions = new()
+    private static readonly JsonSerializerOptions ConfigJsonOptions = new()
     {
+        PropertyNameCaseInsensitive = true,
         WriteIndented = true,
         Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
     };
@@ -42,11 +43,21 @@ public partial class MainWindow : Window
         public bool? Dirty { get; set; }
         public string? Path { get; set; }
         public string? FileName { get; set; }
+        public string? Language { get; set; }
+    }
+
+    // Persisted host-side settings (recent.json's successor): recently opened files and the
+    // last-selected UI language, written to config.json next to the executable.
+    private class HostConfig
+    {
+        public List<string> RecentFiles { get; set; } = [];
+        public string? Language { get; set; }
     }
 
     private readonly ConcurrentDictionary<string, TaskCompletionSource<string?>> _pendingHostRequests = new();
-    private readonly string _recentFilesPath = Path.Combine(AppContext.BaseDirectory, "recent.json");
+    private readonly string _configPath = Path.Combine(AppContext.BaseDirectory, "config.json");
     private List<FileInfo> _recentFiles = [];
+    private string? _language;
 
     private FileInfo? _currentFile;
     private bool _dirty;
@@ -63,7 +74,7 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         _pendingOpenPath = GetProjectFileFromCommandLine();
-        ReadRecentFilesList();
+        ReadConfig();
         UpdateTitle();
 
         SourceInitialized += (_, _) => ApplyTitleBarTheme();
@@ -180,6 +191,11 @@ public partial class MainWindow : Window
                 _dirty = false;
                 UpdateTitle();
                 break;
+            case "setLanguage":
+                _language = msg.Language;
+                WriteConfig();
+                UpdateTitle();
+                break;
             case "contentResponse":
                 if (msg.Id != null && _pendingHostRequests.TryRemove(msg.Id, out var tcs))
                     tcs.SetResult(msg.Content);
@@ -240,7 +256,7 @@ public partial class MainWindow : Window
         {
             var stale = _recentFiles.FirstOrDefault(f => f.FullName == path);
             if (stale != null) _recentFiles.Remove(stale);
-            WriteRecentFilesList();
+            WriteConfig();
             SendRecentFiles();
 
             MessageBox.Show(this, "Projektdatei nicht gefunden.", new FileInfo(path).Name, MessageBoxButton.OK);
@@ -275,26 +291,33 @@ public partial class MainWindow : Window
         }
     }
 
-    private void ReadRecentFilesList()
+    private void ReadConfig()
     {
-        if (!File.Exists(_recentFilesPath)) return;
+        if (!File.Exists(_configPath)) return;
 
         try
         {
-            var json = File.ReadAllText(_recentFilesPath);
-            var paths = JsonSerializer.Deserialize<List<string>>(json);
-            _recentFiles = paths?.Select(p => new FileInfo(p)).Where(f => f.Exists).Take(10).ToList() ?? [];
+            var json = File.ReadAllText(_configPath);
+            var config = JsonSerializer.Deserialize<HostConfig>(json, ConfigJsonOptions);
+            _recentFiles = config?.RecentFiles.Select(p => new FileInfo(p)).Where(f => f.Exists).Take(10).ToList() ?? [];
+            _language = config?.Language;
         }
         catch (Exception ex) when (ex is IOException or JsonException)
         {
             _recentFiles = [];
+            _language = null;
         }
     }
 
-    private void WriteRecentFilesList()
+    private void WriteConfig()
     {
-        var json = JsonSerializer.Serialize(_recentFiles.Select(f => f.FullName), RecentFilesJsonOptions);
-        File.WriteAllText(_recentFilesPath, json);
+        var config = new HostConfig
+        {
+            RecentFiles = _recentFiles.Select(f => f.FullName).ToList(),
+            Language = _language,
+        };
+        var json = JsonSerializer.Serialize(config, ConfigJsonOptions);
+        File.WriteAllText(_configPath, json);
     }
 
     private void EnqueueRecentFile(string path)
@@ -302,7 +325,7 @@ public partial class MainWindow : Window
         var oldEntries = _recentFiles.Where(f => f.FullName != path).Take(9).ToList();
         _recentFiles = [new FileInfo(path), .. oldEntries];
 
-        WriteRecentFilesList();
+        WriteConfig();
         SendRecentFiles();
     }
 
@@ -312,6 +335,7 @@ public partial class MainWindow : Window
         {
             type = "recentFiles",
             files = _recentFiles.Select(f => new { path = f.FullName, name = f.Name }),
+            language = _language,
         });
     }
 
@@ -457,7 +481,8 @@ public partial class MainWindow : Window
 
     private void UpdateTitle()
     {
-        Title = (_currentFile?.Name ?? "Neues Projekt") + (_dirty ? "*" : "");
+        var untitled = _language == "en" ? "New Project" : "Neues Projekt";
+        Title = (_currentFile?.Name ?? untitled) + (_dirty ? "*" : "");
     }
 
     private async void Window_Closing(object? sender, CancelEventArgs e)

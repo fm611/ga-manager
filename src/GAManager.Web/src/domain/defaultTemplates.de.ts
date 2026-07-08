@@ -1,12 +1,12 @@
 import type { GA } from './schema'
 
 export const DEFAULT_SUB_GROUP_NAMES = [
-  'Zentral',
-  'Zentral Status',
-  'Schalten',
-  'Schalten Status',
-  'SET Wert',
-  'GET Wert',
+  'SET Central',
+  'GET Central',
+  'SET Switch',
+  'GET Switch',
+  'SET Value',
+  'GET Value',
   'SET Misc',
   'GET Misc',
 ]
@@ -42,7 +42,7 @@ export const DEFAULT_GROUP_TEMPLATES: DefaultTemplateDef[] = [
     ],
   },
   {
-    name: 'Licht Dimm_bar',
+    name: 'Licht Dimm',
     gas: [
       tga(2, 0, 'Schalten'), tga(3, 0, 'Schalten_Status'),
       tga(2, 2, 'Sequqenz1_Start'), tga(3, 2, 'Sequqenz1_Status'),

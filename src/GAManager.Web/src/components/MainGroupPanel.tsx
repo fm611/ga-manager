@@ -4,6 +4,7 @@ import { AddRegular, EditRegular, DeleteRegular } from '@fluentui/react-icons'
 import type { MainGroup } from '../domain/schema'
 import { MIN_MAIN_GROUP, MAX_MAIN_GROUP } from '../domain/schema'
 import { mainGroupListLabel } from '../domain/operations'
+import { useI18n } from '../i18n/I18nContext'
 import { ContextMenu, type ContextMenuState } from './ContextMenu'
 import { ConfirmDialog } from './dialogs/ConfirmDialog'
 import { useStyles } from './MainGroupPanel.styles'
@@ -21,6 +22,7 @@ interface MainGroupPanelProps {
 
 export const MainGroupPanel = memo(function MainGroupPanel({ mainGroups, selectedId, onSelect, onAdd, onEdit, onDelete }: MainGroupPanelProps) {
   const styles = useStyles()
+  const { t } = useI18n()
   const sorted = [...mainGroups].sort((a, b) => a.subAddress - b.subAddress)
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null)
   const [pendingDelete, setPendingDelete] = useState<MainGroup | null>(null)
@@ -34,9 +36,9 @@ export const MainGroupPanel = memo(function MainGroupPanel({ mainGroups, selecte
       x: e.clientX,
       y: e.clientY,
       items: [
-        { key: 'add', label: 'Neu', onClick: onAdd },
-        { key: 'edit', label: 'Bearbeiten', onClick: () => mg && onEdit(mg), disabled: !mg },
-        { key: 'delete', label: 'Löschen', onClick: () => mg && setPendingDelete(mg), disabled: !mg },
+        { key: 'add', label: t('mainGroupPanel.add'), onClick: onAdd },
+        { key: 'edit', label: t('mainGroupPanel.edit'), onClick: () => mg && onEdit(mg), disabled: !mg },
+        { key: 'delete', label: t('mainGroupPanel.delete'), onClick: () => mg && setPendingDelete(mg), disabled: !mg },
       ],
     })
   }
@@ -45,15 +47,29 @@ export const MainGroupPanel = memo(function MainGroupPanel({ mainGroups, selecte
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.titleGroup}>
-          <Text weight="semibold">Hauptgruppen</Text>
+          <Text weight="semibold">{t('mainGroupPanel.title')}</Text>
           <Text size={200}>
             {mainGroups.length}/{TOTAL_MAIN_GROUPS}
           </Text>
         </div>
         <div>
-          <Button size="small" appearance="subtle" icon={<AddRegular />} title="Neu" onClick={onAdd} />
-          <Button size="small" appearance="subtle" icon={<EditRegular />} title="Bearbeiten" disabled={!selected} onClick={() => selected && onEdit(selected)} />
-          <Button size="small" appearance="subtle" icon={<DeleteRegular />} title="Löschen" disabled={!selected} onClick={() => selected && setPendingDelete(selected)} />
+          <Button size="small" appearance="subtle" icon={<AddRegular />} title={t('mainGroupPanel.add')} onClick={onAdd} />
+          <Button
+            size="small"
+            appearance="subtle"
+            icon={<EditRegular />}
+            title={t('mainGroupPanel.edit')}
+            disabled={!selected}
+            onClick={() => selected && onEdit(selected)}
+          />
+          <Button
+            size="small"
+            appearance="subtle"
+            icon={<DeleteRegular />}
+            title={t('mainGroupPanel.delete')}
+            disabled={!selected}
+            onClick={() => selected && setPendingDelete(selected)}
+          />
         </div>
       </div>
       <div
@@ -80,8 +96,8 @@ export const MainGroupPanel = memo(function MainGroupPanel({ mainGroups, selecte
 
       <ConfirmDialog
         open={pendingDelete !== null}
-        title="Hauptgruppe löschen"
-        message="Hauptgruppe löschen?"
+        title={t('mainGroupPanel.confirmDeleteTitle')}
+        message={t('mainGroupPanel.confirmDeleteMessage')}
         onConfirm={() => {
           if (pendingDelete) onDelete(pendingDelete)
           setPendingDelete(null)

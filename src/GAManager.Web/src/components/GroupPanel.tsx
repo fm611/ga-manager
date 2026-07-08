@@ -4,6 +4,7 @@ import { AddRegular, EditRegular, DeleteRegular, LayerRegular, FilterRegular, Fi
 import type { Group } from '../domain/schema'
 import { useProject } from '../state/ProjectContext'
 import { createGroup, getGroupGAs } from '../domain/operations'
+import { useI18n } from '../i18n/I18nContext'
 import { ContextMenu, type ContextMenuState } from './ContextMenu'
 import { TextPromptDialog } from './dialogs/TextPromptDialog'
 import { DeleteGroupDialog } from './dialogs/DeleteGroupDialog'
@@ -30,6 +31,7 @@ export const GroupPanel = memo(function GroupPanel({
   filterDisabled,
 }: GroupPanelProps) {
   const styles = useStyles()
+  const { t } = useI18n()
   const { project, addGroup, renameGroup, removeGroups } = useProject()
   const sorted = [...project.groups].sort((a, b) => a.name.localeCompare(b.name))
 
@@ -48,10 +50,10 @@ export const GroupPanel = memo(function GroupPanel({
       x: e.clientX,
       y: e.clientY,
       items: [
-        { key: 'new-empty', label: 'Neu (leer)', onClick: () => setNewGroupDialogOpen(true) },
-        { key: 'new-template', label: 'Neu (Template)', onClick: onOpenTemplateManager },
-        { key: 'edit', label: 'Bearbeiten', onClick: () => group && setEditingGroup(group), disabled: !group },
-        { key: 'delete', label: 'Löschen', onClick: () => group && startDelete(group), disabled: !group },
+        { key: 'new-empty', label: t('groupPanel.newEmpty'), onClick: () => setNewGroupDialogOpen(true) },
+        { key: 'new-template', label: t('groupPanel.newTemplate'), onClick: onOpenTemplateManager },
+        { key: 'edit', label: t('groupPanel.edit'), onClick: () => group && setEditingGroup(group), disabled: !group },
+        { key: 'delete', label: t('groupPanel.delete'), onClick: () => group && startDelete(group), disabled: !group },
       ],
     })
   }
@@ -72,15 +74,15 @@ export const GroupPanel = memo(function GroupPanel({
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <Text weight="semibold">Gruppen</Text>
+        <Text weight="semibold">{t('groupPanel.title')}</Text>
         <div className={styles.buttonRow}>
-          <Button size="small" appearance="subtle" icon={<AddRegular />} title="Neu (leer)" onClick={() => setNewGroupDialogOpen(true)} />
-          <Button size="small" appearance="subtle" icon={<LayerRegular />} title="Neu (Template)" onClick={onOpenTemplateManager} />
+          <Button size="small" appearance="subtle" icon={<AddRegular />} title={t('groupPanel.newEmpty')} onClick={() => setNewGroupDialogOpen(true)} />
+          <Button size="small" appearance="subtle" icon={<LayerRegular />} title={t('groupPanel.newTemplate')} onClick={onOpenTemplateManager} />
           <Button
             size="small"
             appearance="subtle"
             icon={<EditRegular />}
-            title="Bearbeiten"
+            title={t('groupPanel.edit')}
             disabled={!singleSelected}
             onClick={() => singleSelected && setEditingGroup(singleSelected)}
           />
@@ -88,7 +90,7 @@ export const GroupPanel = memo(function GroupPanel({
             size="small"
             appearance="subtle"
             icon={<DeleteRegular />}
-            title="Löschen"
+            title={t('groupPanel.delete')}
             disabled={selectedIds.length === 0}
             onClick={() => {
               const first = project.groups.find((g) => g.id === selectedIds[0])
@@ -100,7 +102,7 @@ export const GroupPanel = memo(function GroupPanel({
               size="small"
               appearance="subtle"
               icon={<FilterRegular />}
-              title="Ohne Gruppe"
+              title={t('groupPanel.noGroupFilter')}
               checked={noGroupFilterActive}
               onClick={onToggleNoGroupFilter}
               disabled={filterDisabled}
@@ -109,7 +111,7 @@ export const GroupPanel = memo(function GroupPanel({
               size="small"
               appearance="subtle"
               icon={<FilterDismissRegular />}
-              title="Filter löschen"
+              title={t('groupPanel.clearFilter')}
               onClick={onClearFilter}
               disabled={selectedIds.length === 0 && !noGroupFilterActive}
             />
@@ -134,8 +136,8 @@ export const GroupPanel = memo(function GroupPanel({
 
       <TextPromptDialog
         open={newGroupDialogOpen}
-        title="Gruppe"
-        initialValue="Neue Gruppe"
+        title={t('groupPanel.newGroupDialogTitle')}
+        initialValue={t('groupPanel.newGroupDefaultName')}
         onSubmit={(value) => {
           addGroup(createGroup(value))
           setNewGroupDialogOpen(false)
@@ -145,7 +147,7 @@ export const GroupPanel = memo(function GroupPanel({
 
       <TextPromptDialog
         open={editingGroup !== null}
-        title="Gruppe"
+        title={t('groupPanel.newGroupDialogTitle')}
         initialValue={editingGroup?.name ?? ''}
         onSubmit={(value) => {
           if (editingGroup) renameGroup(editingGroup.id, value)
@@ -156,8 +158,8 @@ export const GroupPanel = memo(function GroupPanel({
 
       <ConfirmDialog
         open={confirmSimpleDelete !== null}
-        title="Gruppe löschen"
-        message="Möchten Sie die Gruppe wirklich löschen?"
+        title={t('groupPanel.confirmDeleteTitle')}
+        message={t('groupPanel.confirmDeleteMessage')}
         onConfirm={() => {
           if (confirmSimpleDelete) {
             removeGroups([confirmSimpleDelete.id], false)

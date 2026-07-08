@@ -4,6 +4,7 @@ interface UseKeyboardShortcutsArgs {
   undo: () => void
   redo: () => void
   onSave: () => void
+  onSaveAs: () => void
   onOpen: () => void
   onDeleteCells: () => void
 }
@@ -13,7 +14,7 @@ function isTextEntryTarget(el: EventTarget | null): boolean {
   return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable
 }
 
-export function useKeyboardShortcuts({ undo, redo, onSave, onOpen, onDeleteCells }: UseKeyboardShortcutsArgs): void {
+export function useKeyboardShortcuts({ undo, redo, onSave, onSaveAs, onOpen, onDeleteCells }: UseKeyboardShortcutsArgs): void {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (!(e.ctrlKey || e.metaKey) || isTextEntryTarget(document.activeElement)) return
@@ -24,6 +25,9 @@ export function useKeyboardShortcuts({ undo, redo, onSave, onOpen, onDeleteCells
       } else if (key === 'y' || (key === 'z' && e.shiftKey)) {
         e.preventDefault()
         redo()
+      } else if (key === 's' && e.shiftKey) {
+        e.preventDefault()
+        onSaveAs()
       } else if (key === 's') {
         e.preventDefault()
         onSave()
@@ -37,5 +41,5 @@ export function useKeyboardShortcuts({ undo, redo, onSave, onOpen, onDeleteCells
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [undo, redo, onSave, onOpen, onDeleteCells])
+  }, [undo, redo, onSave, onSaveAs, onOpen, onDeleteCells])
 }

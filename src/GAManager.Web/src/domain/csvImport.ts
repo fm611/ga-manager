@@ -1,6 +1,6 @@
 import type { GA, MainGroup, Project } from './schema'
 import { MAX_GA_SUBADDRESS, MAX_MAIN_GROUP, MIDDLE_GROUP_COUNT, MIN_MAIN_GROUP, ProjectSchema } from './schema'
-import { DEFAULT_SUB_GROUP_NAMES } from './defaultTemplates'
+import { DEFAULT_SUB_GROUP_NAMES } from './defaultTemplates.de'
 import { createId } from './operations'
 
 const EXPECTED_HEADER = ['main', 'middle', 'sub', 'main', 'middle', 'sub', 'central', 'unfiltered', 'description', 'datapointtype', 'security']

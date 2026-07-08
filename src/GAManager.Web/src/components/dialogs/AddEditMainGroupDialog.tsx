@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Button, Field, Input } from '@fluentui/react-components'
-import { MainGroupFormSchema } from '../../domain/schema'
+import { createMainGroupFormSchema } from '../../domain/schema'
 import type { MainGroup } from '../../domain/schema'
 import { isValidMainGroupSubAddress, nextFreeMainGroupAddress } from '../../domain/operations'
+import { useI18n } from '../../i18n/I18nContext'
 import { DialogShell } from './DialogShell'
 
 export interface AddEditMainGroupDialogProps {
@@ -14,6 +15,7 @@ export interface AddEditMainGroupDialogProps {
 }
 
 export function AddEditMainGroupDialog({ open, mainGroups, editing, onSave, onCancel }: AddEditMainGroupDialogProps) {
+  const { t } = useI18n()
   const [subAddress, setSubAddress] = useState('0')
   const [name, setName] = useState('')
   const [defaultBlockLength, setDefaultBlockLength] = useState('1')
@@ -27,11 +29,11 @@ export function AddEditMainGroupDialog({ open, mainGroups, editing, onSave, onCa
       setDefaultBlockLength(String(editing.defaultBlockLength))
     } else {
       setSubAddress(String(nextFreeMainGroupAddress(mainGroups)))
-      setName('Neue Hauptgruppe')
+      setName(t('addEditMainGroupDialog.defaultName'))
       setDefaultBlockLength('1')
     }
     setErrors({})
-  }, [open, editing, mainGroups])
+  }, [open, editing, mainGroups, t])
 
   function validate(nextSubAddress: string, nextName: string, nextBlockLength: string) {
     const parsedSubAddress = Number(nextSubAddress)
@@ -39,7 +41,7 @@ export function AddEditMainGroupDialog({ open, mainGroups, editing, onSave, onCa
 
     const next: typeof errors = {}
 
-    const result = MainGroupFormSchema.safeParse({
+    const result = createMainGroupFormSchema(t).safeParse({
       subAddress: parsedSubAddress,
       name: nextName,
       defaultBlockLength: parsedBlockLength,
@@ -53,7 +55,7 @@ export function AddEditMainGroupDialog({ open, mainGroups, editing, onSave, onCa
 
     if (!next.subAddress && isValidMainGroupSubAddress(parsedSubAddress)) {
       const conflict = mainGroups.some((m) => m.subAddress === parsedSubAddress && m.id !== editing?.id)
-      if (conflict) next.subAddress = 'Adresse bereits belegt.'
+      if (conflict) next.subAddress = t('addEditMainGroupDialog.addressConflict')
     }
 
     setErrors(next)
@@ -68,21 +70,21 @@ export function AddEditMainGroupDialog({ open, mainGroups, editing, onSave, onCa
   return (
     <DialogShell
       open={open}
-      title={editing ? 'Hauptgruppe bearbeiten' : 'Hauptgruppe hinzufügen'}
+      title={editing ? t('addEditMainGroupDialog.editTitle') : t('addEditMainGroupDialog.addTitle')}
       onCancel={onCancel}
       contentStyle={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
       actions={
         <>
           <Button appearance="secondary" onClick={onCancel}>
-            Abbrechen
+            {t('common.cancel')}
           </Button>
           <Button appearance="primary" disabled={Object.keys(errors).length > 0} onClick={handleSave}>
-            Speichern
+            {t('common.save')}
           </Button>
         </>
       }
     >
-      <Field label="Adresse" validationState={errors.subAddress ? 'error' : 'none'} validationMessage={errors.subAddress}>
+      <Field label={t('addEditMainGroupDialog.addressLabel')} validationState={errors.subAddress ? 'error' : 'none'} validationMessage={errors.subAddress}>
         <Input
           type="number"
           min={0}
@@ -94,7 +96,7 @@ export function AddEditMainGroupDialog({ open, mainGroups, editing, onSave, onCa
           }}
         />
       </Field>
-      <Field label="Name" validationState={errors.name ? 'error' : 'none'} validationMessage={errors.name}>
+      <Field label={t('addEditMainGroupDialog.nameLabel')} validationState={errors.name ? 'error' : 'none'} validationMessage={errors.name}>
         <Input
           value={name}
           onChange={(_, data) => {
@@ -104,7 +106,7 @@ export function AddEditMainGroupDialog({ open, mainGroups, editing, onSave, onCa
         />
       </Field>
       <Field
-        label="Block Länge"
+        label={t('addEditMainGroupDialog.blockLengthLabel')}
         validationState={errors.defaultBlockLength ? 'error' : 'none'}
         validationMessage={errors.defaultBlockLength}
       >

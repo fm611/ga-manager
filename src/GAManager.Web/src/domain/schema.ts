@@ -53,18 +53,20 @@ export const ProjectSchema = z.object({
 })
 export type Project = z.infer<typeof ProjectSchema>
 
-export const MainGroupFormSchema = z.object({
-  subAddress: z
-    .number({ error: 'Adresse muss eine Zahl sein' })
-    .int('Adresse muss eine Zahl sein')
-    .min(MIN_MAIN_GROUP, `Adresse ungültig (${MIN_MAIN_GROUP}-${MAX_MAIN_GROUP})`)
-    .max(MAX_MAIN_GROUP, `Adresse ungültig (${MIN_MAIN_GROUP}-${MAX_MAIN_GROUP})`),
-  name: z.string().min(1, 'Name kann nicht leer sein'),
-  defaultBlockLength: z
-    .number({ error: 'Länge muss eine Zahl sein' })
-    .int('Länge muss eine Zahl sein')
-    .min(1, 'Länge muss >0 sein'),
-})
-export type MainGroupFormValues = z.infer<typeof MainGroupFormSchema>
+export function createMainGroupFormSchema(t: (key: string, vars?: Record<string, string | number>) => string) {
+  return z.object({
+    subAddress: z
+      .number({ error: t('validation.addressMustBeNumber') })
+      .int(t('validation.addressMustBeNumber'))
+      .min(MIN_MAIN_GROUP, t('validation.addressInvalid', { min: MIN_MAIN_GROUP, max: MAX_MAIN_GROUP }))
+      .max(MAX_MAIN_GROUP, t('validation.addressInvalid', { min: MIN_MAIN_GROUP, max: MAX_MAIN_GROUP })),
+    name: z.string().min(1, t('validation.nameRequired')),
+    defaultBlockLength: z
+      .number({ error: t('validation.lengthMustBeNumber') })
+      .int(t('validation.lengthMustBeNumber'))
+      .min(1, t('validation.lengthMustBePositive')),
+  })
+}
+export type MainGroupFormValues = z.infer<ReturnType<typeof createMainGroupFormSchema>>
 
 export const NonEmptyTextSchema = z.string().min(1, 'Darf nicht leer sein')
