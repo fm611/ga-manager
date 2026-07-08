@@ -5,6 +5,12 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-07-08
+
+### Added
+
+- Footer mit aktueller Versionsnummer und einem Info-Icon, das zum GitHub-Repository verlinkt.
+
 ### Removed
 
 - `GAManager.Core` und das zugehörige Testprojekt `GAManager.Core.Tests` entfernt: Das
