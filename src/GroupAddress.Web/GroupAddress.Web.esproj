@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.5984942">
+
+  <PropertyGroup>
+    <StartupCommand>npm run dev</StartupCommand>
+    <!-- npm install/build here would race with GroupAddress.UI.WPF's BuildReactApp target, -->
+    <!-- which already builds this project and embeds the output as wwwroot. -->
+    <ShouldRunNpmInstall>false</ShouldRunNpmInstall>
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+  </PropertyGroup>
+
+</Project>

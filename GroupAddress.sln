@@ -1,32 +1,19 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.8.11925.187
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupAddress.Core", "GroupAddress.Core\GroupAddress.Core.csproj", "{DF168C7A-2641-4C35-AFF2-20D66FBDAA71}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupAddress.UI.WPF", "GroupAddress.UI.WPF\GroupAddress.UI.WPF.csproj", "{CDFAB879-3193-4A85-B383-AB224B59AE52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupAddress.Core", "src\GroupAddress.Core\GroupAddress.Core.csproj", "{DF168C7A-2641-4C35-AFF2-20D66FBDAA71}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "GroupAddress.Web", "GroupAddress.Web\", "{F9685AFA-3ECB-F090-8EDD-E3594EA00CD6}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_61198"
-		Debug.AspNetCompiler.PhysicalPath = "GroupAddress.Web\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_61198\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_61198"
-		Release.AspNetCompiler.PhysicalPath = "GroupAddress.Web\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_61198\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "61198"
-		SlnRelativePath = "GroupAddress.Web\"
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupAddress.UI.WPF", "src\GroupAddress.UI.WPF\GroupAddress.UI.WPF.csproj", "{CDFAB879-3193-4A85-B383-AB224B59AE52}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "GroupAddress.Web", "src\GroupAddress.Web\GroupAddress.Web.esproj", "{CAB8C652-155C-41F8-82D6-EA4D91AB728C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupAddress.Core.Tests", "tests\GroupAddress.Core.Tests\GroupAddress.Core.Tests.csproj", "{4206CC72-BF7E-45CD-96D8-BA3687CB0EE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,13 +29,23 @@ Global
 		{CDFAB879-3193-4A85-B383-AB224B59AE52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDFAB879-3193-4A85-B383-AB224B59AE52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDFAB879-3193-4A85-B383-AB224B59AE52}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9685AFA-3ECB-F090-8EDD-E3594EA00CD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9685AFA-3ECB-F090-8EDD-E3594EA00CD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9685AFA-3ECB-F090-8EDD-E3594EA00CD6}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9685AFA-3ECB-F090-8EDD-E3594EA00CD6}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{CAB8C652-155C-41F8-82D6-EA4D91AB728C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAB8C652-155C-41F8-82D6-EA4D91AB728C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAB8C652-155C-41F8-82D6-EA4D91AB728C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAB8C652-155C-41F8-82D6-EA4D91AB728C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4206CC72-BF7E-45CD-96D8-BA3687CB0EE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4206CC72-BF7E-45CD-96D8-BA3687CB0EE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4206CC72-BF7E-45CD-96D8-BA3687CB0EE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4206CC72-BF7E-45CD-96D8-BA3687CB0EE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DF168C7A-2641-4C35-AFF2-20D66FBDAA71} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{CDFAB879-3193-4A85-B383-AB224B59AE52} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{CAB8C652-155C-41F8-82D6-EA4D91AB728C} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{4206CC72-BF7E-45CD-96D8-BA3687CB0EE9} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9560B6F1-7874-4A9A-BFFA-E26E780F5CF8}
