@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace GroupAddress.UI.WPF;
+namespace GAManager.Desktop;
 
 /// <summary>
 /// Interaction logic for App.xaml

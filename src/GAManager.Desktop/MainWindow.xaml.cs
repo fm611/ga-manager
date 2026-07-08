@@ -13,7 +13,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace GroupAddress.UI.WPF;
+namespace GAManager.Desktop;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
@@ -71,7 +71,7 @@ public partial class MainWindow : Window
     }
 
     // Recolors the native title bar to match the React app's dark KNX theme
-    // (colorNeutralBackground1 / colorNeutralForeground1 from GroupAddress.Web/src/theme.ts).
+    // (colorNeutralBackground1 / colorNeutralForeground1 from GAManager.Web/src/theme.ts).
     private void ApplyTitleBarTheme()
     {
         var hwnd = new WindowInteropHelper(this).Handle;
@@ -117,7 +117,7 @@ public partial class MainWindow : Window
     {
         var userDataFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "GroupAddress", "WebView2");
+            "GAManager", "WebView2");
 
         var environment = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
         await Browser.EnsureCoreWebView2Async(environment);

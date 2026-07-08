@@ -5,6 +5,20 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+### Removed
+
+- `GAManager.Core` und das zugehörige Testprojekt `GAManager.Core.Tests` entfernt: Das
+  Domänenmodell lebt vollständig in `GAManager.Web` (TypeScript/Zod), `GAManager.Core` wurde
+  von `GAManager.UI.WPF` nicht mehr referenziert.
+
+### Changed
+
+- Projekte und Namespaces von `GroupAddress.*` auf `GAManager.*` umbenannt (`GAManager.UI.WPF`,
+  `GAManager.Web`, `GAManager.sln`), passend zum umbenannten GitHub-Repo `ga-manager`. Der
+  Produktname "Gruppenadressen Manager" in der UI bleibt unverändert.
+- `GAManager.UI.WPF` weiter in `GAManager.Desktop` umbenannt (Namespace, XAML `x:Class`,
+  Projekt-/Ordnername), da der `.UI.WPF`-Suffix ohne `GAManager.Core` nicht mehr nötig war.
+
 ## [1.0.0] - 2026-07-08
 
 Erstes Release.

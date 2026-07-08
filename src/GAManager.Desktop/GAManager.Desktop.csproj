@@ -18,17 +18,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GroupAddress.Core\GroupAddress.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Assets\app.ico" />
   </ItemGroup>
 
-  <!-- Build the React app (GroupAddress.Web) and embed its output as static content, -->
+  <!-- Build the React app (GAManager.Web) and embed its output as static content, -->
   <!-- so the WPF app can serve it directly via WebView2 without a separate dev server. -->
   <PropertyGroup>
-    <WebAppDir>$(MSBuildProjectDirectory)\..\GroupAddress.Web</WebAppDir>
+    <WebAppDir>$(MSBuildProjectDirectory)\..\GAManager.Web</WebAppDir>
     <WebAppDist>$(WebAppDir)\dist</WebAppDist>
     <WwwrootDir>$(MSBuildProjectDirectory)\wwwroot</WwwrootDir>
   </PropertyGroup>

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <StartupCommand>npm run dev</StartupCommand>
-    <!-- npm install/build here would race with GroupAddress.UI.WPF's BuildReactApp target, -->
+    <!-- npm install/build here would race with GAManager.Desktop's BuildReactApp target, -->
     <!-- which already builds this project and embeds the output as wwwroot. -->
     <ShouldRunNpmInstall>false</ShouldRunNpmInstall>
     <ShouldRunBuildScript>false</ShouldRunBuildScript>

@@ -11,6 +11,7 @@ import {
   MenuItem,
   MenuDivider,
   Text,
+  Link,
   tokens,
   makeStyles,
 } from '@fluentui/react-components'
@@ -23,6 +24,7 @@ import {
   ArrowRedoRegular,
   SaveRegular,
   ChevronDownRegular,
+  InfoRegular,
 } from '@fluentui/react-icons'
 import type { Address, GA, MainGroup, Project } from './domain/schema'
 import { ProjectSchema } from './domain/schema'
@@ -73,7 +75,19 @@ const useStyles = makeStyles({
   gridToolbar: { display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'space-between' },
   gridWrapper: { flex: 1, minHeight: 0, borderRadius: tokens.borderRadiusMedium },
   gridWrapperFiltered: { boxShadow: `0 0 0 2px ${tokens.colorPaletteRedBorder2}` },
+  footer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    padding: '4px 10px',
+    borderTop: `1px solid ${tokens.colorNeutralStroke2}`,
+    flexShrink: 0,
+    color: tokens.colorNeutralForeground3,
+  },
 })
+
+const GITHUB_REPO_URL = 'https://github.com/fm611/ga-manager'
 
 function parseProjectJson(json: string): Project | null {
   try {
@@ -469,6 +483,13 @@ function MainContent() {
             )}
           </div>
         </div>
+      </div>
+
+      <div className={styles.footer}>
+        <Text size={200}>Version {__APP_VERSION__}</Text>
+        <Link href={GITHUB_REPO_URL} target="_blank" rel="noreferrer" title="GitHub Repository" style={{ display: 'flex', alignItems: 'center' }}>
+          <InfoRegular fontSize={16} />
+        </Link>
       </div>
 
       <AddEditMainGroupDialog
