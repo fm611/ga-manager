@@ -1,20 +1,14 @@
 import { memo, useState } from 'react'
-import { Button, Listbox, Option, Text, tokens, makeStyles } from '@fluentui/react-components'
+import { Button, Listbox, Option, Text } from '@fluentui/react-components'
 import { AddRegular, EditRegular, DeleteRegular } from '@fluentui/react-icons'
 import type { MainGroup } from '../domain/schema'
 import { MIN_MAIN_GROUP, MAX_MAIN_GROUP } from '../domain/schema'
 import { mainGroupListLabel } from '../domain/operations'
 import { ContextMenu, type ContextMenuState } from './ContextMenu'
 import { ConfirmDialog } from './dialogs/ConfirmDialog'
+import { useStyles } from './MainGroupPanel.styles'
 
 const TOTAL_MAIN_GROUPS = MAX_MAIN_GROUP - MIN_MAIN_GROUP + 1
-
-const useStyles = makeStyles({
-  root: { display: 'flex', flexDirection: 'column', height: '100%', gap: '4px', minHeight: 0 },
-  header: { display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
-  titleGroup: { display: 'flex', alignItems: 'baseline', gap: '6px' },
-  list: { flex: 1, overflowY: 'auto', border: `1px solid ${tokens.colorNeutralStroke2}`, borderRadius: tokens.borderRadiusMedium },
-})
 
 interface MainGroupPanelProps {
   mainGroups: MainGroup[]

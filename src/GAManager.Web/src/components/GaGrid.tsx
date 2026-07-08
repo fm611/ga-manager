@@ -1,9 +1,11 @@
-import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { makeStyles, mergeClasses, tokens, MenuList, MenuItem, MenuDivider } from '@fluentui/react-components'
+import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { mergeClasses, MenuList, MenuItem, MenuDivider } from '@fluentui/react-components'
 import type { Address, GA, Group } from '../domain/schema'
 import { addressToString, gaAddressName } from '../domain/operations'
 import { TextPromptDialog } from './dialogs/TextPromptDialog'
 import { ConfirmDialog } from './dialogs/ConfirmDialog'
+import { useStyles } from './GaGrid.styles'
+import { useStableCallback } from '../hooks/useStableCallback'
 
 const TOTAL_ROWS = 256
 const COLUMNS = [0, 1, 2, 3, 4, 5, 6, 7]
@@ -13,93 +15,14 @@ function gaMatchesSearch(g: GA, searchLower: string): boolean {
   return g.name.toLowerCase().includes(searchLower) || addressToString(g.address).toLowerCase().includes(searchLower)
 }
 
-const useStyles = makeStyles({
-  container: {
-    height: '100%',
-    overflow: 'auto',
-    border: `1px solid ${tokens.colorNeutralStroke2}`,
-    outline: 'none',
-  },
-  table: {
-    borderCollapse: 'collapse',
-    fontSize: tokens.fontSizeBase200,
-    userSelect: 'none',
-  },
-  th: {
-    position: 'sticky',
-    top: 0,
-    backgroundColor: tokens.colorNeutralBackground3,
-    border: `1px solid ${tokens.colorNeutralStroke2}`,
-    padding: '4px 6px',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    cursor: 'default',
-    zIndex: 1,
-  },
-  colResizer: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: '6px',
-    height: '100%',
-    cursor: 'col-resize',
-    zIndex: 2,
-    ':hover': {
-      backgroundColor: tokens.colorNeutralStroke1,
-    },
-  },
-  rowHeader: {
-    position: 'sticky',
-    left: 0,
-    backgroundColor: tokens.colorNeutralBackground3,
-    border: `1px solid ${tokens.colorNeutralStroke2}`,
-    padding: '2px 6px',
-    textAlign: 'center',
-    fontVariantNumeric: 'tabular-nums',
-    cursor: 'pointer',
-    userSelect: 'none',
-  },
-  cell: {
-    border: `1px solid ${tokens.colorNeutralStroke2}`,
-    padding: '2px 6px',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    cursor: 'default',
-  },
-  cellSelected: {
-    backgroundColor: tokens.colorBrandBackground2,
-  },
-  cellHighlighted: {
-    backgroundColor: tokens.colorPaletteYellowBackground2,
-    color: tokens.colorPaletteYellowForeground2,
-  },
-  cellSearchMatch: {
-    backgroundColor: tokens.colorPaletteGreenBackground2,
-    color: tokens.colorPaletteGreenForeground2,
-  },
-  cellInput: {
-    width: '100%',
-    boxSizing: 'border-box',
-    font: 'inherit',
-    userSelect: 'text',
-  },
-  contextOverlay: {
-    position: 'fixed',
-    inset: 0,
-    zIndex: 1000,
-  },
-  contextMenu: {
-    position: 'fixed',
-    zIndex: 1001,
-    backgroundColor: tokens.colorNeutralBackground1,
-    border: `1px solid ${tokens.colorNeutralStroke1}`,
-    borderRadius: tokens.borderRadiusMedium,
-    boxShadow: tokens.shadow16,
-    minWidth: '200px',
-  },
-})
+function cellKey(r: number, c: number): string {
+  return `${r}:${c}`
+}
+
+function parseCellKey(key: string): { r: number; c: number } {
+  const [rStr, cStr] = key.split(':')
+  return { r: Number(rStr), c: Number(cStr) }
+}
 
 interface GaGridRowHeaderProps {
   row: number
@@ -316,10 +239,6 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
     return result
   }, [gaByCell, filterActive, filterGroupIds, searchActive, searchLower])
 
-  function cellKey(r: number, c: number) {
-    return `${r}:${c}`
-  }
-
   function rangeSelection(from: { r: number; c: number }, to: { r: number; c: number }) {
     const rMin = Math.min(from.r, to.r)
     const rMax = Math.max(from.r, to.r)
@@ -350,9 +269,7 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
     const selectedGAs: GA[] = []
     const selectedAddresses: Address[] = []
     for (const key of sel) {
-      const [rStr, cStr] = key.split(':')
-      const r = Number(rStr)
-      const c = Number(cStr)
+      const { r, c } = parseCellKey(key)
       selectedAddresses.push({ mainGroup: mainGroupSubAddress, middleGroup: c, ga: r })
       const g = gaByCell.get(`${c}:${r}`)
       if (g) selectedGAs.push(g)
@@ -443,8 +360,8 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
   function selectedGAIds(): string[] {
     const ids: string[] = []
     for (const key of selected) {
-      const [rStr, cStr] = key.split(':')
-      const g = gaByCell.get(`${cStr}:${rStr}`)
+      const { r, c } = parseCellKey(key)
+      const g = gaByCell.get(`${c}:${r}`)
       if (g) ids.push(g.id)
     }
     return ids
@@ -457,9 +374,7 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
     let cMin = Infinity
     let cMax = -Infinity
     for (const key of selected) {
-      const [rStr, cStr] = key.split(':')
-      const r = Number(rStr)
-      const c = Number(cStr)
+      const { r, c } = parseCellKey(key)
       if (r < rMin) rMin = r
       if (r > rMax) rMax = r
       if (c < cMin) cMin = c
@@ -496,8 +411,8 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
       const value = grid[0][0].trim()
       if (value.length === 0) return
       for (const key of selected) {
-        const [rStr, cStr] = key.split(':')
-        onCommitCell(Number(cStr), Number(rStr), value)
+        const { r, c } = parseCellKey(key)
+        onCommitCell(c, r, value)
       }
       return
     }
@@ -550,9 +465,9 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
     // replacing its content — same as double-clicking, but without the extra click.
     if (!readOnly && selected.size === 1 && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
       const [key] = selected
-      const [rStr, cStr] = key.split(':')
+      const { r, c } = parseCellKey(key)
       e.preventDefault()
-      beginEdit(Number(rStr), Number(cStr), e.key)
+      beginEdit(r, c, e.key)
     }
   }
 
@@ -573,39 +488,15 @@ export const GaGrid = forwardRef<GaGridHandle, GaGridProps>(function GaGrid(
 
   // Stable handler references so memoized GaGridCell/GaGridRowHeader instances only
   // re-render when their own visual props change, not on every selection tick.
-  const cellHandlersRef = useRef({
-    mouseDown: handleCellMouseDown,
-    mouseEnter: handleCellMouseEnter,
-    doubleClick: beginEdit,
-    contextMenu: handleContextMenu,
-    editCommit: commitEdit,
-    editCancel: cancelEdit,
-  })
-  cellHandlersRef.current = {
-    mouseDown: handleCellMouseDown,
-    mouseEnter: handleCellMouseEnter,
-    doubleClick: beginEdit,
-    contextMenu: handleContextMenu,
-    editCommit: commitEdit,
-    editCancel: cancelEdit,
-  }
-  const stableCellMouseDown = useCallback((row: number, col: number, e: React.MouseEvent) => cellHandlersRef.current.mouseDown(row, col, e), [])
-  const stableCellMouseEnter = useCallback((row: number, col: number) => cellHandlersRef.current.mouseEnter(row, col), [])
-  const stableCellDoubleClick = useCallback((row: number, col: number) => cellHandlersRef.current.doubleClick(row, col), [])
-  const stableCellContextMenu = useCallback((e: React.MouseEvent, row: number, col: number) => cellHandlersRef.current.contextMenu(e, row, col), [])
-  const stableEditCommit = useCallback(() => cellHandlersRef.current.editCommit(), [])
-  const stableEditCancel = useCallback(() => cellHandlersRef.current.editCancel(), [])
+  const stableCellMouseDown = useStableCallback(handleCellMouseDown)
+  const stableCellMouseEnter = useStableCallback(handleCellMouseEnter)
+  const stableCellDoubleClick = useStableCallback(beginEdit)
+  const stableCellContextMenu = useStableCallback(handleContextMenu)
+  const stableEditCommit = useStableCallback(commitEdit)
+  const stableEditCancel = useStableCallback(cancelEdit)
 
-  const rowHeaderHandlersRef = useRef({
-    mouseDown: handleRowHeaderMouseDown,
-    mouseEnter: handleRowHeaderMouseEnter,
-  })
-  rowHeaderHandlersRef.current = {
-    mouseDown: handleRowHeaderMouseDown,
-    mouseEnter: handleRowHeaderMouseEnter,
-  }
-  const stableRowHeaderMouseDown = useCallback((row: number, e: React.MouseEvent) => rowHeaderHandlersRef.current.mouseDown(row, e), [])
-  const stableRowHeaderMouseEnter = useCallback((row: number) => rowHeaderHandlersRef.current.mouseEnter(row), [])
+  const stableRowHeaderMouseDown = useStableCallback(handleRowHeaderMouseDown)
+  const stableRowHeaderMouseEnter = useStableCallback(handleRowHeaderMouseEnter)
 
   return (
     <div

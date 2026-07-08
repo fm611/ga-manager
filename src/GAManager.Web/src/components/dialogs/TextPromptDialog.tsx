@@ -1,15 +1,6 @@
 import { useEffect, useState } from 'react'
-import {
-  Dialog,
-  DialogSurface,
-  DialogBody,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Field,
-  Input,
-} from '@fluentui/react-components'
+import { Button, Field, Input } from '@fluentui/react-components'
+import { DialogShell } from './DialogShell'
 
 export interface TextPromptDialogProps {
   open: boolean
@@ -36,33 +27,32 @@ export function TextPromptDialog({ open, title, label, initialValue, onSubmit, o
   }
 
   return (
-    <Dialog open={open} onOpenChange={(_, data) => !data.open && onCancel()}>
-      <DialogSurface>
-        <DialogBody>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogContent>
-            <Field label={label}>
-              <Input
-                autoFocus
-                value={value}
-                onChange={(_, data) => setValue(data.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') submit()
-                }}
-                onFocus={(e) => e.currentTarget.select()}
-              />
-            </Field>
-          </DialogContent>
-          <DialogActions>
-            <Button appearance="secondary" onClick={onCancel}>
-              Abbrechen
-            </Button>
-            <Button appearance="primary" disabled={!canSave} onClick={submit}>
-              Speichern
-            </Button>
-          </DialogActions>
-        </DialogBody>
-      </DialogSurface>
-    </Dialog>
+    <DialogShell
+      open={open}
+      title={title}
+      onCancel={onCancel}
+      actions={
+        <>
+          <Button appearance="secondary" onClick={onCancel}>
+            Abbrechen
+          </Button>
+          <Button appearance="primary" disabled={!canSave} onClick={submit}>
+            Speichern
+          </Button>
+        </>
+      }
+    >
+      <Field label={label}>
+        <Input
+          autoFocus
+          value={value}
+          onChange={(_, data) => setValue(data.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') submit()
+          }}
+          onFocus={(e) => e.currentTarget.select()}
+        />
+      </Field>
+    </DialogShell>
   )
 }

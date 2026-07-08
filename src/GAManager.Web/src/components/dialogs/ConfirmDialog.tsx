@@ -1,12 +1,5 @@
-import {
-  Dialog,
-  DialogSurface,
-  DialogBody,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-} from '@fluentui/react-components'
+import { Button } from '@fluentui/react-components'
+import { DialogShell } from './DialogShell'
 
 export interface ConfirmDialogProps {
   open: boolean
@@ -30,21 +23,22 @@ export function ConfirmDialog({
   onCancel,
 }: ConfirmDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={(_, data) => !data.open && onCancel()}>
-      <DialogSurface>
-        <DialogBody>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogContent>{message}</DialogContent>
-          <DialogActions>
-            <Button appearance="secondary" onClick={onCancel}>
-              {cancelText}
-            </Button>
-            <Button appearance="primary" onClick={onConfirm} style={danger ? { backgroundColor: '#c4314b' } : undefined}>
-              {confirmText}
-            </Button>
-          </DialogActions>
-        </DialogBody>
-      </DialogSurface>
-    </Dialog>
+    <DialogShell
+      open={open}
+      title={title}
+      onCancel={onCancel}
+      actions={
+        <>
+          <Button appearance="secondary" onClick={onCancel}>
+            {cancelText}
+          </Button>
+          <Button appearance="primary" onClick={onConfirm} style={danger ? { backgroundColor: '#c4314b' } : undefined}>
+            {confirmText}
+          </Button>
+        </>
+      }
+    >
+      {message}
+    </DialogShell>
   )
 }

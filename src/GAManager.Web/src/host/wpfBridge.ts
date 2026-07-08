@@ -189,29 +189,13 @@ export function notifyNewProject(): void {
 }
 
 export function requestOpenFile(): Promise<OpenFileResult | null> {
-  if (!isHosted()) return openFileFallback()
-
-  return new Promise((resolve) => {
-    const id = createId()
-    pendingRequests.set(id, (message) => {
-      const result = message as OpenResultMessage
-      resolve(result.ok && result.path && result.content !== undefined ? { path: result.path, content: result.content } : null)
-    })
-    postToHost({ type: 'openFile', id })
-  })
+  if (!isHosted()) return pickFileFallback('.gaproj')
+  return sendOpenRequest('openFile')
 }
 
 export function requestOpenRecentFile(path: string): Promise<OpenFileResult | null> {
   if (!isHosted()) return Promise.resolve(null)
-
-  return new Promise((resolve) => {
-    const id = createId()
-    pendingRequests.set(id, (message) => {
-      const result = message as OpenResultMessage
-      resolve(result.ok && result.path && result.content !== undefined ? { path: result.path, content: result.content } : null)
-    })
-    postToHost({ type: 'openRecent', id, path })
-  })
+  return sendOpenRequest('openRecent', { path })
 }
 
 export function requestSaveFile(content: string): Promise<SaveFileResult | null> {
@@ -240,15 +224,18 @@ export function requestExportFile(content: string, suggestedFileName: string): P
 /** Imports arbitrary content (e.g. a CSV) from a file the user picks, without affecting the
  *  host's notion of the currently open/saved project file. */
 export function requestImportFile(): Promise<OpenFileResult | null> {
-  if (!isHosted()) return importFileFallback()
+  if (!isHosted()) return pickFileFallback('.csv')
+  return sendOpenRequest('importFile')
+}
 
+function sendOpenRequest(type: 'openFile' | 'openRecent' | 'importFile', extra?: Record<string, unknown>): Promise<OpenFileResult | null> {
   return new Promise((resolve) => {
     const id = createId()
     pendingRequests.set(id, (message) => {
-      const result = message as ImportResultMessage
+      const result = message as OpenResultMessage | ImportResultMessage
       resolve(result.ok && result.path && result.content !== undefined ? { path: result.path, content: result.content } : null)
     })
-    postToHost({ type: 'importFile', id })
+    postToHost({ type, id, ...extra })
   })
 }
 
@@ -267,11 +254,11 @@ function sendSaveRequest(type: 'saveFile' | 'saveFileAs', content: string): Prom
 
 // ---- Fallbacks for running the app outside of the WPF host (`npm run dev`) ----------------
 
-function openFileFallback(): Promise<OpenFileResult | null> {
+function pickFileFallback(accept: string): Promise<OpenFileResult | null> {
   return new Promise((resolve) => {
     const input = document.createElement('input')
     input.type = 'file'
-    input.accept = '.gaproj'
+    input.accept = accept
     input.onchange = () => {
       const file = input.files?.[0]
       if (!file) {
@@ -297,26 +284,6 @@ function saveFallback(content: string): Promise<SaveFileResult | null> {
   anchor.click()
   URL.revokeObjectURL(url)
   return Promise.resolve({ path: fileName })
-}
-
-function importFileFallback(): Promise<OpenFileResult | null> {
-  return new Promise((resolve) => {
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = '.csv'
-    input.onchange = () => {
-      const file = input.files?.[0]
-      if (!file) {
-        resolve(null)
-        return
-      }
-      const reader = new FileReader()
-      reader.onload = () => resolve({ path: file.name, content: String(reader.result ?? '') })
-      reader.onerror = () => resolve(null)
-      reader.readAsText(file)
-    }
-    input.click()
-  })
 }
 
 function exportFallback(content: string, fileName: string): Promise<SaveFileResult | null> {

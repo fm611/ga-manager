@@ -1,18 +1,9 @@
 import { useEffect, useState } from 'react'
-import {
-  Dialog,
-  DialogSurface,
-  DialogBody,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Field,
-  Input,
-} from '@fluentui/react-components'
+import { Button, Field, Input } from '@fluentui/react-components'
 import { MainGroupFormSchema } from '../../domain/schema'
 import type { MainGroup } from '../../domain/schema'
 import { isValidMainGroupSubAddress, nextFreeMainGroupAddress } from '../../domain/operations'
+import { DialogShell } from './DialogShell'
 
 export interface AddEditMainGroupDialogProps {
   open: boolean
@@ -75,58 +66,58 @@ export function AddEditMainGroupDialog({ open, mainGroups, editing, onSave, onCa
   }
 
   return (
-    <Dialog open={open} onOpenChange={(_, data) => !data.open && onCancel()}>
-      <DialogSurface>
-        <DialogBody>
-          <DialogTitle>{editing ? 'Hauptgruppe bearbeiten' : 'Hauptgruppe hinzufügen'}</DialogTitle>
-          <DialogContent style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <Field label="Adresse" validationState={errors.subAddress ? 'error' : 'none'} validationMessage={errors.subAddress}>
-              <Input
-                type="number"
-                min={0}
-                max={31}
-                value={subAddress}
-                onChange={(_, data) => {
-                  setSubAddress(data.value)
-                  validate(data.value, name, defaultBlockLength)
-                }}
-              />
-            </Field>
-            <Field label="Name" validationState={errors.name ? 'error' : 'none'} validationMessage={errors.name}>
-              <Input
-                value={name}
-                onChange={(_, data) => {
-                  setName(data.value)
-                  validate(subAddress, data.value, defaultBlockLength)
-                }}
-              />
-            </Field>
-            <Field
-              label="Block Länge"
-              validationState={errors.defaultBlockLength ? 'error' : 'none'}
-              validationMessage={errors.defaultBlockLength}
-            >
-              <Input
-                type="number"
-                min={1}
-                value={defaultBlockLength}
-                onChange={(_, data) => {
-                  setDefaultBlockLength(data.value)
-                  validate(subAddress, name, data.value)
-                }}
-              />
-            </Field>
-          </DialogContent>
-          <DialogActions>
-            <Button appearance="secondary" onClick={onCancel}>
-              Abbrechen
-            </Button>
-            <Button appearance="primary" disabled={Object.keys(errors).length > 0} onClick={handleSave}>
-              Speichern
-            </Button>
-          </DialogActions>
-        </DialogBody>
-      </DialogSurface>
-    </Dialog>
+    <DialogShell
+      open={open}
+      title={editing ? 'Hauptgruppe bearbeiten' : 'Hauptgruppe hinzufügen'}
+      onCancel={onCancel}
+      contentStyle={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+      actions={
+        <>
+          <Button appearance="secondary" onClick={onCancel}>
+            Abbrechen
+          </Button>
+          <Button appearance="primary" disabled={Object.keys(errors).length > 0} onClick={handleSave}>
+            Speichern
+          </Button>
+        </>
+      }
+    >
+      <Field label="Adresse" validationState={errors.subAddress ? 'error' : 'none'} validationMessage={errors.subAddress}>
+        <Input
+          type="number"
+          min={0}
+          max={31}
+          value={subAddress}
+          onChange={(_, data) => {
+            setSubAddress(data.value)
+            validate(data.value, name, defaultBlockLength)
+          }}
+        />
+      </Field>
+      <Field label="Name" validationState={errors.name ? 'error' : 'none'} validationMessage={errors.name}>
+        <Input
+          value={name}
+          onChange={(_, data) => {
+            setName(data.value)
+            validate(subAddress, data.value, defaultBlockLength)
+          }}
+        />
+      </Field>
+      <Field
+        label="Block Länge"
+        validationState={errors.defaultBlockLength ? 'error' : 'none'}
+        validationMessage={errors.defaultBlockLength}
+      >
+        <Input
+          type="number"
+          min={1}
+          value={defaultBlockLength}
+          onChange={(_, data) => {
+            setDefaultBlockLength(data.value)
+            validate(subAddress, name, data.value)
+          }}
+        />
+      </Field>
+    </DialogShell>
   )
 }
