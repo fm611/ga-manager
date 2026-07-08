@@ -5,6 +5,10 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-08
+
+Erstes Release.
+
 ### Changed
 
 - Projektstruktur an gängige GitHub-Konventionen angepasst: `GroupAddress.Core`, `GroupAddress.UI.WPF`
