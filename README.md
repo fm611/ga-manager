@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="branding/logo.png" alt="GA Manager" width="420" />
+  <img src="branding/logo-en.png" alt="GA Manager" width="420" />
 
   <p>A Windows desktop tool for creating and maintaining KNX group addresses –<br/>
   ETS-compatible CSV import/export, templates, undo/redo.</p>
